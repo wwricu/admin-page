@@ -1,6 +1,6 @@
 import axios, {AxiosResponse} from "axios";
 import {PostCreateRO, PostRequestRO, PostUpdateRO} from "@/app/model/request";
-import {PostDetailVO, PostPreview} from "@/app/model/response";
+import {PostDetailVO} from "@/app/model/response";
 
 axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.headers.post['Content-Type'] = 'application/json';

@@ -22,3 +22,9 @@ export enum PostStatusEnum {
     DRAFT = 'draft',
     PUBLISHED = 'published'
 }
+
+export interface TagVO {
+    id: number
+    name: string
+    type: string
+}

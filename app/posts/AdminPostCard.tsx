@@ -5,7 +5,7 @@ import {Card} from 'antd';
 import {PostDetailVO} from "@/app/model/response";
 
 
-const AdminPostCard: React.FC<postDetailVO> = (postDetailVO: PostDetailVO) => {
+const AdminPostCard: React.FC<PostDetailVO> = (postDetailVO: PostDetailVO) => {
     return (
         <Card title={postDetailVO.title} extra={<a href={`/editor?id=${postDetailVO.id}`}>Edit</a>} style={{ width: '100%' }}>
             <p>{postDetailVO.content}</p>

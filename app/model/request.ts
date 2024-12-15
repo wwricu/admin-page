@@ -27,3 +27,9 @@ export interface PostUpdateRO {
     category?: TagVO
     status?: string
 }
+
+export interface TagRO {
+    id?: number
+    name: string
+    type: string
+}
