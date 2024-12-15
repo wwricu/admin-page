@@ -12,7 +12,7 @@ export const getAllPost = async (pageIndex: number, pageSize: number) => {
         page_index: pageIndex,
         page_size: pageSize
     }
-    return await axios.post('/post/all', postRequest).then((res: AxiosResponse<PostPreview[]>) => res.data);
+    return await axios.post('/post/all', postRequest).then((res: AxiosResponse<PostDetailVO[]>) => res.data);
 }
 
 export const createPostAPI = async (postCreateRO: PostCreateRO) => {

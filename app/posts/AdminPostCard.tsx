@@ -2,16 +2,16 @@
 
 import React from 'react';
 import {Card} from 'antd';
-import {PostPreview} from "@/app/model/response";
+import {PostDetailVO} from "@/app/model/response";
 
 
-const AdminPostCard: React.FC<PostPreview> = (postPreview: PostPreview) => {
+const AdminPostCard: React.FC<postDetailVO> = (postDetailVO: PostDetailVO) => {
     return (
-        <Card title={postPreview.title} extra={<a href={`/editor?id=${postPreview.id}`}>Edit</a>} style={{ width: '100%' }}>
-            <p>{postPreview.content}</p>
-            <p>{postPreview.create_time}</p>
-            <p>{postPreview.update_time}</p>
-            <p>{postPreview.status}</p>
+        <Card title={postDetailVO.title} extra={<a href={`/editor?id=${postDetailVO.id}`}>Edit</a>} style={{ width: '100%' }}>
+            <p>{postDetailVO.content}</p>
+            <p>{postDetailVO.create_time}</p>
+            <p>{postDetailVO.update_time}</p>
+            <p>{postDetailVO.status}</p>
         </Card>
     );
 };
