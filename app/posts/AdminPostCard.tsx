@@ -11,6 +11,7 @@ const AdminPostCard: React.FC<PostPreview> = (postPreview: PostPreview) => {
             <p>{postPreview.content}</p>
             <p>{postPreview.create_time}</p>
             <p>{postPreview.update_time}</p>
+            <p>{postPreview.status}</p>
         </Card>
     );
 };

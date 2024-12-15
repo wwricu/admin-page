@@ -32,18 +32,19 @@ export default function RootLayout({
   return (
       <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-
-      <Layout>
-        <AdminHeader/>
-        <Layout>
-          <Sider>
-            <AdminMenu/>
-          </Sider>
-          <Content style={{padding: '24'}}>
-            {children}
-          </Content>
-        </Layout>
-      </Layout>
+          <Layout style={{minHeight: '100vh'}}>
+            <AdminHeader/>
+            <Layout>
+              <Layout>
+                <Sider>
+                  <AdminMenu/>
+                </Sider>
+                <Content style={{padding: '24'}}>
+                  {children}
+                </Content>
+              </Layout>
+            </Layout>
+          </Layout>
       </body>
       </html>
   );

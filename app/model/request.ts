@@ -1,3 +1,4 @@
+import {TagVO} from "@/app/model/response";
 
 
 export interface PostRequestRO {
@@ -15,4 +16,14 @@ export interface PostCreateRO {
     content?: string
     tag_id_list?: number[]
     category_id?: number
+}
+
+export interface PostUpdateRO {
+    id: number
+    title?: string
+    cover?: string
+    content?: string
+    tag_list?: TagVO[]
+    category?: TagVO
+    status?: string
 }

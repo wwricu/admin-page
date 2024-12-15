@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios";
-import {PostCreateRO, PostRequestRO} from "@/app/model/request";
+import {PostCreateRO, PostRequestRO, PostUpdateRO} from "@/app/model/request";
 import {PostDetailVO, PostPreview} from "@/app/model/response";
 
 axios.defaults.baseURL = 'http://localhost:8000'
@@ -21,4 +21,9 @@ export const createPostAPI = async (postCreateRO: PostCreateRO) => {
 
 export const getPostDetailAPI = async (postId: string) => {
     return await axios.get(`/post/detail/${postId}`).then((res: AxiosResponse<PostDetailVO>) => res.data);
+}
+
+export const updatePostDetailAPI = async (postUpdateRO: PostUpdateRO) => {
+    return await axios.post('/post/update', postUpdateRO)
+        .then((res: AxiosResponse<PostDetailVO>) => res.data);
 }

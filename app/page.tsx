@@ -1,8 +1,9 @@
 "use client"
 
 
+import {useRouter} from "next/navigation";
+
 export default function Home() {
-  return (
-    <div>Dashboard placeholder</div>
-  );
+  const router = useRouter()
+  router.push('/posts')
 }

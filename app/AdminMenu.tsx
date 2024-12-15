@@ -1,41 +1,40 @@
-import React from 'react';
+'use client'
+
+import React from 'react'
 import {
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-} from '@ant-design/icons';
-import {Menu} from 'antd';
+    BookOutlined,
+    BorderlessTableOutlined, EditOutlined,
+} from '@ant-design/icons'
+import {Menu} from 'antd'
+import {useRouter} from "next/navigation";
 
 
 const AdminMenu: React.FC = () => {
+    const router = useRouter()
     return (
         <Menu
             mode="inline"
             defaultSelectedKeys={['1']}
+            theme="dark"
             items={[
                 {
                     key: '1',
-                    icon: <VideoCameraOutlined />,
-                    label: <a href='/new-post'>New Post</a>,
+                    icon: <BookOutlined/>,
+                    label: <div onClick={() => router.push('/posts')}>Post Management</div>,
                 },
                 {
                     key: '2',
-                    icon: <VideoCameraOutlined />,
-                    label: <a href='/posts'>Post Management</a>,
+                    icon: <BorderlessTableOutlined/>,
+                    label: <div onClick={() => router.push('/tags')}>Tag Management</div>,
                 },
                 {
                     key: '3',
-                    icon: <UploadOutlined />,
-                    label: <a href='/tags'>Tag Management</a>,
+                    icon: <EditOutlined/>,
+                    label: <div onClick={() => router.push('/new-post')}>New Post</div>,
                 },
-                {
-                    key: '4',
-                    icon: <UploadOutlined />,
-                    label: <a href='/editor'>Editor</a>,
-                }
             ]}
         />
-    );
-};
+    )
+}
 
-export default AdminMenu;
+export default AdminMenu

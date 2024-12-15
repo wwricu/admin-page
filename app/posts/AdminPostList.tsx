@@ -15,7 +15,6 @@ const AdminPostList: React.FC = () => {
             setData(res);
             setList(res);
         }).then(() => {
-            console.log(JSON.stringify(data))
         }).catch((reason) => {
             console.log(reason)
         })

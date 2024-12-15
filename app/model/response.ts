@@ -29,3 +29,9 @@ export interface PostDetailVO {
     create_time: string
     update_time: string
 }
+
+
+export enum PostStatusEnum {
+    DRAFT = 'draft',
+    PUBLISHED = 'published'
+}
