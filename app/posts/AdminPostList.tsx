@@ -1,36 +1,17 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { List, Skeleton } from 'antd';
+import React, { useEffect, useState} from 'react';
+import {Row, Space} from 'antd';
 import { getAllPost } from "@/app/api/post";
 import {PostPreview} from "@/app/model/response";
-
-interface DataType {
-    gender?: string;
-    name: {
-        title?: string;
-        first?: string;
-        last?: string;
-    };
-    email?: string;
-    picture: {
-        large?: string;
-        medium?: string;
-        thumbnail?: string;
-    };
-    nat?: string;
-    loading: boolean;
-}
-
+import AdminPostCard from "@/app/posts/AdminPostCard";
 
 const AdminPostList: React.FC = () => {
-    const [initLoading, setInitLoading] = useState(true);
     const [data, setData] = useState<PostPreview[]>([]);
     const [list, setList] = useState<PostPreview[]>([]);
 
     useEffect(() => {
         getAllPost(1, 5).then((res: PostPreview[]) => {
-            setInitLoading(false);
             setData(res);
             setList(res);
         }).then(() => {
@@ -40,24 +21,26 @@ const AdminPostList: React.FC = () => {
         })
     }, []);
 
+    const postCardList: React.JSX.Element[] = list.map(postPreview =>
+        <Row key={postPreview.id} justify="center">
+            <AdminPostCard
+                id={postPreview.id}
+                title={postPreview.title}
+                cover={postPreview.cover}
+                content={postPreview.content}
+                create_time={postPreview.create_time}
+                update_time={postPreview.update_time}
+                tag_list={postPreview.tag_list}
+                category={postPreview.category}
+                status={postPreview.status}
+            />
+        </Row>
+    )
+
     return (
-        <List
-            className="demo-loadmore-list"
-            loading={initLoading}
-            itemLayout="horizontal"
-            dataSource={list}
-            style={{ padding: 24 }}
-            renderItem={(item) => (
-                <List.Item>
-                    <Skeleton avatar title={false} loading={initLoading} active>
-                        <List.Item.Meta
-                            title={<a href="https://ant.design">{item.title}</a>}
-                            description={item.content}
-                        />
-                    </Skeleton>
-                </List.Item>
-            )}
-        />
+        <Space direction="vertical" style={{ width: '100%' }}>
+            {postCardList}
+        </Space>
     );
 };
 
