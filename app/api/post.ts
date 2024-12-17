@@ -19,7 +19,7 @@ export const createPostAPI = async (postCreateRO: PostCreateRO) => {
     return await axios.post('/post/create', postCreateRO).then((res: AxiosResponse<PostDetailVO>) => res.data);
 }
 
-export const getPostDetailAPI = async (postId: string) => {
+export const getPostDetailAPI = async (postId: string | number) => {
     return await axios.get(`/post/detail/${postId}`).then((res: AxiosResponse<PostDetailVO>) => res.data);
 }
 
