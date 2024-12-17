@@ -1,10 +1,10 @@
 "use client"
 
-import AdminPostList from "@/app/posts/AdminPostList";
+import AdminPostTable from "@/app/posts/AdminPostTable";
 
 
 export default function PostList() {
   return (
-    <AdminPostList/>
+    <AdminPostTable/>
   );
 }
