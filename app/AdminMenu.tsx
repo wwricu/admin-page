@@ -25,10 +25,15 @@ const AdminMenu: React.FC = () => {
                 {
                     key: '2',
                     icon: <BorderlessTableOutlined/>,
-                    label: <div onClick={() => router.push('/tags')}>Tag Management</div>,
+                    label: <div onClick={() => router.push('/tag')}>Tag Management</div>,
                 },
                 {
                     key: '3',
+                    icon: <BorderlessTableOutlined/>,
+                    label: <div onClick={() => router.push('/category')}>Category Management</div>,
+                },
+                {
+                    key: '4',
                     icon: <EditOutlined/>,
                     label: <div onClick={() => router.push('/new-post')}>New Post</div>,
                 },

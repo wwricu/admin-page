@@ -7,11 +7,10 @@ axios.defaults.headers.post['Accept'] = 'application/json';
 axios.defaults.withCredentials = true
 
 export const getAllTag = async () => {
-
     return await axios.get('/open/tag/all').then((res: AxiosResponse<TagVO[]>) => res.data);
 }
 
 export const getAllCategory = async () => {
-    return await axios.get('/open/category/all').then((res: AxiosResponse<TagVO>) => res.data);
+    return await axios.get('/open/category/all').then((res: AxiosResponse<TagVO[]>) => res.data);
 }
 
