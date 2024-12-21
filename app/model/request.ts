@@ -43,3 +43,9 @@ export interface TagBatchRO {
     id_list: number[]
     type: TagTypeEnum
 }
+
+export interface GetTagRO {
+    page_size?: number
+    page_index?: number
+    type: TagTypeEnum
+}

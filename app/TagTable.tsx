@@ -140,7 +140,7 @@ export const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             width: '15%',
             title: 'operation',
             dataIndex: 'operation',
-            render: (_, tag: TagVO) => {
+            render: (_: any, tag: TagVO) => {
                 return isEditing(tag) ? (
                   <span>
                     <Typography.Link onClick={() => save(tag.id)} style={{ marginInlineEnd: 8 }}>
