@@ -1,6 +1,6 @@
 "use client"
 
-import React, {ChangeEvent, MutableRefObject, useRef, useState} from 'react'
+import React, {MutableRefObject, useRef, useState} from 'react'
 import { Editor } from '@tinymce/tinymce-react'
 import { Editor as TinyMCEEditor } from 'tinymce'
 import {useSearchParams} from "next/navigation"
@@ -37,7 +37,7 @@ export default function EditorPage() {
             >
                 <Editor
                     id='tinyMCE'
-                    onInit={(evt, editor) => {
+                    onInit={(_, editor) => {
                         editorRef.current = editor
                         if (id == null) {
                             return

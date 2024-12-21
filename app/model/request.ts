@@ -33,3 +33,13 @@ export interface TagRO {
     name: string
     type: string
 }
+
+export enum TagTypeEnum {
+    POST_TAG = 'post_tag',
+    POST_CAT = 'post_category'
+}
+
+export interface TagBatchRO {
+    id_list: number[]
+    type: TagTypeEnum
+}
