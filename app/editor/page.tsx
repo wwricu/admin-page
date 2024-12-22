@@ -62,6 +62,7 @@ export default function EditorPage() {
             messageApi.info('success').then();
         })
     }
+    // TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
 
     return (
         <>
@@ -70,10 +71,10 @@ export default function EditorPage() {
                 title={(
                     <Flex justify='space-between'>
                         <Input value={title} style={{width: '50%'}} onChange={(e) => setTitle(e.target.value)}></Input>
+                        <Flex justify='start'>
                             <Select<TagItem>
                                 showSearch
                                 optionFilterProp='label'
-                                style={{width: '10%'}}
                                 value={category}
                                 options={allCategories}
                                 onChange={(value) => {setCategory(value)}}
@@ -81,13 +82,13 @@ export default function EditorPage() {
                             <Select<TagItem[]>
                                 showSearch
                                 mode='tags'
-                                style={{width: '20%'}}
                                 optionFilterProp='label'
                                 value={tags}
                                 onChange={(values) => {setTags(values)}}
                                 options={allTags}
                             />
-                        <Flex justify='space-between' style={{width: '8%'}}>
+                        </Flex>
+                        <Flex justify='start'>
                             <Button onClick={() => updatePost(undefined)}>
                                 Save
                             </Button>
@@ -120,8 +121,10 @@ export default function EditorPage() {
                     }}
                     apiKey='ttp8w1owo5c68hkksofh1cth7018mik8e8urjtrz23ng6fy5'
                     init={{
+                        height: '90vh',
                         menubar: false,
-                        images_upload_url: '/demo/upimg.php',
+                        images_upload_base_path: 'http://localhost:8000',
+                        images_upload_url: '/upload',
                         plugins: [
                             'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
                         ],
