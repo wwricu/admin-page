@@ -23,8 +23,8 @@ export interface PostUpdateRO {
     title?: string
     cover?: string
     content?: string
-    tag_list?: TagVO[]
-    category?: TagVO
+    tag_id_list?: number[]
+    category_id?: number
     status?: string
 }
 

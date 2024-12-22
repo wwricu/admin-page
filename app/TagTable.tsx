@@ -17,15 +17,16 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     index: number
 }
 
-const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
-                                                                                editing,
-                                                                                dataIndex,
-                                                                                title,
-                                                                                inputType,
-                                                                                children,
-                                                                                ...restProps
-                                                                            }) => {
-    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />
+const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
+    {
+        editing,
+        dataIndex,
+        title,
+        inputType,
+        children,
+        ...restProps
+    }) => {
+    const inputNode = inputType === 'number' ? <InputNumber/> : <Input/>
 
     return (
         <td {...restProps}>
@@ -37,7 +38,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
                         {
                             required: true,
                             message: `Please Input ${title}!`,
-                        },
+                        }
                     ]}
                 >
                     {inputNode}
