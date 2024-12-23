@@ -26,7 +26,7 @@ export default function EditorPage() {
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
     const id = searchParams.get('id')
-    const [messageApi, contextHolder] = message.useMessage();
+    const [messageApi, contextHolder] = message.useMessage()
 
     useEffect(() => {
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
@@ -59,7 +59,7 @@ export default function EditorPage() {
             status: status?.toString()
         }
         updatePostDetailAPI(postUpdateRO).then(() => {
-            messageApi.info('success').then();
+            messageApi.info('success').then()
         })
     }
     // TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
