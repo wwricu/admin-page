@@ -15,7 +15,7 @@ const AdminMenu: React.FC = () => {
         <Menu
             mode="inline"
             defaultSelectedKeys={['1']}
-            theme="dark"
+            theme="light"
             items={[
                 {
                     key: '1',

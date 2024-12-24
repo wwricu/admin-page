@@ -9,6 +9,7 @@ import {PostDetailVO, PostStatusEnum, TagVO} from '@/app/model/response'
 import {Button, Card, Flex, Input, message, Select} from 'antd'
 import {getAllTag} from '@/app/api/tag'
 import {PostUpdateRO, TagTypeEnum} from '@/app/model/request'
+import {uploadFileAPI} from "@/app/api/common";
 
 type TagItem = {
     value: number
@@ -63,6 +64,17 @@ export default function EditorPage() {
         })
     }
     // TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
+
+    const image_upload_handler = (blobInfo, progress) => new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('file', blobInfo.blob(), blobInfo.filename());
+        uploadFileAPI(formData).then((fileUploadVO) => {
+            progress(100)
+            resolve(fileUploadVO.location)
+        }).catch(() => {
+            reject('failed');
+        })
+    });
 
     return (
         <>
@@ -123,8 +135,7 @@ export default function EditorPage() {
                     init={{
                         height: '90vh',
                         menubar: false,
-                        images_upload_base_path: 'http://localhost:8000',
-                        images_upload_url: '/upload',
+                        images_upload_handler: image_upload_handler,
                         plugins: [
                             'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
                         ],

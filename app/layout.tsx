@@ -36,7 +36,7 @@ export default function RootLayout({
             <AdminHeader/>
             <Layout>
               <Layout>
-                <Sider>
+                <Sider theme='light'>
                   <AdminMenu/>
                 </Sider>
                 <Content style={{padding: '24'}}>

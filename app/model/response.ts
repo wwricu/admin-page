@@ -29,3 +29,8 @@ export interface TagVO {
     name: string
     type: string
 }
+
+export interface FileUploadVO {
+    name: string
+    location: string
+}
