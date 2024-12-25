@@ -65,7 +65,7 @@ export default function EditorPage() {
     }
     // TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
 
-    const image_upload_handler = (blobInfo, progress) => new Promise((resolve, reject) => {
+    const image_upload_handler = (blobInfo: any, progress: any) => new Promise((resolve: any, reject: any) => {
         const formData = new FormData();
         formData.append('file', blobInfo.blob(), blobInfo.filename());
         uploadFileAPI(formData).then((fileUploadVO) => {
@@ -112,7 +112,6 @@ export default function EditorPage() {
                 )}
                 style={{ margin: 24}}
             >
-
                 <Editor
                     id='tinyMCE'
                     onInit={(_, editor) => {
@@ -135,6 +134,8 @@ export default function EditorPage() {
                     init={{
                         height: '90vh',
                         menubar: false,
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
                         images_upload_handler: image_upload_handler,
                         plugins: [
                             'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'

@@ -1,6 +1,3 @@
-import {TagVO} from "@/app/model/response";
-
-
 export interface PostRequestRO {
     page_index: number
     page_size: number
