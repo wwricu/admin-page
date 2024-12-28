@@ -18,12 +18,6 @@ export interface PostDetailVO {
     update_time: string
 }
 
-
-export enum PostStatusEnum {
-    DRAFT = 'draft',
-    PUBLISHED = 'published'
-}
-
 export interface TagVO {
     id: number
     name: string

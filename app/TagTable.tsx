@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react'
 import {Button, Flex, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
 import {TagVO} from "@/app/model/response"
-import {TagTypeEnum} from "@/app/model/request"
+import {TagTypeEnum} from "@/app/model/enum"
 import {deleteTag, getAllTag, newTag, updateTag} from "@/app/api/tag"
 
 

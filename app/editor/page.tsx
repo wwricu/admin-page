@@ -5,11 +5,12 @@ import {Editor} from '@tinymce/tinymce-react'
 import {Editor as TinyMCEEditor} from 'tinymce'
 import {useSearchParams} from 'next/navigation'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
-import {PostDetailVO, PostStatusEnum, TagVO} from '@/app/model/response'
+import {PostDetailVO, TagVO} from '@/app/model/response'
 import {Button, Card, Flex, Input, message, Select} from 'antd'
 import {getAllTag} from '@/app/api/tag'
-import {PostUpdateRO, TagTypeEnum} from '@/app/model/request'
+import {PostUpdateRO} from '@/app/model/request'
 import {uploadFileAPI} from "@/app/api/common";
+import {PostStatusEnum, TagTypeEnum} from "@/app/model/enum";
 
 type TagItem = {
     value: number

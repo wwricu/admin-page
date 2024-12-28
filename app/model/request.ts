@@ -1,3 +1,5 @@
+import {TagTypeEnum} from "@/app/model/enum";
+
 export interface PostRequestRO {
     page_index: number
     page_size: number
@@ -5,14 +7,6 @@ export interface PostRequestRO {
     cat_id?: string| undefined
     status?: string | undefined
     deleted?: boolean | undefined
-}
-
-export interface PostCreateRO {
-    title: string
-    cover?: string
-    content?: string
-    tag_id_list?: number[]
-    category_id?: number
 }
 
 export interface PostUpdateRO {
@@ -29,11 +23,6 @@ export interface TagRO {
     id?: number
     name: string
     type: string
-}
-
-export enum TagTypeEnum {
-    POST_TAG = 'post_tag',
-    POST_CAT = 'post_category'
 }
 
 export interface TagBatchRO {
