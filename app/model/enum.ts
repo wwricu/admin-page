@@ -7,3 +7,9 @@ export enum PostStatusEnum {
     DRAFT = 'draft',
     PUBLISHED = 'published'
 }
+
+export enum PostResourceTypeEnum {
+    IMAGE = 'image',
+    COVER_IMAGE = 'cover',
+    COMMON = 'common',
+}

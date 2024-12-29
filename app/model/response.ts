@@ -5,11 +5,17 @@ export interface TagVO {
     type: string
 }
 
+export interface PostResourceVO {
+    id: number,
+    name?: string
+    key: string
+    url: string
+}
 
 export interface PostDetailVO {
     id: number
     title: string
-    cover?: string
+    cover?: PostResourceVO
     content: string
     tag_list: TagVO[]
     category?: TagVO

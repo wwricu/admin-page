@@ -6,12 +6,12 @@ import {Editor as TinyMCEEditor} from 'tinymce'
 import {useSearchParams} from 'next/navigation'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
 import {PostDetailVO, TagVO} from '@/app/model/response'
-import {Button, Card, Flex, Input, message, Select} from 'antd'
+import {Button, Card, Flex, type GetProp, Input, message, Select, Upload, type UploadProps} from 'antd'
 import {getAllTag} from '@/app/api/tag'
 import {PostUpdateRO} from '@/app/model/request'
 import {uploadFileAPI} from "@/app/api/common"
-import {PostStatusEnum, TagTypeEnum} from "@/app/model/enum"
-import ImageUploader from "@/app/components/ImageUploader"
+import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/app/model/enum"
+import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
 
 type TagItem = {
     value: number
@@ -34,6 +34,27 @@ const selectorStyle = {
     width: '50%'
 }
 
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
+
+const getBase64 = (img: FileType, callback: (url: string) => void) => {
+    const reader = new FileReader()
+    reader.addEventListener('load', () => callback(reader.result as string))
+    reader.readAsDataURL(img)
+}
+
+const beforeUpload = (file: FileType) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+    if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!').then()
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2
+    if (!isLt2M) {
+        message.error('Image must smaller than 2MB!').then()
+    }
+    return isJpgOrPng && isLt2M
+}
+
+
 
 // TODO: edit title, cover, categories and tags here.
 export default function EditorPage() {
@@ -48,7 +69,37 @@ export default function EditorPage() {
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
     const id = searchParams.get('id')
     const [messageApi, contextHolder] = message.useMessage()
+    const [loading, setLoading] = useState(false)
+    const [imageUrl, setImageUrl] = useState<string>()
+    const [coverId, setCoverId] = useState<number>()
 
+
+    const handleChange: UploadProps['onChange'] = (info) => {
+        if (info.file.status === 'uploading') {
+            setLoading(true)
+            return
+        }
+        if (info.file.status === 'done') {
+            // Get this url from response in real world.
+            getBase64(info.file.originFileObj as FileType, (url) => {
+                setLoading(false)
+                setImageUrl(url)
+                setCoverId(info.file.response.id)
+            })
+        }
+    }
+
+    const getExtraData: UploadProps['data'] = () => ({
+        post_id: parseInt(id!),
+        file_type: PostResourceTypeEnum.COVER_IMAGE
+    });
+
+    const uploadButton = (
+        <button style={{ border: 0, background: 'none' }} type='button'>
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </button>
+    )
     useEffect(() => {
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
             const tagItems = tagList.map((tag) => {
@@ -74,6 +125,7 @@ export default function EditorPage() {
         const postUpdateRO: PostUpdateRO = {
             id: parseInt(id!),
             title: title,
+            cover_id: coverId,
             content: editorRef.current?.getContent() ?? '',
             category_id: category?.value,
             tag_id_list: tags.map((tagItem) => tagItem.value),
@@ -111,7 +163,19 @@ export default function EditorPage() {
             <Card
                 title={(
                     <Flex>
-                        <ImageUploader/>
+                        <Flex gap='middle' wrap>
+                            <Upload
+                                name='file'
+                                listType='picture-card'
+                                showUploadList={false}
+                                action='http://localhost:8000/post/upload'
+                                beforeUpload={beforeUpload}
+                                onChange={handleChange}
+                                data={getExtraData}
+                            >
+                                {imageUrl ? <img width={100} src={imageUrl} alt='cover' style={{ width: '100%' }} /> : uploadButton}
+                            </Upload>
+                        </Flex>
                         <Flex vertical justify='space-evenly' style={{width: '100%'}}>
                             <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                             <Flex justify='space-between'>
@@ -158,6 +222,7 @@ export default function EditorPage() {
                             if (postDetailVO.category) {
                                 setCategory({label: postDetailVO.category.name, value: postDetailVO.category.id})
                             }
+                            setImageUrl(postDetailVO.cover?.url)
                             if (postDetailVO.tag_list?.length > 0) {
                                 setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
                                     return {
