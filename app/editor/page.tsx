@@ -6,16 +6,32 @@ import {Editor as TinyMCEEditor} from 'tinymce'
 import {useSearchParams} from 'next/navigation'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
 import {PostDetailVO, TagVO} from '@/app/model/response'
-import {Button, Card, Col, Flex, Input, message, Row, Select} from 'antd'
+import {Button, Card, Flex, Input, message, Select} from 'antd'
 import {getAllTag} from '@/app/api/tag'
 import {PostUpdateRO} from '@/app/model/request'
-import {uploadFileAPI} from "@/app/api/common";
-import {PostStatusEnum, TagTypeEnum} from "@/app/model/enum";
-import ImageUploader from "@/app/components/ImageUploader";
+import {uploadFileAPI} from "@/app/api/common"
+import {PostStatusEnum, TagTypeEnum} from "@/app/model/enum"
+import ImageUploader from "@/app/components/ImageUploader"
 
 type TagItem = {
     value: number
     label: string
+}
+
+// TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
+const image_upload_handler = (blobInfo: any, progress: any) => new Promise((resolve: any, reject: any) => {
+    const formData = new FormData();
+    formData.append('file', blobInfo.blob(), blobInfo.filename());
+    uploadFileAPI(formData).then((fileUploadVO) => {
+        progress(100)
+        resolve(fileUploadVO.location)
+    }).catch(() => {
+        reject('failed');
+    })
+})
+
+const selectorStyle = {
+    width: '50%'
 }
 
 
@@ -52,7 +68,7 @@ export default function EditorPage() {
             })
             setAllCategories(tagItems)
         })
-    }, [])
+    }, [id])
 
     const updatePost = (status: PostStatusEnum) => {
         const postUpdateRO: PostUpdateRO = {
@@ -67,18 +83,6 @@ export default function EditorPage() {
             messageApi.info('success').then()
         })
     }
-    // TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
-
-    const image_upload_handler = (blobInfo: any, progress: any) => new Promise((resolve: any, reject: any) => {
-        const formData = new FormData();
-        formData.append('file', blobInfo.blob(), blobInfo.filename());
-        uploadFileAPI(formData).then((fileUploadVO) => {
-            progress(100)
-            resolve(fileUploadVO.location)
-        }).catch(() => {
-            reject('failed');
-        })
-    });
 
     const actionButtons = () => {
         const publish = postStatus == PostStatusEnum.DRAFT ? (
@@ -106,43 +110,39 @@ export default function EditorPage() {
             {contextHolder}
             <Card
                 title={(
-                    <Row>
-                        <Col span={6}>
-                            <ImageUploader/>
-                        </Col>
-                        <Col span={18}>
-                            <Flex vertical justify='space-evenly' style={{height: '100%'}}>
-                                <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
-                                <Flex justify='space-between'>
-                                    <div>
-                                        <Select<TagItem>
-                                            showSearch
-                                            labelInValue
-                                            placeholder='No Category'
-                                            optionFilterProp='label'
-                                            value={category}
-                                            options={allCategories}
-                                            onChange={(value) => {setCategory(value)}}
-                                        />
-                                        <Select<TagItem[]>
-                                            showSearch
-                                            labelInValue
-                                            allowClear
-                                            mode='multiple'
-                                            placeholder='No Tag'
-                                            optionFilterProp='label'
-                                            style={{minWidth: 100}}
-                                            value={tags}
-                                            onChange={(values) => {setTags(values)}}
-                                            options={allTags}
-                                        />
-                                    </div>
-                                    {actionButtons()}
-                                </Flex>
+                    <Flex>
+                        <ImageUploader/>
+                        <Flex vertical justify='space-evenly' style={{width: '100%'}}>
+                            <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
+                            <Flex justify='space-between'>
+                                <div style={{width: '100%'}}>
+                                    <Select<TagItem>
+                                        showSearch
+                                        labelInValue
+                                        placeholder='No Category'
+                                        optionFilterProp='label'
+                                        value={category}
+                                        style={selectorStyle}
+                                        options={allCategories}
+                                        onChange={(value) => {setCategory(value)}}
+                                    />
+                                    <Select<TagItem[]>
+                                        showSearch
+                                        labelInValue
+                                        allowClear
+                                        mode='multiple'
+                                        placeholder='No Tag'
+                                        optionFilterProp='label'
+                                        style={selectorStyle}
+                                        value={tags}
+                                        onChange={(values) => {setTags(values)}}
+                                        options={allTags}
+                                    />
+                                </div>
+                                {actionButtons()}
                             </Flex>
-
-                        </Col>
-                    </Row>
+                        </Flex>
+                    </Flex>
 
                 )}
                 style={{ margin: 24}}
@@ -181,9 +181,7 @@ export default function EditorPage() {
                         toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough | link image table',
                     }}
                 />
-
             </Card>
-
         </>
     )
 }
