@@ -25,7 +25,7 @@ export default function EditorPage() {
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
-    const [tags, setTags] = useState<TagItem[]>()
+    const [tags, setTags] = useState<TagItem[]>([])
 
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
@@ -57,9 +57,9 @@ export default function EditorPage() {
         const postUpdateRO: PostUpdateRO = {
             id: parseInt(id!),
             title: title,
-            content: editorRef.current?.getContent(),
+            content: editorRef.current?.getContent() ?? '',
             category_id: category?.value,
-            tag_id_list: tags?.map((tagItem) => tagItem.value),
+            tag_id_list: tags.map((tagItem) => tagItem.value),
             status: status?.toString()
         }
         updatePostDetailAPI(postUpdateRO).then(() => {
@@ -82,14 +82,17 @@ export default function EditorPage() {
     const actionButtons = () => {
         const publish = postStatus == PostStatusEnum.DRAFT ? (
             <Button
-                onClick={() => updatePost(PostStatusEnum.PUBLISHED)}
+                onClick={() => {
+                    updatePost(PostStatusEnum.PUBLISHED)
+                    window.location.reload()
+                }}
             >
                 Publish
             </Button>
         ) : null
         return (
             <Flex justify='start'>
-                <Button onClick={() => updatePost(postStatus)}>
+                <Button onClick={() => updatePost(postStatus!)}>
                     Save
                 </Button>
                 {publish}
@@ -121,6 +124,7 @@ export default function EditorPage() {
                                 mode='multiple'
                                 placeholder='No Tag'
                                 optionFilterProp='label'
+                                style={{minWidth: 100}}
                                 value={tags}
                                 onChange={(values) => {setTags(values)}}
                                 options={allTags}

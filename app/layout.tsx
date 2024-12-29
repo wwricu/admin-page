@@ -3,8 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import React from "react";
 import {Layout} from "antd";
-import AdminMenu from "@/app/AdminMenu";
-import AdminHeader from "@/app/AdminHeader";
+import AdminMenu from "@/app/components/AdminMenu";
+import AdminHeader from "@/app/components/AdminHeader";
 import Sider from "antd/es/layout/Sider";
 import {Content} from "antd/es/layout/layout";
 
