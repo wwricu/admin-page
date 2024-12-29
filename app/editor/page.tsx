@@ -6,11 +6,12 @@ import {Editor as TinyMCEEditor} from 'tinymce'
 import {useSearchParams} from 'next/navigation'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
 import {PostDetailVO, TagVO} from '@/app/model/response'
-import {Button, Card, Flex, Input, message, Select} from 'antd'
+import {Button, Card, Col, Flex, Input, message, Row, Select} from 'antd'
 import {getAllTag} from '@/app/api/tag'
 import {PostUpdateRO} from '@/app/model/request'
 import {uploadFileAPI} from "@/app/api/common";
 import {PostStatusEnum, TagTypeEnum} from "@/app/model/enum";
+import ImageUploader from "@/app/components/ImageUploader";
 
 type TagItem = {
     value: number
@@ -105,33 +106,44 @@ export default function EditorPage() {
             {contextHolder}
             <Card
                 title={(
-                    <Flex justify='space-between'>
-                        <Input value={title} style={{width: '50%'}} onChange={(e) => setTitle(e.target.value)}></Input>
-                        <Flex justify='start'>
-                            <Select<TagItem>
-                                showSearch
-                                labelInValue
-                                placeholder='No Category'
-                                optionFilterProp='label'
-                                value={category}
-                                options={allCategories}
-                                onChange={(value) => {setCategory(value)}}
-                            />
-                            <Select<TagItem[]>
-                                showSearch
-                                labelInValue
-                                allowClear
-                                mode='multiple'
-                                placeholder='No Tag'
-                                optionFilterProp='label'
-                                style={{minWidth: 100}}
-                                value={tags}
-                                onChange={(values) => {setTags(values)}}
-                                options={allTags}
-                            />
-                        </Flex>
-                        {actionButtons()}
-                    </Flex>
+                    <Row>
+                        <Col span={6}>
+                            <ImageUploader/>
+                        </Col>
+                        <Col span={18}>
+                            <Flex vertical justify='space-evenly' style={{height: '100%'}}>
+                                <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
+                                <Flex justify='space-between'>
+                                    <div>
+                                        <Select<TagItem>
+                                            showSearch
+                                            labelInValue
+                                            placeholder='No Category'
+                                            optionFilterProp='label'
+                                            value={category}
+                                            options={allCategories}
+                                            onChange={(value) => {setCategory(value)}}
+                                        />
+                                        <Select<TagItem[]>
+                                            showSearch
+                                            labelInValue
+                                            allowClear
+                                            mode='multiple'
+                                            placeholder='No Tag'
+                                            optionFilterProp='label'
+                                            style={{minWidth: 100}}
+                                            value={tags}
+                                            onChange={(values) => {setTags(values)}}
+                                            options={allTags}
+                                        />
+                                    </div>
+                                    {actionButtons()}
+                                </Flex>
+                            </Flex>
+
+                        </Col>
+                    </Row>
+
                 )}
                 style={{ margin: 24}}
             >
