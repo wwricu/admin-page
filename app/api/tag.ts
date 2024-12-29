@@ -1,6 +1,7 @@
 import axios, {AxiosResponse} from "axios"
 import {TagVO} from "@/app/model/response"
-import {GetTagRO, TagBatchRO, TagRO, TagTypeEnum} from "@/app/model/request"
+import {GetTagRO, TagBatchRO, TagRO} from "@/app/model/request"
+import {TagTypeEnum} from "@/app/model/enum";
 
 axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.headers.post['Content-Type'] = 'application/json'

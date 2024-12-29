@@ -11,12 +11,11 @@ export interface PostRequestRO {
 
 export interface PostUpdateRO {
     id: number
-    title?: string
-    cover?: string
-    content?: string
-    tag_id_list?: number[]
+    title: string
+    content: string
+    tag_id_list: number[]
     category_id?: number
-    status?: string
+    status: string
 }
 
 export interface TagRO {

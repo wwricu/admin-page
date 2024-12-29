@@ -23,8 +23,10 @@ export default function EditorPage() {
     const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
     const searchParams = useSearchParams()
     const [title, setTitle] = useState('')
+    const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
-    const [tags, setTags] = useState<TagItem[]>([])
+    const [tags, setTags] = useState<TagItem[]>()
+
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
     const id = searchParams.get('id')
@@ -51,7 +53,7 @@ export default function EditorPage() {
         })
     }, [])
 
-    const updatePost = (status: PostStatusEnum | undefined) => {
+    const updatePost = (status: PostStatusEnum) => {
         const postUpdateRO: PostUpdateRO = {
             id: parseInt(id!),
             title: title,
@@ -77,6 +79,24 @@ export default function EditorPage() {
         })
     });
 
+    const actionButtons = () => {
+        const publish = postStatus == PostStatusEnum.DRAFT ? (
+            <Button
+                onClick={() => updatePost(PostStatusEnum.PUBLISHED)}
+            >
+                Publish
+            </Button>
+        ) : null
+        return (
+            <Flex justify='start'>
+                <Button onClick={() => updatePost(postStatus)}>
+                    Save
+                </Button>
+                {publish}
+            </Flex>
+        )
+    }
+
     return (
         <>
             {contextHolder}
@@ -87,6 +107,8 @@ export default function EditorPage() {
                         <Flex justify='start'>
                             <Select<TagItem>
                                 showSearch
+                                labelInValue
+                                placeholder='No Category'
                                 optionFilterProp='label'
                                 value={category}
                                 options={allCategories}
@@ -94,21 +116,17 @@ export default function EditorPage() {
                             />
                             <Select<TagItem[]>
                                 showSearch
-                                mode='tags'
+                                labelInValue
+                                allowClear
+                                mode='multiple'
+                                placeholder='No Tag'
                                 optionFilterProp='label'
                                 value={tags}
                                 onChange={(values) => {setTags(values)}}
                                 options={allTags}
                             />
                         </Flex>
-                        <Flex justify='start'>
-                            <Button onClick={() => updatePost(undefined)}>
-                                Save
-                            </Button>
-                            <Button onClick={() => updatePost(PostStatusEnum.PUBLISHED)}>
-                                Publish
-                            </Button>
-                        </Flex>
+                        {actionButtons()}
                     </Flex>
                 )}
                 style={{ margin: 24}}
@@ -120,15 +138,18 @@ export default function EditorPage() {
                         getPostDetailAPI(id!).then((postDetailVO: PostDetailVO) => {
                             editor.setContent(postDetailVO.content)
                             setTitle(postDetailVO.title)
+                            setPostStatus(postDetailVO.status as PostStatusEnum)
                             if (postDetailVO.category) {
                                 setCategory({label: postDetailVO.category.name, value: postDetailVO.category.id})
                             }
-                            setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
-                                return {
-                                    label: tagVO.name,
-                                    value: tagVO.id
-                                }
-                            }))
+                            if (postDetailVO.tag_list?.length > 0) {
+                                setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
+                                    return {
+                                        label: tagVO.name,
+                                        value: tagVO.id
+                                    }
+                                }))
+                            }
                         })
                     }}
                     apiKey='ttp8w1owo5c68hkksofh1cth7018mik8e8urjtrz23ng6fy5'
