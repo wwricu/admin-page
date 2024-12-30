@@ -80,9 +80,9 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}) => {
                 key='action'
                 render={(_, postDetailVO) => (
                     <Space size='middle'>
-                        <a href={`/editor?id=${postDetailVO.id}`}>Edit</a>
-                        <a href={`/editor?id=${postDetailVO.id}`}>{postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}</a>
-                        <a href={`/editor?id=${postDetailVO.id}`}>Delete</a>
+                        <a href={`/editor/${postDetailVO.id}`}>Edit</a>
+                        <a href={`/editor/${postDetailVO.id}`}>{postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}</a>
+                        <a href={`/editor/${postDetailVO.id}`}>Delete</a>
                     </Space>
                 )}
             />

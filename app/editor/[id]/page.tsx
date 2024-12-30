@@ -3,7 +3,6 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
 import {Editor} from '@tinymce/tinymce-react'
 import {Editor as TinyMCEEditor} from 'tinymce'
-import {useSearchParams} from 'next/navigation'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
 import {PostDetailVO, TagVO} from '@/app/model/response'
 import {Button, Card, Flex, type GetProp, Input, message, Select, Upload, UploadFile, type UploadProps} from 'antd'
@@ -45,17 +44,15 @@ const beforeUpload = (file: FileType) => {
 }
 
 
-export default function EditorPage() {
+export default function EditorPage({ params }: { params: { id: string } }) {
     const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
-    const searchParams = useSearchParams()
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
     const [tags, setTags] = useState<TagItem[]>([])
-
+    const postId = parseInt(params.id)
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
-    const id = searchParams.get('id')
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
     const [imageUrl, setImageUrl] = useState<string>()
@@ -63,7 +60,7 @@ export default function EditorPage() {
 
     const tinyMCEImageUploadHandler = (blobInfo: any, progress: any) => new Promise((resolve: any, reject: any) => {
         const formData = new FormData();
-        formData.append('post_id', id!);
+        formData.append('post_id', postId.toString());
         formData.append('file_type', PostResourceTypeEnum.IMAGE);
         formData.append('file', blobInfo.blob(), blobInfo.filename());
         formData.append('file', blobInfo.blob(), blobInfo.filename());
@@ -106,7 +103,7 @@ export default function EditorPage() {
     }
 
     const getExtraData: UploadProps['data'] = () => ({
-        post_id: parseInt(id!),
+        post_id: postId,
         file_type: PostResourceTypeEnum.COVER_IMAGE
     });
 
@@ -135,11 +132,11 @@ export default function EditorPage() {
             })
             setAllCategories(tagItems)
         })
-    }, [id])
+    }, [params.id])
 
     const updatePost = (status: PostStatusEnum) => {
         const postUpdateRO: PostUpdateRO = {
-            id: parseInt(id!),
+            id: postId,
             title: title,
             cover_id: coverId,
             content: editorRef.current?.getContent() ?? '',
@@ -235,7 +232,7 @@ export default function EditorPage() {
                     id='tinyMCE'
                     onInit={(_, editor) => {
                         editorRef.current = editor
-                        getPostDetailAPI(id!).then((postDetailVO: PostDetailVO) => {
+                        getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
                             editor.setContent(postDetailVO.content)
                             setTitle(postDetailVO.title)
                             setPostStatus(postDetailVO.status as PostStatusEnum)

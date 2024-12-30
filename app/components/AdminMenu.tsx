@@ -15,7 +15,7 @@ const AdminMenu: React.FC = () => {
     const router = useRouter()
     const createPost = () => {
         createPostAPI().then((postDetailVO: PostDetailVO) => {
-            router.push(`/editor?id=${postDetailVO.id}`)
+            router.push(`/editor/${postDetailVO.id}`)
         })
     }
     return (
