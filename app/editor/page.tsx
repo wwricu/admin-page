@@ -12,6 +12,7 @@ import {PostUpdateRO} from '@/app/model/request'
 import {uploadFileAPI} from "@/app/api/common"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/app/model/enum"
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
+import ImgCrop from "antd-img-crop";
 
 type TagItem = {
     value: number
@@ -167,6 +168,7 @@ export default function EditorPage() {
                 title={(
                     <Flex>
                         <Flex gap='middle' wrap>
+                            <ImgCrop aspectSlider showReset rotationSlider zoomSlider minZoom={0.5} minAspect={1} aspect={2}>
                             <Upload
                                 name='file'
                                 listType='picture-card'
@@ -178,6 +180,7 @@ export default function EditorPage() {
                             >
                                 {imageUrl ? <img width={100} src={imageUrl} alt='cover' style={{ width: '100%' }} /> : uploadButton}
                             </Upload>
+                            </ImgCrop>
                         </Flex>
                         <Flex vertical justify='space-evenly' style={{width: '100%'}}>
                             <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
