@@ -1,8 +1,8 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Space, Table, Tag} from 'antd'
-import {getAllPost} from '@/app/api/post'
+import {Popconfirm, Space, Table, Tag, Typography} from 'antd'
+import {deletePostAPI, getAllPost, patchPostDetailAPI} from '@/app/api/post'
 import {PostDetailVO} from '@/app/model/response'
 import {PostStatusEnum} from "@/app/model/enum";
 
@@ -80,9 +80,22 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}) => {
                 key='action'
                 render={(_, postDetailVO) => (
                     <Space size='middle'>
-                        <a href={`/editor/${postDetailVO.id}`}>Edit</a>
-                        <a href={`/editor/${postDetailVO.id}`}>{postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}</a>
-                        <a href={`/editor/${postDetailVO.id}`}>Delete</a>
+                        <Typography.Link>
+                            <a href={`/editor/${postDetailVO.id}`}>Edit</a>
+                        </Typography.Link>
+                        <Popconfirm title={postDetailVO.status === 'published' ? 'Revoke' : 'Publish'} onConfirm={() => patchPostDetailAPI({
+                            id: postDetailVO.id,
+                            status: postDetailVO.status === 'published' ? PostStatusEnum.DRAFT : PostStatusEnum.PUBLISHED
+                        })}>
+                            <Typography.Link color='red'>
+                                {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
+                            </Typography.Link>
+                        </Popconfirm>
+                        <Popconfirm title="Sure to Delete?" onConfirm={() => deletePostAPI(postDetailVO.id)}>
+                            <Typography.Link color='red'>
+                                Delete
+                            </Typography.Link>
+                        </Popconfirm>
                     </Space>
                 )}
             />

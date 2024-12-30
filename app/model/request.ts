@@ -19,6 +19,16 @@ export interface PostUpdateRO {
     status: string
 }
 
+export interface PostPatchRO {
+    id: number
+    title?: string
+    cover_id?: number
+    content?: string
+    tag_id_list?: number[]
+    category_id?: number
+    status?: string
+}
+
 export interface TagRO {
     id?: number
     name: string

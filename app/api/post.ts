@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios"
-import {PostRequestRO, PostUpdateRO} from "@/app/model/request"
+import {PostPatchRO, PostRequestRO, PostUpdateRO} from "@/app/model/request"
 import {PostDetailVO} from "@/app/model/response"
 import {PostStatusEnum} from "@/app/model/enum";
 
@@ -28,4 +28,12 @@ export const getPostDetailAPI = async (postId: string | number) => {
 export const updatePostDetailAPI = async (postUpdateRO: PostUpdateRO) => {
     return await axios.post('/post/update', postUpdateRO)
         .then((res: AxiosResponse<PostDetailVO>) => res.data)
+}
+
+export const patchPostDetailAPI = async (postPatchRO: PostPatchRO) => {
+    return await axios.post('/post/patch', postPatchRO).then((res: AxiosResponse<PostDetailVO>) => res.data)
+}
+
+export const deletePostAPI = async (postId: string | number) => {
+    return await axios.get(`/post/delete/${postId}`).then((res: AxiosResponse<PostDetailVO>) => res.data)
 }
