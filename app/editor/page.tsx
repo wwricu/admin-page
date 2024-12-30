@@ -6,21 +6,19 @@ import {Editor as TinyMCEEditor} from 'tinymce'
 import {useSearchParams} from 'next/navigation'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
 import {PostDetailVO, TagVO} from '@/app/model/response'
-import {Button, Card, Flex, type GetProp, Input, message, Select, Upload, type UploadProps} from 'antd'
+import {Button, Card, Flex, type GetProp, Input, message, Select, Upload, UploadFile, type UploadProps} from 'antd'
 import {getAllTag} from '@/app/api/tag'
 import {PostUpdateRO} from '@/app/model/request'
 import {uploadFileAPI} from "@/app/api/common"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/app/model/enum"
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
+import '@/app/css/uploader.css'
 
 type TagItem = {
     value: number
     label: string
 }
-
-// TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
-
 
 const selectorStyle = {
     width: '50%'
@@ -47,7 +45,6 @@ const beforeUpload = (file: FileType) => {
 }
 
 
-// TODO: edit title, cover, categories and tags here.
 export default function EditorPage() {
     const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
     const searchParams = useSearchParams()
@@ -78,7 +75,22 @@ export default function EditorPage() {
         })
     })
 
-    const handleChange: UploadProps['onChange'] = (info) => {
+    const onPreview = async (file: UploadFile) => {
+        let src = file.url as string;
+        if (!src) {
+            src = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file.originFileObj as FileType);
+                reader.onload = () => resolve(reader.result as string);
+            });
+        }
+        const image = new Image();
+        image.src = src;
+        const imgWindow = window.open(src);
+        imgWindow?.document.write(image.outerHTML);
+    };
+
+    const onChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
             setLoading(true)
             return
@@ -88,8 +100,8 @@ export default function EditorPage() {
             getBase64(info.file.originFileObj as FileType, (url) => {
                 setLoading(false)
                 setImageUrl(url)
-                setCoverId(info.file.response.id)
             })
+            setCoverId(info.file.response.id)
         }
     }
 
@@ -143,6 +155,7 @@ export default function EditorPage() {
     const actionButtons = () => {
         const publish = postStatus == PostStatusEnum.DRAFT ? (
             <Button
+                style={{marginLeft: 12}}
                 onClick={() => {
                     updatePost(PostStatusEnum.PUBLISHED)
                     window.location.reload()
@@ -160,32 +173,16 @@ export default function EditorPage() {
             </Flex>
         )
     }
-
+    // TODO: upload url compatible with diff env
     return (
         <>
             {contextHolder}
             <Card
                 title={(
-                    <Flex>
-                        <Flex gap='middle' wrap>
-                            <ImgCrop aspectSlider showReset rotationSlider zoomSlider minZoom={0.5} minAspect={1} aspect={2}>
-                            <Upload
-                                name='file'
-                                listType='picture-card'
-                                showUploadList={false}
-                                action='http://localhost:8000/post/upload'
-                                beforeUpload={beforeUpload}
-                                onChange={handleChange}
-                                data={getExtraData}
-                            >
-                                {imageUrl ? <img width={100} src={imageUrl} alt='cover' style={{ width: '100%' }} /> : uploadButton}
-                            </Upload>
-                            </ImgCrop>
-                        </Flex>
+                    <Flex justify='space-between' gap='middle'>
                         <Flex vertical justify='space-evenly' style={{width: '100%'}}>
                             <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
-                            <Flex justify='space-between'>
-                                <div style={{width: '100%'}}>
+                            <Flex justify='space-between' gap='middle'>
                                     <Select<TagItem>
                                         showSearch
                                         labelInValue
@@ -208,12 +205,29 @@ export default function EditorPage() {
                                         onChange={(values) => {setTags(values)}}
                                         options={allTags}
                                     />
-                                </div>
+                            </Flex>
+                            <Flex>
                                 {actionButtons()}
                             </Flex>
                         </Flex>
+                        <Flex gap='middle' wrap>
+                            <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} minAspect={1} aspect={4 / 3}>
+                                <Upload
+                                    name='file'
+                                    listType='picture-card'
+                                    showUploadList={false}
+                                    action='http://localhost:8000/post/upload'
+                                    maxCount={1}
+                                    beforeUpload={beforeUpload}
+                                    onChange={onChange}
+                                    onPreview={onPreview}
+                                    data={getExtraData}
+                                >
+                                    {imageUrl ? <img width={100} src={imageUrl} alt='cover' style={{ width: '100%' }} /> : uploadButton}
+                                </Upload>
+                            </ImgCrop>
+                        </Flex>
                     </Flex>
-
                 )}
                 style={{ margin: 24}}
             >
