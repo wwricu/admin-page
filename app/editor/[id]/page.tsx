@@ -5,7 +5,18 @@ import {Editor} from '@tinymce/tinymce-react'
 import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
 import {PostDetailVO, TagVO} from '@/app/model/response'
-import {Button, Card, Flex, type GetProp, Input, message, Select, Upload, UploadFile, type UploadProps} from 'antd'
+import {
+    Button,
+    Card,
+    Flex,
+    type GetProp,
+    Image,
+    Input,
+    message,
+    Select,
+    Upload,
+    type UploadProps
+} from 'antd'
 import {getAllTag} from '@/app/api/tag'
 import {PostUpdateRO} from '@/app/model/request'
 import {uploadFileAPI} from "@/app/api/common"
@@ -72,21 +83,6 @@ export default function EditorPage({ params }: { params: { id: string } }) {
         })
     })
 
-    const onPreview = async (file: UploadFile) => {
-        let src = file.url as string;
-        if (!src) {
-            src = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file.originFileObj as FileType);
-                reader.onload = () => resolve(reader.result as string);
-            });
-        }
-        const image = new Image();
-        image.src = src;
-        const imgWindow = window.open(src);
-        imgWindow?.document.write(image.outerHTML);
-    };
-
     const onChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
             setLoading(true)
@@ -149,27 +145,6 @@ export default function EditorPage({ params }: { params: { id: string } }) {
         })
     }
 
-    const actionButtons = () => {
-        const publish = postStatus == PostStatusEnum.DRAFT ? (
-            <Button
-                style={{marginLeft: 12}}
-                onClick={() => {
-                    updatePost(PostStatusEnum.PUBLISHED)
-                    window.location.reload()
-                }}
-            >
-                Publish
-            </Button>
-        ) : null
-        return (
-            <Flex justify='start'>
-                <Button onClick={() => updatePost(postStatus!)}>
-                    Save
-                </Button>
-                {publish}
-            </Flex>
-        )
-    }
     // TODO: upload url compatible with diff env
     return (
         <>
@@ -203,8 +178,10 @@ export default function EditorPage({ params }: { params: { id: string } }) {
                                         options={allTags}
                                     />
                             </Flex>
-                            <Flex>
-                                {actionButtons()}
+                            <Flex justify='start'>
+                                <Button onClick={() => updatePost(postStatus!)}>
+                                    Save
+                                </Button>
                             </Flex>
                         </Flex>
                         <Flex gap='middle' wrap>
@@ -217,10 +194,9 @@ export default function EditorPage({ params }: { params: { id: string } }) {
                                     maxCount={1}
                                     beforeUpload={beforeUpload}
                                     onChange={onChange}
-                                    onPreview={onPreview}
                                     data={getExtraData}
                                 >
-                                    {imageUrl ? <img width={100} src={imageUrl} alt='cover' style={{ width: '100%' }} /> : uploadButton}
+                                    {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
                                 </Upload>
                             </ImgCrop>
                         </Flex>
