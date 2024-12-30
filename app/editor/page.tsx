@@ -19,16 +19,7 @@ type TagItem = {
 }
 
 // TODO: 1. image upload base url, 2. preview, 3. revoke, delete and publish
-const image_upload_handler = (blobInfo: any, progress: any) => new Promise((resolve: any, reject: any) => {
-    const formData = new FormData();
-    formData.append('file', blobInfo.blob(), blobInfo.filename());
-    uploadFileAPI(formData).then((fileUploadVO) => {
-        progress(100)
-        resolve(fileUploadVO.location)
-    }).catch(() => {
-        reject('failed');
-    })
-})
+
 
 const selectorStyle = {
     width: '50%'
@@ -55,7 +46,6 @@ const beforeUpload = (file: FileType) => {
 }
 
 
-
 // TODO: edit title, cover, categories and tags here.
 export default function EditorPage() {
     const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
@@ -73,6 +63,19 @@ export default function EditorPage() {
     const [imageUrl, setImageUrl] = useState<string>()
     const [coverId, setCoverId] = useState<number>()
 
+    const tinyMCEImageUploadHandler = (blobInfo: any, progress: any) => new Promise((resolve: any, reject: any) => {
+        const formData = new FormData();
+        formData.append('post_id', id!);
+        formData.append('file_type', PostResourceTypeEnum.IMAGE);
+        formData.append('file', blobInfo.blob(), blobInfo.filename());
+        formData.append('file', blobInfo.blob(), blobInfo.filename());
+        uploadFileAPI(formData).then((fileUploadVO) => {
+            progress(100)
+            resolve(fileUploadVO.location)
+        }).catch(() => {
+            reject('failed');
+        })
+    })
 
     const handleChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
@@ -239,11 +242,12 @@ export default function EditorPage() {
                         menubar: false,
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-expect-error
-                        images_upload_handler: image_upload_handler,
+                        images_upload_handler: tinyMCEImageUploadHandler,
+                        automatic_uploads: true,
                         plugins: [
                             'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
                         ],
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough | link image table',
+                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough | image link table',
                     }}
                 />
             </Card>
