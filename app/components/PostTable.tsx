@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from 'react'
 import {Popconfirm, Space, Table, Tag, Typography} from 'antd'
-import {deletePostAPI, getAllPost, patchPostDetailAPI} from '@/app/api/post'
+import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '@/app/api/post'
 import {PostDetailVO} from '@/app/model/response'
 import {PostStatusEnum} from "@/app/model/enum";
 
@@ -83,10 +83,10 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}) => {
                         <Typography.Link>
                             <a href={`/editor/${postDetailVO.id}`}>Edit</a>
                         </Typography.Link>
-                        <Popconfirm title={postDetailVO.status === 'published' ? 'Revoke' : 'Publish'} onConfirm={() => patchPostDetailAPI({
-                            id: postDetailVO.id,
-                            status: postDetailVO.status === 'published' ? PostStatusEnum.DRAFT : PostStatusEnum.PUBLISHED
-                        })}>
+                        <Popconfirm
+                            title={postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
+                            onConfirm={() => updatePostStatusDetailAPI(postDetailVO.id, postDetailVO.status as PostStatusEnum)}
+                        >
                             <Typography.Link color='red'>
                                 {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
                             </Typography.Link>
