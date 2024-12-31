@@ -1,10 +1,11 @@
 import axios, {AxiosResponse} from "axios"
 import {FileUploadVO} from "@/app/model/response"
 
-axios.defaults.baseURL = 'http://localhost:8000'
+axios.defaults.baseURL = process.env.BASE_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.headers.post['Accept'] = 'application/json'
 axios.defaults.withCredentials = true
+
 
 export const uploadFileAPI = async (formData: FormData) => {
     return await axios.post('/post/upload', formData, {
@@ -13,4 +14,3 @@ export const uploadFileAPI = async (formData: FormData) => {
         }
     }).then((res: AxiosResponse<FileUploadVO>) => res.data)
 }
-

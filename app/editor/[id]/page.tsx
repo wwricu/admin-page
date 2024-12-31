@@ -190,7 +190,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
                                     name='file'
                                     listType='picture-card'
                                     showUploadList={false}
-                                    action='http://localhost:8000/post/upload'
+                                    action={`${process.env.BASE_URL}/post/upload`}
                                     maxCount={1}
                                     beforeUpload={beforeUpload}
                                     onChange={onChange}

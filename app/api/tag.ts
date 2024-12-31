@@ -3,10 +3,6 @@ import {TagVO} from "@/app/model/response"
 import {GetTagRO, TagBatchRO, TagRO} from "@/app/model/request"
 import {TagTypeEnum} from "@/app/model/enum";
 
-axios.defaults.baseURL = 'http://localhost:8000'
-axios.defaults.headers.post['Content-Type'] = 'application/json'
-axios.defaults.headers.post['Accept'] = 'application/json'
-axios.defaults.withCredentials = true
 
 export const newTag = async (tag: TagRO) => {
     return await axios.post('/tag/create', tag).then((res: AxiosResponse<TagVO>) => res.data)
