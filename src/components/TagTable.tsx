@@ -3,9 +3,9 @@
 import React, {useEffect, useState} from 'react'
 import {Button, Flex, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
-import {TagVO} from "@/app/model/response"
-import {TagTypeEnum} from "@/app/model/enum"
-import {deleteTag, getAllTag, newTag, updateTag} from "@/app/api/tag"
+import {TagVO} from "../model/response"
+import {TagTypeEnum} from "../model/enum"
+import {deleteTag, getAllTag, newTag, updateTag} from "../api/tag"
 
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -54,7 +54,7 @@ interface TagTableProps {
     tagType: TagTypeEnum
 }
 
-export const TagTable: React.FC<TagTableProps> = ({tagType}) => {
+const TagTable: React.FC<TagTableProps> = ({tagType}) => {
     const [form] = Form.useForm()
     const [data, setData] = useState<TagVO[]>([])
     const [editingKey, setEditingKey] = useState<number | undefined>()
@@ -141,7 +141,7 @@ export const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             width: '15%',
             title: 'operation',
             dataIndex: 'operation',
-            render: (_: any, tag: TagVO) => {
+            render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
                   <span>
                     <Typography.Link onClick={() => save(tag.id)} style={{ marginInlineEnd: 8 }}>
@@ -202,3 +202,5 @@ export const TagTable: React.FC<TagTableProps> = ({tagType}) => {
 
     )
 }
+
+export default TagTable

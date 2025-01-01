@@ -6,18 +6,13 @@ import {
     BorderlessTableOutlined, EditOutlined,
 } from '@ant-design/icons'
 import {Button, Divider, Menu} from 'antd'
-import {useRouter} from "next/navigation";
-import {createPostAPI} from "@/app/api/post";
-import {PostDetailVO} from "@/app/model/response";
+import {createPostAPI} from "../api/post";
+import {PostDetailVO} from "../model/response";
+import {Link, useNavigate} from "react-router-dom";
 
 
 const AdminMenu: React.FC = () => {
-    const router = useRouter()
-    const createPost = () => {
-        createPostAPI().then((postDetailVO: PostDetailVO) => {
-            router.push(`/editor/${postDetailVO.id}`)
-        })
-    }
+    const navigate = useNavigate()
     return (
         <>
             <Menu
@@ -28,29 +23,31 @@ const AdminMenu: React.FC = () => {
                     {
                         key: '1',
                         icon: <EditOutlined/>,
-                        label: <div onClick={() => router.push('/posts')}>Post Management</div>,
+                        label: <Link to='/post'>Post</Link>,
                     },
                     {
                         key: '2',
                         icon: <EditOutlined/>,
-                        label: <div onClick={() => router.push('/drafts')}>Draft Management</div>,
+                        label: <Link to='/draft'>Draft</Link>,
                     },
                     {
                         key: '3',
                         icon: <BookOutlined/>,
-                        label: <div onClick={() => router.push('/category')}>Category Management</div>,
+                        label: <Link to='/category'>Category</Link>,
                     },
                     {
                         key: '4',
                         icon: <BorderlessTableOutlined/>,
-                        label: <div onClick={() => router.push('/tag')}>Tag Management</div>,
+                        label: <Link to='/tag'>Tag</Link>,
                     }
                 ]}
             />
             <Divider/>
             <Button
                 style={{width: '100%', marginTop: 10}}
-                onClick={createPost}
+                onClick={() => {createPostAPI().then((postDetailVO: PostDetailVO) => {
+                    navigate(`/edit/${postDetailVO.id}`)
+                })}}
             >New Post</Button>
         </>
 

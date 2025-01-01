@@ -10,6 +10,5 @@ export enum PostStatusEnum {
 
 export enum PostResourceTypeEnum {
     IMAGE = 'image',
-    COVER_IMAGE = 'cover',
-    COMMON = 'common',
+    COVER_IMAGE = 'cover'
 }

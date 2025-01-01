@@ -1,10 +1,8 @@
-'use client'
-
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
+import {MutableRefObject, useEffect, useRef, useState} from 'react'
 import {Editor} from '@tinymce/tinymce-react'
 import {Editor as TinyMCEEditor} from 'tinymce'
-import {getPostDetailAPI, updatePostDetailAPI} from '@/app/api/post'
-import {PostDetailVO, TagVO} from '@/app/model/response'
+import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
+import {PostDetailVO, TagVO} from '../model/response.ts'
 import {
     Button,
     Card,
@@ -17,17 +15,29 @@ import {
     Upload,
     type UploadProps
 } from 'antd'
-import {getAllTag} from '@/app/api/tag'
-import {PostUpdateRO} from '@/app/model/request'
-import {uploadFileAPI} from "@/app/api/common"
-import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/app/model/enum"
+import {getAllTag} from '../api/tag.ts'
+import {PostUpdateRO} from '../model/request.ts'
+import {uploadFileAPI} from "../api/common.ts"
+import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.ts"
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
-import '@/app/css/uploader.css'
+import {useParams} from "react-router-dom";
+
+type ProgressFn = (percent: number) => void
 
 type TagItem = {
     value: number
     label: string
+}
+
+interface BlobInfo {
+    id: () => string;
+    name: () => string;
+    filename: () => string;
+    blob: () => Blob;
+    base64: () => string;
+    blobUri: () => string;
+    uri: () => string | undefined;
 }
 
 const selectorStyle = {
@@ -54,22 +64,22 @@ const beforeUpload = (file: FileType) => {
     return isJpgOrPng && isLt2M
 }
 
-
-export default function EditorPage({ params }: { params: { id: string } }) {
+export default function EditorPage() {
     const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
     const [tags, setTags] = useState<TagItem[]>([])
-    const postId = parseInt(params.id)
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
     const [imageUrl, setImageUrl] = useState<string>()
     const [coverId, setCoverId] = useState<number>()
+    const { id } = useParams();
+    const postId = parseInt(id!)
 
-    const tinyMCEImageUploadHandler = (blobInfo: any, progress: any) => new Promise((resolve: any, reject: any) => {
+    const tinyMCEImageUploadHandler = (blobInfo: BlobInfo, progress: ProgressFn) => new Promise((resolve: (value: string) => void, reject: (reason?: string) => void) => {
         const formData = new FormData();
         formData.append('post_id', postId.toString());
         formData.append('file_type', PostResourceTypeEnum.IMAGE);
@@ -128,7 +138,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
             })
             setAllCategories(tagItems)
         })
-    }, [params.id])
+    }, [id])
 
     const updatePost = (status: PostStatusEnum) => {
         const postUpdateRO: PostUpdateRO = {
@@ -190,7 +200,7 @@ export default function EditorPage({ params }: { params: { id: string } }) {
                                     name='file'
                                     listType='picture-card'
                                     showUploadList={false}
-                                    action={`${process.env.BASE_URL}/post/upload`}
+                                    action={`http://localhost:8000/post/upload`}
                                     maxCount={1}
                                     beforeUpload={beforeUpload}
                                     onChange={onChange}
@@ -230,8 +240,6 @@ export default function EditorPage({ params }: { params: { id: string } }) {
                     init={{
                         height: '90vh',
                         menubar: false,
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-expect-error
                         images_upload_handler: tinyMCEImageUploadHandler,
                         automatic_uploads: true,
                         plugins: [
