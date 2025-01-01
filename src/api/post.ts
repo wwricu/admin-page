@@ -2,7 +2,7 @@ import {AxiosResponse} from "axios"
 import {PostRequestRO, PostUpdateRO} from "../model/request"
 import {PostDetailVO} from "../model/response"
 import {PostStatusEnum} from "../model/enum";
-import {myAxios} from "../api/common";
+import {myAxios} from "./common.ts";
 
 
 export const getAllPost = async (pageIndex: number, pageSize: number, status: PostStatusEnum) => {
