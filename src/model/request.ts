@@ -1,4 +1,4 @@
-import {TagTypeEnum} from "@/app/model/enum";
+import {TagTypeEnum} from "./enum.ts";
 
 export interface PostRequestRO {
     page_index: number
@@ -17,16 +17,6 @@ export interface PostUpdateRO {
     tag_id_list: number[]
     category_id?: number
     status: string
-}
-
-export interface PostPatchRO {
-    id: number
-    title?: string
-    cover_id?: number
-    content?: string
-    tag_id_list?: number[]
-    category_id?: number
-    status?: string
 }
 
 export interface TagRO {
