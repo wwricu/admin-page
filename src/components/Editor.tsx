@@ -155,7 +155,6 @@ export default function EditorPage() {
         })
     }
 
-    // TODO: upload url compatible with diff env
     return (
         <>
             {contextHolder}
@@ -200,7 +199,7 @@ export default function EditorPage() {
                                     name='file'
                                     listType='picture-card'
                                     showUploadList={false}
-                                    action={`http://localhost:8000/post/upload`}
+                                    action={`${import.meta.env.BASE_URL}/post/upload`}
                                     maxCount={1}
                                     beforeUpload={beforeUpload}
                                     onChange={onChange}
