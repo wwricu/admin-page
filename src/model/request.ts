@@ -14,6 +14,7 @@ export interface PostUpdateRO {
     title: string
     cover_id?: number
     content: string
+    preview?: string
     tag_id_list: number[]
     category_id?: number
     status: string

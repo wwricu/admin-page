@@ -17,6 +17,7 @@ export interface PostDetailVO {
     title: string
     cover?: PostResourceVO
     content: string
+    preview: string
     tag_list: TagVO[]
     category?: TagVO
     status: string

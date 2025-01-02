@@ -1,4 +1,4 @@
-import {MutableRefObject, useEffect, useRef, useState} from 'react'
+import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
 import {Editor} from '@tinymce/tinymce-react'
 import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
@@ -22,6 +22,7 @@ import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.t
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
 import ImgCrop from "antd-img-crop";
 import {useParams} from "react-router-dom";
+const { TextArea } = Input;
 
 type ProgressFn = (percent: number) => void
 
@@ -70,6 +71,7 @@ export default function EditorPage() {
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
     const [tags, setTags] = useState<TagItem[]>([])
+    const [preview, setPreview] = useState<string>('')
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
     const [messageApi, contextHolder] = message.useMessage()
@@ -146,6 +148,7 @@ export default function EditorPage() {
             title: title,
             cover_id: coverId,
             content: editorRef.current?.getContent() ?? '',
+            preview: preview,
             category_id: category?.value,
             tag_id_list: tags.map((tagItem) => tagItem.value),
             status: status?.toString()
@@ -161,6 +164,22 @@ export default function EditorPage() {
             <Card
                 title={(
                     <Flex justify='space-between' gap='middle'>
+                        <Flex gap='middle' wrap>
+                            <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={1 / 2}>
+                                <Upload
+                                    name='file'
+                                    listType='picture-card'
+                                    showUploadList={false}
+                                    action={`${import.meta.env.BASE_URL}/post/upload`}
+                                    maxCount={1}
+                                    beforeUpload={beforeUpload}
+                                    onChange={onChange}
+                                    data={getExtraData}
+                                >
+                                    {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
+                                </Upload>
+                            </ImgCrop>
+                        </Flex>
                         <Flex vertical justify='space-evenly' style={{width: '100%'}}>
                             <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                             <Flex justify='space-between' gap='middle'>
@@ -187,27 +206,21 @@ export default function EditorPage() {
                                         options={allTags}
                                     />
                             </Flex>
-                            <Flex justify='start'>
+                            <TextArea
+                                showCount
+                                maxLength={200}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                                    setPreview(e.target.value)
+                                }}
+                                value={preview}
+                                placeholder="Preview"
+                                style={{ height: 160, resize: 'none' }}
+                            />
+                            <Flex justify='end'>
                                 <Button onClick={() => updatePost(postStatus!)}>
                                     Save
                                 </Button>
                             </Flex>
-                        </Flex>
-                        <Flex gap='middle' wrap>
-                            <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} minAspect={1} aspect={4 / 3}>
-                                <Upload
-                                    name='file'
-                                    listType='picture-card'
-                                    showUploadList={false}
-                                    action={`${import.meta.env.BASE_URL}/post/upload`}
-                                    maxCount={1}
-                                    beforeUpload={beforeUpload}
-                                    onChange={onChange}
-                                    data={getExtraData}
-                                >
-                                    {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
-                                </Upload>
-                            </ImgCrop>
                         </Flex>
                     </Flex>
                 )}
@@ -225,6 +238,7 @@ export default function EditorPage() {
                                 setCategory({label: postDetailVO.category.name, value: postDetailVO.category.id})
                             }
                             setImageUrl(postDetailVO.cover?.url)
+                            setPreview(postDetailVO.preview)
                             if (postDetailVO.tag_list?.length > 0) {
                                 setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
                                     return {
