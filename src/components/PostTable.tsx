@@ -69,8 +69,8 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
             <Column
                 <PostDetailVO>
                 title='Preview'
-                dataIndex='content'
-                key='content'
+                dataIndex='preview'
+                key='preview'
             />
             <Column
                 <PostDetailVO>
