@@ -36,3 +36,10 @@ export interface GetTagRO {
     page_index?: number
     type: TagTypeEnum
 }
+
+export interface LoginRO {
+    username: string
+    password: string
+    captcha?: string
+    otp?: string
+}

@@ -1,5 +1,6 @@
 import axios, {AxiosResponse} from "axios"
 import {FileUploadVO} from "../model/response"
+import {LoginRO} from "../model/request.ts";
 
 axios.defaults.baseURL = import.meta.env.DEV ? import.meta.env.VITE_DEV_BASE_URL : import.meta.env.VITE_PROD_BASE_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -15,4 +16,8 @@ export const uploadFileAPI = async (formData: FormData) => {
             'Content-Type': 'multipart/form-data'
         }
     }).then((res: AxiosResponse<FileUploadVO>) => res.data)
+}
+
+export const loginAPI = async (loginRO: LoginRO) => {
+    return await myAxios.post('/login', loginRO)
 }
