@@ -21,3 +21,7 @@ export const uploadFileAPI = async (formData: FormData) => {
 export const loginAPI = async (loginRO: LoginRO) => {
     return await myAxios.post('/login', loginRO)
 }
+
+export const infoAPI = async () => {
+    return await myAxios.get('/info').then((res: AxiosResponse<boolean>) => res.data)
+}
