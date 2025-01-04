@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios"
 import {PostRequestRO, PostUpdateRO} from "../model/request"
-import {PostDetailVO} from "../model/response"
+import {PostDetailPageVO, PostDetailVO} from "../model/response"
 import {PostStatusEnum} from "../model/enum";
 import {myAxios} from "./common.ts";
 
@@ -11,7 +11,7 @@ export const getAllPost = async (pageIndex: number, pageSize: number, status: Po
         page_size: pageSize,
         status: status
     }
-    return await myAxios.post('/post/all', postRequest).then((res: AxiosResponse<PostDetailVO[]>) => res.data)
+    return await myAxios.post('/post/all', postRequest).then((res: AxiosResponse<PostDetailPageVO>) => res.data)
 }
 
 export const createPostAPI = async () => {

@@ -25,6 +25,13 @@ export interface PostDetailVO {
     update_time: string
 }
 
+export interface PostDetailPageVO {
+    page_index: number
+    page_size: number
+    count: number
+    post_details: PostDetailVO[]
+}
+
 export interface TagVO {
     id: number
     name: string

@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react'
 import {Popconfirm, Space, Table, Tag, Typography} from 'antd'
 import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '../api/post'
-import {PostDetailVO, TagVO} from '../model/response'
+import {PostDetailPageVO, PostDetailVO, TagVO} from '../model/response'
 import {PostStatusEnum} from '../model/enum'
 
 const {Column} = Table
@@ -14,17 +14,33 @@ interface PostTableProps {
 
 const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) => {
     const [list, setList] = useState<PostDetailVO[]>([])
+    const [count, setCount] = useState<number>()
+
+    const paginationProps = {
+        showSizeChanger: true,
+        showQuickJumper: false,
+        pageSize: 5,
+        current: 1,
+        total: count,
+        // onShowSizeChange: (current,pageSize) => this.changePageSize(pageSize,current),
+        // onChange: (current) => this.changePage(current),
+    }
 
     useEffect(() => {
-        getAllPost(1, 5, postStatus).then((res: PostDetailVO[]) => {
-            setList(res)
+        getAllPost(1, 5, postStatus).then((res: PostDetailPageVO) => {
+            setList(res?.post_details)
+            setCount(res?.count)
         }).catch((reason) => {
             console.log(reason)
         })
     }, [postStatus])
 
     return (
-        <Table<PostDetailVO> dataSource={list} rowKey={(postDetailVO: PostDetailVO) => postDetailVO.id}>
+        <Table<PostDetailVO>
+            dataSource={list}
+            rowKey={(postDetailVO: PostDetailVO) => postDetailVO.id}
+            pagination={paginationProps}
+        >
             <Column
                 <PostDetailVO>
                 title='Title'
