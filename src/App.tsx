@@ -2,7 +2,7 @@ import {Layout} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content} from "antd/es/layout/layout";
 import AdminMenu from "./components/AdminMenu.tsx";
-import {BrowserRouter as Router, Outlet, Route, Routes, useNavigate} from "react-router-dom";
+import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom";
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts";
 import './App.css'
 import React, {Suspense, useEffect} from "react";
@@ -75,6 +75,7 @@ export default function App() {
                             <LazyEditor/>
                         </Suspense>
                     )}/>
+                    <Route path="/" element={<Navigate to="/post" replace/>}/>
                 </Route>
             </Routes>
         </Router>
