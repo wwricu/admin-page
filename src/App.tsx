@@ -13,7 +13,7 @@ const LazyEditor = React.lazy(() => import("./components/Editor"));
 const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"));
 
 
-const AppLayout = <Layout style={{minHeight: '100vh', width: '100vw'}}>
+const AppLayout = <Layout style={{minHeight: '100svh', width: '100svw'}}>
     <Layout>
         <Sider theme='light'>
             <AdminMenu/>
@@ -37,7 +37,7 @@ function App() {
                     </Suspense>
                 )}/>
                 <Route path='/' element={AppLayout}>
-                    <Route path="/post" element={(
+                    <Route index path="/post" element={(
                         <Suspense fallback={Loading}>
                             <LazyPostTable postStatus={PostStatusEnum.PUBLISHED}/>
                         </Suspense>
