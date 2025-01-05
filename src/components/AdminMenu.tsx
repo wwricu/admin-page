@@ -6,9 +6,9 @@ import {
     BorderlessTableOutlined, EditOutlined,
 } from '@ant-design/icons'
 import {Button, Divider, Menu} from 'antd'
-import {createPostAPI} from "../api/post";
-import {PostDetailVO} from "../model/response";
-import {Link, useNavigate} from "react-router-dom";
+import {createPostAPI} from "../api/post"
+import {PostDetailVO} from "../model/response"
+import {Link, useNavigate} from "react-router-dom"
 
 
 const AdminMenu: React.FC = () => {

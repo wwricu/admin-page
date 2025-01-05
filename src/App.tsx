@@ -1,18 +1,18 @@
-import {Layout} from "antd";
-import Sider from "antd/es/layout/Sider";
-import {Content} from "antd/es/layout/layout";
-import AdminMenu from "./components/AdminMenu.tsx";
-import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom";
-import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts";
+import {Layout} from "antd"
+import Sider from "antd/es/layout/Sider"
+import {Content} from "antd/es/layout/layout"
+import AdminMenu from "./components/AdminMenu.tsx"
+import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom"
+import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import './App.css'
-import React, {Suspense, useEffect} from "react";
-import {infoAPI} from "./api/common.ts";
+import React, {Suspense, useEffect} from "react"
+import {infoAPI} from "./api/common.ts"
 
 
-const LazyPostTable = React.lazy(() => import("./components/PostTable"));
-const LazyTagTable = React.lazy(() => import("./components/TagTable"));
-const LazyEditor = React.lazy(() => import("./components/Editor"));
-const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"));
+const LazyPostTable = React.lazy(() => import("./components/PostTable"))
+const LazyTagTable = React.lazy(() => import("./components/TagTable"))
+const LazyEditor = React.lazy(() => import("./components/Editor"))
+const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
 
 const Loading: React.FC = () => {
     return <div>Loading...</div>
@@ -20,7 +20,7 @@ const Loading: React.FC = () => {
 
 
 const AppLayout: React.FC = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     useEffect(() => {
         infoAPI().then((res: boolean) => {
             if (!res) navigate("/login")

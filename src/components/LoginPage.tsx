@@ -1,13 +1,13 @@
-import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {LoginForm, ProConfigProvider, ProFormText} from '@ant-design/pro-components';
-import {theme} from 'antd';
+import {LockOutlined, UserOutlined} from '@ant-design/icons'
+import {LoginForm, ProConfigProvider, ProFormText} from '@ant-design/pro-components'
+import {theme} from 'antd'
 import icon from '../../public/favicon.ico'
-import {loginAPI} from "../api/common.ts";
-import {useNavigate} from "react-router-dom";
+import {loginAPI} from "../api/common.ts"
+import {useNavigate} from "react-router-dom"
 
 
 export default function LoginPage() {
-    const { token } = theme.useToken();
+    const { token } = theme.useToken()
     const navigate = useNavigate()
 
     return (
@@ -58,5 +58,5 @@ export default function LoginPage() {
                 </LoginForm>
             </div>
         </ProConfigProvider>
-    );
-};
+    )
+}

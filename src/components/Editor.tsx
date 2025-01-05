@@ -19,10 +19,10 @@ import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
 import {uploadFileAPI} from "../api/common.ts"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.ts"
-import {LoadingOutlined, PlusOutlined} from "@ant-design/icons";
-import ImgCrop from "antd-img-crop";
-import {useParams} from "react-router-dom";
-const { TextArea } = Input;
+import {LoadingOutlined, PlusOutlined} from "@ant-design/icons"
+import ImgCrop from "antd-img-crop"
+import {useParams} from "react-router-dom"
+const { TextArea } = Input
 
 type ProgressFn = (percent: number) => void
 
@@ -32,13 +32,13 @@ type TagItem = {
 }
 
 interface BlobInfo {
-    id: () => string;
-    name: () => string;
-    filename: () => string;
-    blob: () => Blob;
-    base64: () => string;
-    blobUri: () => string;
-    uri: () => string | undefined;
+    id: () => string
+    name: () => string
+    filename: () => string
+    blob: () => Blob
+    base64: () => string
+    blobUri: () => string
+    uri: () => string | undefined
 }
 
 const selectorStyle = {
@@ -78,20 +78,20 @@ export default function EditorPage() {
     const [loading, setLoading] = useState(false)
     const [imageUrl, setImageUrl] = useState<string>()
     const [coverId, setCoverId] = useState<number>()
-    const { id } = useParams();
+    const { id } = useParams()
     const postId = parseInt(id!)
 
     const tinyMCEImageUploadHandler = (blobInfo: BlobInfo, progress: ProgressFn) => new Promise((resolve: (value: string) => void, reject: (reason?: string) => void) => {
-        const formData = new FormData();
-        formData.append('post_id', postId.toString());
-        formData.append('file_type', PostResourceTypeEnum.IMAGE);
-        formData.append('file', blobInfo.blob(), blobInfo.filename());
-        formData.append('file', blobInfo.blob(), blobInfo.filename());
+        const formData = new FormData()
+        formData.append('post_id', postId.toString())
+        formData.append('file_type', PostResourceTypeEnum.IMAGE)
+        formData.append('file', blobInfo.blob(), blobInfo.filename())
+        formData.append('file', blobInfo.blob(), blobInfo.filename())
         uploadFileAPI(formData).then((fileUploadVO) => {
             progress(100)
             resolve(fileUploadVO.location)
         }).catch(() => {
-            reject('failed');
+            reject('failed')
         })
     })
 
@@ -113,7 +113,7 @@ export default function EditorPage() {
     const getExtraData: UploadProps['data'] = () => ({
         post_id: postId,
         file_type: PostResourceTypeEnum.COVER_IMAGE
-    });
+    })
 
     const uploadButton = (
         <button style={{ border: 0, background: 'none' }} type='button'>
