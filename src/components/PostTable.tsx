@@ -12,28 +12,38 @@ interface PostTableProps {
     postStatus: PostStatusEnum
 }
 
+
+
 const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) => {
     const [list, setList] = useState<PostDetailVO[]>([])
     const [count, setCount] = useState<number>()
+    const [pageIndex, setPageIndex] = useState<number>(1)
+    const [pageSize, setPageSize] = useState<number>(10)
+
+    const updatePostPage = (pageIndex: number = 1, pageSize: number = 10) => {
+        setPageIndex(pageIndex)
+        setPageSize(pageSize)
+        getAllPost(pageIndex, pageSize, postStatus).then((res: PostDetailPageVO) => {
+            setList(res?.post_details)
+            setCount(res?.count)
+        })
+    }
 
     const paginationProps = {
         showSizeChanger: true,
         showQuickJumper: false,
-        pageSize: 5,
-        current: 1,
+        pageSize: pageSize,
+        current: pageIndex,
         total: count,
-        // onShowSizeChange: (current,pageSize) => this.changePageSize(pageSize,current),
-        // onChange: (current) => this.changePage(current),
+        onChange: updatePostPage,
     }
 
     useEffect(() => {
-        getAllPost(1, 5, postStatus).then((res: PostDetailPageVO) => {
+        getAllPost(1, pageSize, postStatus).then((res: PostDetailPageVO) => {
             setList(res?.post_details)
             setCount(res?.count)
-        }).catch((reason) => {
-            console.log(reason)
         })
-    }, [postStatus])
+    }, [pageSize, postStatus])
 
     return (
         <Table<PostDetailVO>
