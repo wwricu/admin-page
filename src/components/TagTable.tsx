@@ -188,6 +188,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             <Button onClick={create}>New</Button>
             <Form form={form} component={false}>
                 <Table<TagVO>
+                    rowKey={(tagVO: TagVO) => tagVO.id}
                     components={{
                         body: { cell: EditableCell },
                     }}
