@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - 'release'
+    paths:
+      - 'version.txt'
+  workflow_dispatch:
+jobs:
+  github:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.12.2
+          cache: 'npm'
+      - id: build
+        run: |
+          echo version=$(cat version.txt) >> $GITHUB_ENV
+          npm run build --if-present
+      - run: gh release create ${{ env.version }} --title ${{ env.version }} --generate-notes --latest ./dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: 'dist/**/*'
