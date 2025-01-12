@@ -21,9 +21,10 @@ jobs:
           echo version=$(cat version.txt) >> $GITHUB_ENV
           npm ci
           npm run build --if-present
-      - run: gh release create ${{ env.version }} --title ${{ env.version }} --generate-notes --latest ./dist/*
+          tar -czvf dist.tar.gz dist/*
+      - run: gh release create ${{ env.version }} --title ${{ env.version }} --generate-notes --latest dist.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/attest-build-provenance@v1
         with:
-          subject-path: 'dist/**/*'
+          subject-path: 'dist.tar.gz'
