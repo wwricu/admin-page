@@ -1,10 +1,8 @@
-name: Release
+name: Build dev
 on:
   push:
     branches:
-      - 'release'
-    paths:
-      - 'version.txt'
+      - 'dev'
   workflow_dispatch:
 jobs:
   github:
@@ -18,14 +16,11 @@ jobs:
           cache: 'npm'
       - id: build
         run: |
-          echo version=$(cat version.txt) >> $GITHUB_ENV
           npm ci
           npm run build --if-present
           cd dist && tar -czf dist.tar.gz ./*
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.version }}
+          tag_name: dev
           files: dist/dist.tar.gz
-      - uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: 'dist/dist.tar.gz'
+          make_latest: true

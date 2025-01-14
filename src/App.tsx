@@ -1,7 +1,6 @@
 import {Layout} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content} from "antd/es/layout/layout"
-import AdminMenu from "./components/AdminMenu.tsx"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import './App.css'
@@ -13,6 +12,7 @@ const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
 const LazyEditor = React.lazy(() => import("./components/Editor"))
 const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
+const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 
 const Loading: React.FC = () => {
     return <div>Loading...</div>
@@ -31,7 +31,9 @@ const AppLayout: React.FC = () => {
     return <Layout style={{minHeight: '100svh', width: '100svw'}}>
         <Layout>
             <Sider theme='light'>
-                <AdminMenu/>
+                <Suspense fallback={<Loading/>}>
+                    <LazyMenu/>
+                </Suspense>
             </Sider>
             <Content style={{padding: '24'}}>
                 <Outlet/>
@@ -42,7 +44,7 @@ const AppLayout: React.FC = () => {
 
 export default function App() {
     return (
-        <Router>
+        <Router basename='/admin'>
             <Routes>
                 <Route path="/login" element={(
                     <Suspense fallback={<Loading/>}>
