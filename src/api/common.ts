@@ -2,7 +2,9 @@ import axios, {AxiosResponse} from "axios"
 import {FileUploadVO} from "../model/response"
 import {LoginRO} from "../model/request.ts";
 
-axios.defaults.baseURL = import.meta.env.DEV ? import.meta.env.VITE_DEV_BASE_URL : import.meta.env.VITE_PROD_BASE_URL
+export const baseUrl = import.meta.env.DEV ? import.meta.env.VITE_DEV_BASE_URL : import.meta.env.VITE_PROD_BASE_URL
+
+axios.defaults.baseURL = baseUrl
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.headers.post['Accept'] = 'application/json'
 axios.defaults.withCredentials = true

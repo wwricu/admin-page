@@ -104,7 +104,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                 key='action'
                 render={(_, postDetailVO: PostDetailVO) => (
                     <Space size='middle'>
-                        <Typography.Link href={`/edit/${postDetailVO.id}`}>
+                        <Typography.Link href={`${import.meta.env.BASE_URL}/edit/${postDetailVO.id}`}>
                             Edit
                         </Typography.Link>
                         <Popconfirm
