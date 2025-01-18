@@ -4,6 +4,7 @@ import React from 'react'
 import {
     BookOutlined,
     BorderlessTableOutlined, EditOutlined,
+    TagsOutlined,
 } from '@ant-design/icons'
 import {Button, Divider, Menu} from 'antd'
 import {createPostAPI} from "../api/post"
@@ -22,7 +23,7 @@ const AdminMenu: React.FC = () => {
                 items={[
                     {
                         key: '1',
-                        icon: <EditOutlined/>,
+                        icon: <BookOutlined/>,
                         label: <Link to='/post'>Post</Link>,
                     },
                     {
@@ -32,12 +33,12 @@ const AdminMenu: React.FC = () => {
                     },
                     {
                         key: '3',
-                        icon: <BookOutlined/>,
+                        icon: <BorderlessTableOutlined/>,
                         label: <Link to='/category'>Category</Link>,
                     },
                     {
                         key: '4',
-                        icon: <BorderlessTableOutlined/>,
+                        icon: <TagsOutlined/>,
                         label: <Link to='/tag'>Tag</Link>,
                     }
                 ]}
