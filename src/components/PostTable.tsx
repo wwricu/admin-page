@@ -109,7 +109,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                         </Typography.Link>
                         <Popconfirm
                             title={postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
-                            onConfirm={() => updatePostStatusDetailAPI(postDetailVO.id, postDetailVO.status as PostStatusEnum)}
+                            onConfirm={() => updatePostStatusDetailAPI(postDetailVO.id, postDetailVO.status === 'published' ? PostStatusEnum.DRAFT : PostStatusEnum.PUBLISHED)}
                         >
                             <Typography.Link color='red'>
                                 {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}

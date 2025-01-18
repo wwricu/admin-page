@@ -5,6 +5,7 @@ import {
     BookOutlined,
     BorderlessTableOutlined, EditOutlined,
     TagsOutlined,
+    MenuOutlined,
 } from '@ant-design/icons'
 import {Button, Divider, Menu} from 'antd'
 import {createPostAPI} from "../api/post"
@@ -40,6 +41,11 @@ const AdminMenu: React.FC = () => {
                         key: '4',
                         icon: <TagsOutlined/>,
                         label: <Link to='/tag'>Tag</Link>,
+                    },
+                    {
+                        key: '5',
+                        icon: <MenuOutlined/>,
+                        label: <Link to='/management'>Management</Link>,
                     }
                 ]}
             />

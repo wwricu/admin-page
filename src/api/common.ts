@@ -1,6 +1,7 @@
 import axios, {AxiosResponse} from "axios"
 import {FileUploadVO} from "../model/response"
 import {LoginRO} from "../model/request.ts";
+import {DatabaseActionEnum} from "../model/enum.ts";
 
 export const baseUrl = import.meta.env.VITE_BASE_URL
 
@@ -26,4 +27,8 @@ export const loginAPI = async (loginRO: LoginRO) => {
 
 export const infoAPI = async () => {
     return await myAxios.get('/info').then((res: AxiosResponse<boolean>) => res.data)
+}
+
+export const databaseAPI = async (action: DatabaseActionEnum) => {
+    return await myAxios.get(`/database?action=${action}`).then((res: AxiosResponse<null>) => res.data)
 }
