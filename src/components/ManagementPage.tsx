@@ -20,7 +20,6 @@ type ActionRow = {
 }
 
 
-
 const ManagementPage: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage()
     const actionTableData: ActionRow[] = [
@@ -65,7 +64,7 @@ const ManagementPage: React.FC = () => {
                     render={(_, row: ActionRow) => (
                         <Space size='middle'>
                             {row?.actions.map((action: Action) =>
-                                <Popconfirm title={action.confirmMessage ?? `Sure to ${action.name}?`} onConfirm={action.handle}>
+                                <Popconfirm key={action.name} title={action.confirmMessage ?? `Sure to ${action.name}?`} onConfirm={action.handle}>
                                     <Typography.Link color='red'>
                                         {action.name}
                                     </Typography.Link>
