@@ -12,3 +12,8 @@ export enum PostResourceTypeEnum {
     IMAGE = 'image',
     COVER_IMAGE = 'cover'
 }
+
+export enum DatabaseActionEnum {
+    BACKUP = 'backup',
+    RESTORE = 'restore'
+}

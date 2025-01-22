@@ -258,7 +258,7 @@ export default function EditorPage() {
                         plugins: [
                             'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
                         ],
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough | image link table',
+                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | image link table',
                     }}
                 />
             </Card>

@@ -12,6 +12,7 @@ const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
 const LazyEditor = React.lazy(() => import("./components/Editor"))
 const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
+const LazyManagement = React.lazy(() => import("./components/ManagementPage.tsx"))
 const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 
 const Loading: React.FC = () => {
@@ -70,6 +71,11 @@ export default function App() {
                     <Route path="/tag" element={(
                         <Suspense fallback={<Loading/>}>
                             <LazyTagTable tagType={TagTypeEnum.POST_TAG}/>
+                        </Suspense>
+                    )}/>
+                    <Route path="/management" element={(
+                        <Suspense fallback={<Loading/>}>
+                            <LazyManagement/>
                         </Suspense>
                     )}/>
                     <Route path="/edit/:id" element={(
