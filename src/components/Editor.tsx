@@ -249,7 +249,7 @@ export default function EditorPage() {
                             }
                         })
                     }}
-                    licenseKey='gpl'
+                    apiKey='ttp8w1owo5c68hkksofh1cth7018mik8e8urjtrz23ng6fy5'
                     init={{
                         height: '90vh',
                         menubar: false,
