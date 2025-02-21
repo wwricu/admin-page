@@ -92,7 +92,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
     }
 
     const remove = (tag: TagVO) => {
-        deleteTag(tag.id, tagType).then((id: number) => {
+        deleteTag(tag.id).then((id: number) => {
             if (id === 1) {
                 const newData = [...data]
                 const index = newData.findIndex((item) => tag.id === item.id)
