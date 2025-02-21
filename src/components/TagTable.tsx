@@ -73,7 +73,8 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         const tag: TagVO = {
             id: 0,
             name: '',
-            type: tagType
+            type: tagType,
+            count: 0
         }
         newData.unshift(tag)
         form.setFieldsValue(tag)
@@ -126,19 +127,19 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
 
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            width: '15%',
-            editable: false,
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
-            width: '50%',
+            width: '40%',
             editable: true,
         },
         {
-            width: '15%',
+            title: 'Count',
+            dataIndex: 'count',
+            width: '30%',
+            editable: false,
+        },
+        {
+            width: '30%',
             title: 'operation',
             dataIndex: 'operation',
             render: (_: unknown, tag: TagVO) => {
