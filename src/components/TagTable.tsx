@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, Flex, TableProps} from 'antd'
+import {Button, Space, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
@@ -140,8 +140,8 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         },
         {
             width: '30%',
-            title: 'operation',
-            dataIndex: 'operation',
+            title: 'Action',
+            dataIndex: 'Action',
             render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
                   <span>
@@ -153,7 +153,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                     </Popconfirm>
                   </span>
                 ) : (
-                  <Flex justify='space-evenly'>
+                  <Space size='middle'>
                       <Typography.Link disabled={editingKey !== undefined} onClick={() => edit(tag)}>
                           Edit
                       </Typography.Link>
@@ -162,7 +162,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                               Delete
                           </Typography.Link>
                       </Popconfirm>
-                  </Flex>
+                  </Space>
                 )
             },
         },
