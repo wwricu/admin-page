@@ -6,6 +6,7 @@ import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
 import {deleteTag, getAllTag, newTag, updateTag} from "../api/tag"
+import {PlusOutlined} from "@ant-design/icons";
 
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -186,22 +187,22 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
 
     return (
         <>
-            <Button onClick={create}>New</Button>
             <Form form={form} component={false}>
+                <Button style={{marginTop: 4, marginLeft: 4}} type='primary' onClick={create}>
+                    <PlusOutlined/>New
+                </Button>
                 <Table<TagVO>
                     rowKey={(tagVO: TagVO) => tagVO.id}
-                    components={{
-                        body: { cell: EditableCell },
-                    }}
+                    components={{body: { cell: EditableCell }}}
                     bordered
                     dataSource={data}
                     columns={mergedColumns}
                     rowClassName="editable-row"
-                    pagination={{ onChange: cancel }}
+                    pagination={{ onChange: cancel, simple: true}}
+                    style={{margin: 4}}
                 />
             </Form>
         </>
-
     )
 }
 

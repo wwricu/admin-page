@@ -12,8 +12,6 @@ interface PostTableProps {
     postStatus: PostStatusEnum
 }
 
-
-
 const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) => {
     const [list, setList] = useState<PostDetailVO[]>([])
     const [count, setCount] = useState<number>()
@@ -47,6 +45,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
 
     return (
         <Table<PostDetailVO>
+            style={{margin: 4}}
             dataSource={list}
             rowKey={(postDetailVO: PostDetailVO) => postDetailVO.id}
             pagination={paginationProps}

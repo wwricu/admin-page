@@ -52,6 +52,7 @@ const ManagementPage: React.FC = () => {
                 <ActionRow>
                 dataSource={actionTableData}
                 pagination={false}
+                style={{margin: 4}}
             >
                 <Column
                     title='Name'
