@@ -7,13 +7,15 @@ import {
     TagsOutlined,
     MenuOutlined,
 } from '@ant-design/icons'
-import {Divider, Menu} from 'antd'
-import {Link} from "react-router-dom"
+import {Button, Divider, Flex, Menu} from 'antd'
+import {Link, useNavigate} from "react-router-dom"
+import {logoutAPI} from "../api/common.ts";
 
 
 const AdminMenu: React.FC = () => {
+    const navigate = useNavigate()
     return (
-        <>
+        <Flex vertical justify='space-between' style={{minHeight: '100vh'}}>
             <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}
@@ -47,7 +49,8 @@ const AdminMenu: React.FC = () => {
                 ]}
             />
             <Divider/>
-        </>
+            <Button onClick={() => logoutAPI().then(() => navigate('/login'))} style={{margin: 16}}>Logout</Button>
+        </Flex>
     )
 }
 

@@ -25,6 +25,10 @@ export const loginAPI = async (loginRO: LoginRO) => {
     return await myAxios.post('/login', loginRO)
 }
 
+export const logoutAPI = async () => {
+    return await myAxios.get('/logout')
+}
+
 export const infoAPI = async () => {
     return await myAxios.get('/info').then((res: AxiosResponse<boolean>) => res.data)
 }
