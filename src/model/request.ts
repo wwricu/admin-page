@@ -1,4 +1,4 @@
-import {TagTypeEnum} from "./enum.ts";
+import {ConfigKeyEnum, TagTypeEnum} from "./enum.ts";
 
 export interface PostRequestRO {
     page_index: number
@@ -37,4 +37,9 @@ export interface LoginRO {
     password: string
     captcha?: string
     otp?: string
+}
+
+export interface ConfigRO {
+    key: ConfigKeyEnum
+    value?: string
 }

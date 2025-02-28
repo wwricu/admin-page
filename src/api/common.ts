@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from "axios"
 import {FileUploadVO} from "../model/response"
-import {LoginRO} from "../model/request.ts";
-import {DatabaseActionEnum} from "../model/enum.ts";
+import {ConfigRO, LoginRO} from "../model/request.ts";
+import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
 
 export const baseUrl = import.meta.env.VITE_BASE_URL
 
@@ -35,4 +35,12 @@ export const infoAPI = async () => {
 
 export const databaseAPI = async (action: DatabaseActionEnum) => {
     return await myAxios.get(`/database?action=${action}`).then((res: AxiosResponse<null>) => res.data)
+}
+
+export const setConfigAPI = async (config: ConfigRO) => {
+    return await myAxios.post('/set_config', config).then((res: AxiosResponse<null>) => res.data)
+}
+
+export const getConfigAPI = async (key: ConfigKeyEnum) => {
+    return await myAxios.get(`/get_config?key=${key}`).then((res: AxiosResponse<string | null>) => res.data)
 }
