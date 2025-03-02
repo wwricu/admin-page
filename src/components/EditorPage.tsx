@@ -201,6 +201,7 @@ export default function EditorPage() {
                                         beforeUpload={beforeUpload}
                                         onChange={onChange}
                                         data={getExtraData}
+                                        openFileDialogOnClick={coverId === undefined || imageUrl === undefined}
                                     >
                                         {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
                                     </Upload>
