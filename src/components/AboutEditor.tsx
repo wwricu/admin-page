@@ -27,8 +27,7 @@ export default function AboutEditor({onOk, ...props}: ModalProps) {
     }
 
     // onOk upload, onInit fetch content
-    return <Modal closable={false} onOk={updateAbout} {...props}>
-        {/*<textarea style={{width: '100%', maxWidth: '100%', height: '100%', maxHeight: '100%'}}/>*/}
+    return <Modal closable={false} onOk={updateAbout} width={800} {...props}>
         <TinyMCE
             id='tinyMCE'
             onInit={(_, editor) => {
@@ -37,7 +36,8 @@ export default function AboutEditor({onOk, ...props}: ModalProps) {
             }}
             init={{
                 menubar: false,
-                height: '300px'
+                width: '100%',
+                height: '600px'
             }}
         />
     </Modal>
