@@ -10,7 +10,7 @@ import {
     type GetProp,
     Image,
     Input,
-    message,
+    message, Popconfirm,
     Select,
     Upload,
     type UploadProps
@@ -217,12 +217,15 @@ export default function EditorPage() {
                                         style={{ height: 160, resize: 'none' }}
                                     />
                                     <Flex gap='small'>
-                                        <Button onClick={() => updatePost(postStatus!)} type='primary'>
-                                            Save
-                                        </Button>
-                                        <Button>
-                                            Reset cover
-                                        </Button>
+                                        <Popconfirm title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
+                                            <Button type='primary'>
+                                                Save
+                                            </Button>
+                                        </Popconfirm>
+                                        <Button onClick={() => {
+                                            setCoverId(undefined)
+                                            setImageUrl(undefined)
+                                        }}>Reset cover</Button>
                                     </Flex>
                                 </Flex>
                             </Flex>
