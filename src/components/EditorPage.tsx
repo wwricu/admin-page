@@ -164,66 +164,69 @@ export default function EditorPage() {
             {contextHolder}
             <Card
                 title={(
-                    <Flex justify='space-between' gap='middle'>
-                        <Flex gap='middle' wrap>
-                            <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={1 / 2}>
-                                <Upload
-                                    name='file'
-                                    listType='picture-card'
-                                    showUploadList={false}
-                                    action={`${baseUrl}/post/upload`}
-                                    maxCount={1}
-                                    beforeUpload={beforeUpload}
-                                    onChange={onChange}
-                                    data={getExtraData}
-                                >
-                                    {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
-                                </Upload>
-                            </ImgCrop>
-                        </Flex>
-                        <Flex vertical justify='space-evenly' style={{width: '100%'}}>
-                            <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
+                        <Flex vertical justify='space-evenly' gap='middle' style={{marginTop: 18, marginBottom: 8}}>
                             <Flex justify='space-between' gap='middle'>
-                                    <Select<TagItem>
-                                        showSearch
-                                        labelInValue
-                                        placeholder='No Category'
-                                        optionFilterProp='label'
-                                        value={category}
-                                        style={selectorStyle}
-                                        options={allCategories}
-                                        onChange={(value) => {setCategory(value)}}
-                                    />
-                                    <Select<TagItem[]>
-                                        showSearch
-                                        labelInValue
-                                        allowClear
-                                        mode='multiple'
-                                        placeholder='No Tag'
-                                        optionFilterProp='label'
-                                        style={selectorStyle}
-                                        value={tags}
-                                        onChange={(values) => {setTags(values)}}
-                                        options={allTags}
-                                    />
+                                <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
+                                <Select<TagItem>
+                                    showSearch
+                                    labelInValue
+                                    placeholder='No Category'
+                                    optionFilterProp='label'
+                                    value={category}
+                                    style={selectorStyle}
+                                    options={allCategories}
+                                    onChange={(value) => {setCategory(value)}}
+                                />
+                                <Select<TagItem[]>
+                                    showSearch
+                                    labelInValue
+                                    allowClear
+                                    mode='multiple'
+                                    placeholder='No Tag'
+                                    optionFilterProp='label'
+                                    style={selectorStyle}
+                                    value={tags}
+                                    onChange={(values) => {setTags(values)}}
+                                    options={allTags}
+                                />
                             </Flex>
-                            <TextArea
-                                showCount
-                                maxLength={200}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                                    setPreview(e.target.value)
-                                }}
-                                value={preview}
-                                placeholder="Preview"
-                                style={{ height: 160, resize: 'none' }}
-                            />
-                            <Flex justify='end'>
-                                <Button onClick={() => updatePost(postStatus!)}>
-                                    Save
-                                </Button>
+                            <Flex justify='space-between' gap='middle'>
+                                <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={5 / 4}>
+                                    <Upload
+                                        name='file'
+                                        listType='picture-card'
+                                        showUploadList={false}
+                                        action={`${baseUrl}/post/upload`}
+                                        maxCount={1}
+                                        beforeUpload={beforeUpload}
+                                        onChange={onChange}
+                                        data={getExtraData}
+                                    >
+                                        {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
+                                    </Upload>
+                                </ImgCrop>
+                                <Flex vertical gap='small' style={{width: '100%'}}>
+                                    <TextArea
+                                        showCount
+                                        maxLength={200}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                                            setPreview(e.target.value)
+                                        }}
+                                        value={preview}
+                                        placeholder="Preview"
+                                        style={{ height: 160, resize: 'none' }}
+                                    />
+                                    <Flex gap='small'>
+                                        <Button onClick={() => updatePost(postStatus!)} type='primary'>
+                                            Save
+                                        </Button>
+                                        <Button>
+                                            Reset cover
+                                        </Button>
+                                    </Flex>
+                                </Flex>
                             </Flex>
                         </Flex>
-                    </Flex>
                 )}
                 style={{ margin: 24}}
             >
