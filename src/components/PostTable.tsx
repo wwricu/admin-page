@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, Popconfirm, Space, Table, Tag, Typography} from 'antd'
+import {Button, Flex, Popconfirm, Table, Tag, Typography} from 'antd'
 import {createPostAPI, deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '../api/post'
 import {PostDetailPageVO, PostDetailVO, TagVO} from '../model/response'
 import {PostStatusEnum} from '../model/enum'
@@ -67,12 +67,14 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                     title='Title'
                     dataIndex='title'
                     key='title'
+                    width={200}
                 />
                 <Column
                     <PostDetailVO>
                     title='Created At'
                     dataIndex='create_time'
                     key='create_time'
+                    width={120}
                     render={(_, {create_time}: PostDetailVO) => create_time.slice(0, 10)}
                 />
                 <Column
@@ -80,22 +82,26 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                     title='Category'
                     dataIndex='category'
                     key='category'
-                    render={(_, {category}: PostDetailVO) => (
-                        <Tag color={'blue'}>
-                            {category?.name.toUpperCase()}
-                        </Tag>
-                    )}
+                    width={200}
+                    render={(_, {category}: PostDetailVO) =>
+                        category ? (
+                            <Tag color={'blue'} style={{maxWidth: 150, overflow: 'hidden'}}>
+                                {category.name.toUpperCase()}
+                            </Tag>
+                        ) : <></>
+                    }
                 />
                 <Column
                     <PostDetailVO>
                     title='Tags'
                     dataIndex='tag_list'
                     key='tag_list'
+                    width={300}
                     render={(_, {tag_list}: PostDetailVO) => (
                         <>
                             {tag_list.map((tag: TagVO) => {
                                 return (
-                                    <Tag color={'blue'} key={tag.id}>
+                                    <Tag color={'blue'} key={tag.id} style={{maxWidth: 200, overflow: 'hidden'}}>
                                         {tag.name.toUpperCase()}
                                     </Tag>
                                 )
@@ -108,13 +114,17 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                     title='Preview'
                     dataIndex='preview'
                     key='preview'
+                    render={(_, {preview}: PostDetailVO) => (
+                        <Typography.Text>{preview}</Typography.Text>
+                    )}
                 />
                 <Column
                     <PostDetailVO>
                     title='Action'
                     key='action'
+                    width={180}
                     render={(_, postDetailVO: PostDetailVO) => (
-                        <Space size='middle'>
+                        <Flex justify='space-evenly' style={{flexWrap: 'wrap'}}>
                             <Typography.Link href={`${import.meta.env.BASE_URL}/edit/${postDetailVO.id}`}>
                                 Edit
                             </Typography.Link>
@@ -131,7 +141,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                                     Delete
                                 </Typography.Link>
                             </Popconfirm>
-                        </Space>
+                        </Flex>
                     )}
                 />
             </Table>
