@@ -1,7 +1,7 @@
 import {LockOutlined, UserOutlined} from '@ant-design/icons'
 import {LoginForm, ProConfigProvider, ProFormText} from '@ant-design/pro-components'
 import {theme} from 'antd'
-import icon from '../../public/favicon.ico'
+import icon from '/favicon.ico'
 import {loginAPI} from "../api/common.ts"
 import {useNavigate} from "react-router-dom"
 

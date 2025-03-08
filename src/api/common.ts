@@ -1,17 +1,37 @@
 import axios, {AxiosResponse} from "axios"
 import {FileUploadVO} from "../model/response"
-import {ConfigRO, LoginRO} from "../model/request.ts";
-import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
+import {ConfigRO, LoginRO} from "../model/request.ts"
+import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
+import { message } from 'antd'
 
 export const baseUrl = import.meta.env.VITE_BASE_URL
 
-axios.defaults.baseURL = baseUrl
-axios.defaults.headers.post['Content-Type'] = 'application/json'
-axios.defaults.headers.post['Accept'] = 'application/json'
-axios.defaults.withCredentials = true
+export const myAxios = axios.create({
+    baseURL: baseUrl,
+    timeout: 5000,
+    withCredentials: true,
+    headers: {
+        post: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    }
+})
 
-export const myAxios = axios
-
+myAxios.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    (error) => {
+        const { response } = error
+        if (response && response.status !== 200 && response.data?.detail) {
+            message.error(response.data?.detail).then()
+        } else {
+            message.error(error.message).then()
+        }
+        return Promise.reject(error)
+    }
+)
 
 export const uploadFileAPI = async (formData: FormData) => {
     return await myAxios.post('/post/upload', formData, {

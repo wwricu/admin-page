@@ -29,7 +29,7 @@ const AppLayout: React.FC = () => {
             navigate("/login")
         })
     }, [navigate])
-    return <Layout style={{minHeight: '100svh', width: '100svw'}}>
+    return <Layout style={{minHeight: '100vh', width: '100vw'}}>
         <Layout>
             <Sider theme='light'>
                 <Suspense fallback={<Loading/>}>
