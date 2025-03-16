@@ -7,20 +7,19 @@ import {
     TagsOutlined,
     MenuOutlined,
 } from '@ant-design/icons'
-import {Button, Divider, Menu} from 'antd'
-import {createPostAPI} from "../api/post"
-import {PostDetailVO} from "../model/response"
+import {Button, Divider, Flex, Menu} from 'antd'
 import {Link, useNavigate} from "react-router-dom"
+import {logoutAPI} from "../api/common.ts";
 
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
     return (
-        <>
+        <Flex vertical justify='space-between' style={{minHeight: '100vh'}}>
             <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}
-                theme="light"
+                theme='light'
                 items={[
                     {
                         key: '1',
@@ -50,15 +49,8 @@ const AdminMenu: React.FC = () => {
                 ]}
             />
             <Divider/>
-            <Button
-                style={{width: '100%', marginTop: 10}}
-                onClick={() => {createPostAPI().then((postDetailVO: PostDetailVO) => {
-                    navigate(`/edit/${postDetailVO.id}`)
-                })}}
-            >New Post</Button>
-        </>
-
-
+            <Button onClick={() => logoutAPI().then(() => navigate('/login'))} style={{margin: 16}}>Logout</Button>
+        </Flex>
     )
 }
 

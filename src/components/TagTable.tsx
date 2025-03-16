@@ -1,11 +1,12 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, Flex, TableProps} from 'antd'
+import {Button, Space, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
 import {deleteTag, getAllTag, newTag, updateTag} from "../api/tag"
+import {PlusOutlined} from "@ant-design/icons";
 
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -73,7 +74,8 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         const tag: TagVO = {
             id: 0,
             name: '',
-            type: tagType
+            type: tagType,
+            count: 0
         }
         newData.unshift(tag)
         form.setFieldsValue(tag)
@@ -92,7 +94,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
     }
 
     const remove = (tag: TagVO) => {
-        deleteTag(tag.id, tagType).then((id: number) => {
+        deleteTag(tag.id).then((id: number) => {
             if (id === 1) {
                 const newData = [...data]
                 const index = newData.findIndex((item) => tag.id === item.id)
@@ -126,21 +128,21 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
 
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            width: '15%',
-            editable: false,
-        },
-        {
             title: 'Name',
             dataIndex: 'name',
-            width: '50%',
+            width: '40%',
             editable: true,
         },
         {
-            width: '15%',
-            title: 'operation',
-            dataIndex: 'operation',
+            title: 'Count',
+            dataIndex: 'count',
+            width: '30%',
+            editable: false,
+        },
+        {
+            width: '30%',
+            title: 'Action',
+            dataIndex: 'Action',
             render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
                   <span>
@@ -152,7 +154,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                     </Popconfirm>
                   </span>
                 ) : (
-                  <Flex justify='space-evenly'>
+                  <Space size='middle'>
                       <Typography.Link disabled={editingKey !== undefined} onClick={() => edit(tag)}>
                           Edit
                       </Typography.Link>
@@ -161,7 +163,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                               Delete
                           </Typography.Link>
                       </Popconfirm>
-                  </Flex>
+                  </Space>
                 )
             },
         },
@@ -185,22 +187,22 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
 
     return (
         <>
-            <Button onClick={create}>New</Button>
             <Form form={form} component={false}>
+                <Button style={{marginTop: 4, marginLeft: 4}} type='primary' onClick={create}>
+                    <PlusOutlined/>New
+                </Button>
                 <Table<TagVO>
                     rowKey={(tagVO: TagVO) => tagVO.id}
-                    components={{
-                        body: { cell: EditableCell },
-                    }}
+                    components={{body: { cell: EditableCell }}}
                     bordered
                     dataSource={data}
                     columns={mergedColumns}
                     rowClassName="editable-row"
-                    pagination={{ onChange: cancel }}
+                    pagination={{ onChange: cancel, simple: true}}
+                    style={{margin: 4}}
                 />
             </Form>
         </>
-
     )
 }
 

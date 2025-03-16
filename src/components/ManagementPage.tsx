@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, {useState} from 'react'
 import {message, Popconfirm, Space, Table, Typography} from 'antd'
 import {databaseAPI} from "../api/common.ts";
 import {DatabaseActionEnum} from "../model/enum.ts";
+import AboutEditor from "./AboutEditor.tsx";
 
 const {Column} = Table
 
@@ -22,9 +23,23 @@ type ActionRow = {
 
 const ManagementPage: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage()
+    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+
     const actionTableData: ActionRow[] = [
         {
             key: '1',
+            title: 'About Page',
+            actions: [
+                {
+                    name: 'Edit',
+                    handle: () => {
+                        setIsAboutModalOpen(true)
+                    }
+                }
+            ]
+        },
+        {
+            key: '2',
             title: 'Database',
             actions: [
                 {
@@ -48,10 +63,16 @@ const ManagementPage: React.FC = () => {
     return (
         <>
             {contextHolder}
+            <AboutEditor
+                open={isAboutModalOpen}
+                onCancel={() => setIsAboutModalOpen(false)}
+                onOk={() => setIsAboutModalOpen(false)}
+            />
             <Table
                 <ActionRow>
                 dataSource={actionTableData}
                 pagination={false}
+                style={{margin: 4}}
             >
                 <Column
                     title='Name'
@@ -64,11 +85,17 @@ const ManagementPage: React.FC = () => {
                     render={(_, row: ActionRow) => (
                         <Space size='middle'>
                             {row?.actions.map((action: Action) =>
-                                <Popconfirm key={action.name} title={action.confirmMessage ?? `Sure to ${action.name}?`} onConfirm={action.handle}>
-                                    <Typography.Link color='red'>
+                                action.confirmMessage ? (
+                                    <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
+                                        <Typography.Link>
+                                            {action.name}
+                                        </Typography.Link>
+                                    </Popconfirm>
+                                ) : (
+                                    <Typography.Link onClick={action.handle}>
                                         {action.name}
                                     </Typography.Link>
-                                </Popconfirm>
+                                )
                             )}
                         </Space>
                     )}
