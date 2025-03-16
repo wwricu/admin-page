@@ -4,7 +4,7 @@ import {ConfigRO, LoginRO} from "../model/request.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
 import { message } from 'antd'
 
-export const baseUrl = import.meta.env.VITE_BASE_URL
+export const baseUrl = import.meta.env.VITE_BASE_URL ?? '/api'
 
 export const myAxios = axios.create({
     baseURL: baseUrl,
