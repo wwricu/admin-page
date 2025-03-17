@@ -34,11 +34,26 @@ jobs:
           files: dist/dist.tar.gz
           make_latest: false
           prerelease: true
+  dockerhub:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: github
+    steps:
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: wwricu
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          file: DockerfileDev
+          tags: wwricu/admin-page:snapshot
   deploy:
     runs-on: ubuntu-latest
     permissions: write-all
     continue-on-error: true
-    needs: github
+    needs: dockerhub
     steps:
       - uses: appleboy/ssh-action@master
         with:
@@ -46,23 +61,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            rm -rf /admin-page
-            mkdir /admin-page
-      - run: wget https://github.com/wwricu/admin-page/releases/download/snapshot/dist.tar.gz
-      - uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.DEV_HOSTNAME }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          source: "dist.tar.gz"
-          target: "/admin-page"
-          overwrite: true
-      - uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEV_HOSTNAME }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            cd /admin-page
-            tar -xzf dist.tar.gz
-            docker restart caddy
+            docker stop caddy
+            docker rm caddy
+            docker rmi wwricu/admin-page:snapshot
+            cd /data/deploy
+            docker-compose -f docker-compose-dev.yml up -d
