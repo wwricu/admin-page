@@ -19,7 +19,7 @@ wwr.icu {
     }
 
     handle_path /admin* {
-        root * /data
+        root * /root
         file_server
         try_files {path} {path}/ /index.html
     }
