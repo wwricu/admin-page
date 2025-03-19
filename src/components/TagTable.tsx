@@ -18,6 +18,10 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     index: number
 }
 
+interface TagTableProps {
+    tagType: TagTypeEnum
+}
+
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
     {
         editing,
@@ -49,10 +53,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
             )}
         </td>
     )
-}
-
-interface TagTableProps {
-    tagType: TagTypeEnum
 }
 
 const TagTable: React.FC<TagTableProps> = ({tagType}) => {

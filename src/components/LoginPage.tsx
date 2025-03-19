@@ -24,7 +24,6 @@ export default function LoginPage() {
                         }).then(() => {
                             navigate('/')
                         })
-                        // TODO: CATCH HERE FOR ERROR PROMPT
                     }}
                 >
                     <ProFormText
