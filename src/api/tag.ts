@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios"
 import {TagVO} from "../model/response"
-import {GetTagRO, TagBatchRO, TagRO} from "../model/request"
+import {GetTagRO, TagRO} from "../model/request"
 import {TagTypeEnum} from "../model/enum";
 import {myAxios} from "./common.ts";
 
@@ -26,10 +26,6 @@ export const getAllTag = async (
     return await myAxios.post('/open/tags', request).then((res: AxiosResponse<TagVO[]>) => res.data)
 }
 
-export const deleteTag = async (tagId: number, type: TagTypeEnum) => {
-    const tagBatchRO: TagBatchRO = {
-        id_list: [tagId],
-        type: type
-    }
-    return await myAxios.post('/tag/delete', tagBatchRO).then((res: AxiosResponse<number>) => res.data)
+export const deleteTag = async (tagId: number) => {
+    return await myAxios.get(`/tag/delete/${tagId}`).then((res: AxiosResponse<number>) => res.data)
 }

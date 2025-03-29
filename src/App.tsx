@@ -10,8 +10,9 @@ import {infoAPI} from "./api/common.ts"
 
 const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
-const LazyEditor = React.lazy(() => import("./components/Editor"))
+const LazyEditor = React.lazy(() => import("./components/EditorPage"))
 const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
+const LazyManagement = React.lazy(() => import("./components/ManagementPage.tsx"))
 const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 
 const Loading: React.FC = () => {
@@ -28,7 +29,7 @@ const AppLayout: React.FC = () => {
             navigate("/login")
         })
     }, [navigate])
-    return <Layout style={{minHeight: '100svh', width: '100svw'}}>
+    return <Layout style={{minHeight: '100vh', width: '100vw'}}>
         <Layout>
             <Sider theme='light'>
                 <Suspense fallback={<Loading/>}>
@@ -70,6 +71,11 @@ export default function App() {
                     <Route path="/tag" element={(
                         <Suspense fallback={<Loading/>}>
                             <LazyTagTable tagType={TagTypeEnum.POST_TAG}/>
+                        </Suspense>
+                    )}/>
+                    <Route path="/management" element={(
+                        <Suspense fallback={<Loading/>}>
+                            <LazyManagement/>
                         </Suspense>
                     )}/>
                     <Route path="/edit/:id" element={(

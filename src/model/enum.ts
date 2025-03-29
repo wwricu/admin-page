@@ -12,3 +12,16 @@ export enum PostResourceTypeEnum {
     IMAGE = 'image',
     COVER_IMAGE = 'cover'
 }
+
+export enum DatabaseActionEnum {
+    BACKUP = 'backup',
+    RESTORE = 'restore'
+}
+
+export enum ConfigKeyEnum {
+    ABOUT_CONTENT = 'about_content',
+    ABOUT_AVATAR = 'about_avatar',
+    TOTP_SECRET = 'totp_secret',
+    USERNAME = 'username',
+    PASSWORD = 'password'
+}
