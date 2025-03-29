@@ -27,18 +27,20 @@ export default function AboutEditor({onOk, ...props}: ModalProps) {
     }
 
     // onOk upload, onInit fetch content
-    return <Modal closable={false} onOk={updateAbout} width={800} {...props}>
-        <TinyMCE
-            id='tinyMCE'
-            onInit={(_, editor) => {
-                editorRef.current = editor
-                fetchAbout()
-            }}
-            init={{
-                menubar: false,
-                width: '100%',
-                height: '600px'
-            }}
-        />
-    </Modal>
+    return (
+        <Modal closable={false} onOk={updateAbout} width={800} {...props}>
+            <TinyMCE
+                id='tinyMCE'
+                onInit={(_, editor) => {
+                    editorRef.current = editor
+                    fetchAbout()
+                }}
+                init={{
+                    menubar: false,
+                    width: '100%',
+                    height: '600px'
+                }}
+            />
+        </Modal>
+    )
 }

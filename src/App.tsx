@@ -19,7 +19,6 @@ const Loading: React.FC = () => {
     return <div>Loading...</div>
 }
 
-
 const AppLayout: React.FC = () => {
     const navigate = useNavigate()
     useEffect(() => {
@@ -29,18 +28,20 @@ const AppLayout: React.FC = () => {
             navigate("/login")
         })
     }, [navigate])
-    return <Layout style={{minHeight: '100vh', width: '100vw'}}>
-        <Layout>
-            <Sider theme='light'>
-                <Suspense fallback={<Loading/>}>
-                    <LazyMenu/>
-                </Suspense>
-            </Sider>
-            <Content style={{padding: '24'}}>
-                <Outlet/>
-            </Content>
+    return (
+        <Layout style={{minHeight: '100vh', width: '100vw'}}>
+            <Layout>
+                <Sider theme='light'>
+                    <Suspense fallback={<Loading/>}>
+                        <LazyMenu/>
+                    </Suspense>
+                </Sider>
+                <Content style={{padding: '24'}}>
+                    <Outlet/>
+                </Content>
+            </Layout>
         </Layout>
-    </Layout>
+    )
 }
 
 export default function App() {
