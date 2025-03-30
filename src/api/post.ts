@@ -28,7 +28,7 @@ export const updatePostDetailAPI = async (postUpdateRO: PostUpdateRO) => {
 }
 
 export const updatePostStatusDetailAPI = async (postId: number, postStatusEnum: PostStatusEnum) => {
-    return await myAxios.post(`/post/status/${postId}?post_status=${postStatusEnum}`).then((res: AxiosResponse<PostDetailVO>) => res.data)
+    return await myAxios.get(`/post/status/${postId}?status=${postStatusEnum}`).then((res: AxiosResponse<PostDetailVO>) => res.data)
 }
 
 export const deletePostAPI = async (postId: string | number) => {
