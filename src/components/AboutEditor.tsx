@@ -2,7 +2,7 @@ import {Modal, ModalProps} from "antd";
 import TinyMCE from "./Editor.tsx";
 import React, {MutableRefObject, useRef} from "react";
 import {Editor as TinyMCEEditor} from "tinymce";
-import {getConfigAPI, setConfigAPI} from "../api/common.ts";
+import {getConfigAPI, setConfigAPI} from "../api/manage.ts";
 import {ConfigKeyEnum} from "../model/enum.ts";
 
 

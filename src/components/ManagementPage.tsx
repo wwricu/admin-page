@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react'
 import {message, Popconfirm, Space, Table, Typography} from 'antd'
-import {databaseAPI} from "../api/common.ts";
+import {databaseAPI} from "../api/manage.ts";
 import {DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
 
