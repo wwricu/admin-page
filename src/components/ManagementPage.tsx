@@ -83,7 +83,7 @@ const ManagementPage: React.FC = () => {
                     title='Actions'
                     key='actions'
                     render={(_, row: ActionRow) => (
-                        <Space size='middle'>
+                        <Space key={row.key} size='middle'>
                             {row?.actions.map((action: Action) =>
                                 action.confirmMessage ? (
                                     <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
