@@ -2,7 +2,7 @@
 
 import React, {useState} from 'react'
 import {message, Popconfirm, Space, Table, Typography} from 'antd'
-import {databaseAPI} from "../api/common.ts";
+import {databaseAPI} from "../api/manage.ts";
 import {DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
 
@@ -83,7 +83,7 @@ const ManagementPage: React.FC = () => {
                     title='Actions'
                     key='actions'
                     render={(_, row: ActionRow) => (
-                        <Space size='middle'>
+                        <Space key={row.key} size='middle'>
                             {row?.actions.map((action: Action) =>
                                 action.confirmMessage ? (
                                     <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
