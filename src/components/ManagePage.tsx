@@ -5,6 +5,7 @@ import {message, Popconfirm, Space, Table, Typography} from 'antd'
 import {databaseAPI} from "../api/manage.ts";
 import {DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
+import {baseUrl} from "../api/common.ts";
 
 const {Column} = Table
 
@@ -21,7 +22,7 @@ type ActionRow = {
 }
 
 
-const ManagementPage: React.FC = () => {
+const ManagePage: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage()
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
 
@@ -43,18 +44,24 @@ const ManagementPage: React.FC = () => {
             title: 'Database',
             actions: [
                 {
-                    name: 'Backup (upload)',
+                    name: 'Backup to cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.BACKUP).then(() => {
                         messageApi.info('Database backup successfully.').then()
                     })},
                     confirmMessage: 'Sure to backup database? This will override cloud database'
                 },
                 {
-                    name: 'Restore (download)',
+                    name: 'Restore from cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.RESTORE).then(() => {
                         messageApi.info('Database restore successfully.').then()
                     })},
                     confirmMessage: 'Sure to backup database? This will override local database'
+                },
+                {
+                    name: 'Download to local',
+                    handle: () => {
+                        window.open(`${baseUrl}/manage/database?action=${DatabaseActionEnum.DOWNLOAD}`)
+                    }
                 }
             ]
         }
@@ -105,4 +112,4 @@ const ManagementPage: React.FC = () => {
     )
 }
 
-export default ManagementPage
+export default ManagePage

@@ -12,7 +12,7 @@ const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
 const LazyEditor = React.lazy(() => import("./components/EditorPage"))
 const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
-const LazyManagement = React.lazy(() => import("./components/ManagementPage.tsx"))
+const LazyManagement = React.lazy(() => import("./components/ManagePage.tsx"))
 const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 
 const Loading: React.FC = () => {

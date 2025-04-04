@@ -8,9 +8,9 @@ export const databaseAPI = async (action: DatabaseActionEnum) => {
 }
 
 export const setConfigAPI = async (config: ConfigRO) => {
-    return await myAxios.post('/manage/set_config', config).then((res: AxiosResponse<null>) => res.data)
+    return await myAxios.post('/manage/config/set', config).then((res: AxiosResponse<null>) => res.data)
 }
 
 export const getConfigAPI = async (key: ConfigKeyEnum) => {
-    return await myAxios.get(`/manage/get_config?key=${key}`).then((res: AxiosResponse<string | null>) => res.data)
+    return await myAxios.get(`/manage/config/get?key=${key}`).then((res: AxiosResponse<string | null>) => res.data)
 }
