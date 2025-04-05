@@ -1,9 +1,9 @@
 'use client'
 
-import React, {useState} from 'react'
-import {message, Popconfirm, Space, Table, Typography} from 'antd'
-import {databaseAPI} from "../api/manage.ts";
-import {DatabaseActionEnum} from "../model/enum.ts";
+import React, {useEffect, useRef, useState} from 'react'
+import {Input, InputRef, message, Modal, Popconfirm, Space, Table, Typography} from 'antd'
+import {databaseAPI, getConfigAPI, userAPI} from "../api/manage.ts";
+import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
 import {baseUrl} from "../api/common.ts";
 
@@ -23,8 +23,19 @@ type ActionRow = {
 
 
 const ManagePage: React.FC = () => {
-    const [messageApi, contextHolder] = message.useMessage()
+    const [messageApi, messageContextHolder] = message.useMessage()
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+    const [modalApi, modalContextHolder] = Modal.useModal();
+    const inputRef = useRef<InputRef>(null);
+    const [username, setUsername] = useState<string>();
+
+    const updateUsername = () => getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
+        setUsername(res ?? '');
+    })
+
+    useEffect(() => {
+        updateUsername().then()
+    })
 
     const actionTableData: ActionRow[] = [
         {
@@ -41,6 +52,72 @@ const ManagePage: React.FC = () => {
         },
         {
             key: '2',
+            title: 'Login',
+            actions: [
+                {
+                    name: 'Set username',
+                    handle: () => {
+                        modalApi.confirm({
+                            icon: null,
+                            title: 'Set username',
+                            content: <Input
+                                ref={inputRef}
+                                style={{ marginTop: '15px', marginBottom: '15px' }}
+                                defaultValue={username}
+                            />,
+                            onOk: () => {
+                                const username = inputRef?.current?.input?.value
+                                return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
+                                    if (!username) {
+                                        messageApi.error('Please input valid username').then()
+                                        reject()
+                                    } else {
+                                        userAPI({username: username}).then(() => {
+                                            updateUsername().then(() => resolve(true))
+                                        })
+
+                                    }
+                                });
+
+                            }
+                        });
+                    },
+                },
+                {
+                    name: 'Set password',
+                    handle: () => {
+                        modalApi.confirm({
+                            icon: null,
+                            title: 'Input new Password',
+                            content: <Input ref={inputRef} style={{ marginTop: '15px', marginBottom: '15px' }} />,
+                            onOk: () => {
+                                const password = inputRef?.current?.input?.value
+                                return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
+                                    if (!password) {
+                                        messageApi.error('Please input valid password').then()
+                                        reject()
+                                    } else {
+                                        userAPI({password: password}).then(() => {resolve(true)})
+                                    }
+                                });
+
+                            }
+                        });
+                    },
+                },
+                {
+                    name: 'Reset all to default',
+                    handle: () => {
+                        userAPI({reset: true}).then(() => {
+                            updateUsername().then(() => messageApi.info('User reset successfully')).then()
+                        })
+                    },
+                    confirmMessage: 'Sure to reset username and password to default?',
+                }
+            ]
+        },
+        {
+            key: '3',
             title: 'Database',
             actions: [
                 {
@@ -69,7 +146,8 @@ const ManagePage: React.FC = () => {
 
     return (
         <>
-            {contextHolder}
+            {messageContextHolder}
+            {modalContextHolder}
             <AboutEditor
                 open={isAboutModalOpen}
                 onCancel={() => setIsAboutModalOpen(false)}
@@ -99,7 +177,7 @@ const ManagePage: React.FC = () => {
                                         </Typography.Link>
                                     </Popconfirm>
                                 ) : (
-                                    <Typography.Link onClick={action.handle}>
+                                    <Typography.Link key={action.name} onClick={action.handle}>
                                         {action.name}
                                     </Typography.Link>
                                 )

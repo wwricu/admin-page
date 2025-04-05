@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios"
-import {ConfigRO} from "../model/request.ts"
+import {ConfigRO, UserRO} from "../model/request.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
 import {myAxios} from "./common.ts";
 
@@ -13,4 +13,8 @@ export const setConfigAPI = async (config: ConfigRO) => {
 
 export const getConfigAPI = async (key: ConfigKeyEnum) => {
     return await myAxios.get(`/manage/config/get?key=${key}`).then((res: AxiosResponse<string | null>) => res.data)
+}
+
+export const userAPI = async (userRO: UserRO) => {
+    return await myAxios.post('/manage/user', userRO).then((res: AxiosResponse<null>) => res.data)
 }
