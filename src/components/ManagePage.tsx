@@ -6,6 +6,7 @@ import {databaseAPI, getConfigAPI, userAPI} from "../api/manage.ts";
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
 import {baseUrl} from "../api/common.ts";
+import {useNavigate} from "react-router-dom";
 
 const {Column} = Table
 
@@ -28,6 +29,7 @@ const ManagePage: React.FC = () => {
     const [modalApi, modalContextHolder] = Modal.useModal();
     const inputRef = useRef<InputRef>(null);
     const [username, setUsername] = useState<string>();
+    const navigate = useNavigate();
 
     const updateUsername = () => getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
         setUsername(res ?? '');
@@ -72,9 +74,14 @@ const ManagePage: React.FC = () => {
                                         messageApi.error('Please input valid username').then()
                                         reject()
                                     } else {
-                                        userAPI({username: username}).then(() => {
-                                            updateUsername().then(() => resolve(true))
-                                        })
+                                        userAPI({username: username}).then(
+                                            () => updateUsername()).then(
+                                            () => messageApi.info('success')).then(
+                                            () => {
+                                                resolve(true)
+                                                navigate('/login')
+                                            }
+                                        )
 
                                     }
                                 });
@@ -97,7 +104,13 @@ const ManagePage: React.FC = () => {
                                         messageApi.error('Please input valid password').then()
                                         reject()
                                     } else {
-                                        userAPI({password: password}).then(() => {resolve(true)})
+                                        userAPI({password: password}).then(
+                                            () => messageApi.info('success')).then(
+                                            () => {
+                                                resolve(true)
+                                                navigate('/login')
+                                            },
+                                        )
                                     }
                                 });
 
@@ -109,7 +122,10 @@ const ManagePage: React.FC = () => {
                     name: 'Reset all to default',
                     handle: () => {
                         userAPI({reset: true}).then(() => {
-                            updateUsername().then(() => messageApi.info('User reset successfully')).then()
+                            updateUsername().then(
+                                () => messageApi.info('success')).then(
+                                () => navigate('/login')
+                            )
                         })
                     },
                     confirmMessage: 'Sure to reset username and password to default?',
