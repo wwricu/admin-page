@@ -1,11 +1,12 @@
 'use client'
 
 import React, {useEffect, useRef, useState} from 'react'
-import {Input, InputRef, message, Modal, Popconfirm, Space, Table, Typography} from 'antd'
+import {Flex, Input, InputRef, message, Modal, Popconfirm, Table, Typography} from 'antd'
 import {databaseAPI, getConfigAPI, userAPI} from "../api/manage.ts";
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
 import {baseUrl} from "../api/common.ts";
+import {useNavigate} from "react-router-dom";
 
 const {Column} = Table
 
@@ -28,13 +29,12 @@ const ManagePage: React.FC = () => {
     const [modalApi, modalContextHolder] = Modal.useModal();
     const inputRef = useRef<InputRef>(null);
     const [username, setUsername] = useState<string>();
-
-    const updateUsername = () => getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
-        setUsername(res ?? '');
-    })
+    const navigate = useNavigate();
 
     useEffect(() => {
-        updateUsername().then()
+        getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
+            setUsername(res ?? '');
+        })
     })
 
     const actionTableData: ActionRow[] = [
@@ -72,9 +72,13 @@ const ManagePage: React.FC = () => {
                                         messageApi.error('Please input valid username').then()
                                         reject()
                                     } else {
-                                        userAPI({username: username}).then(() => {
-                                            updateUsername().then(() => resolve(true))
-                                        })
+                                        userAPI({username: username}).then(
+                                            () => messageApi.info('success')).then(
+                                            () => {
+                                                resolve(true)
+                                                navigate('/login')
+                                            }
+                                        )
 
                                     }
                                 });
@@ -97,7 +101,13 @@ const ManagePage: React.FC = () => {
                                         messageApi.error('Please input valid password').then()
                                         reject()
                                     } else {
-                                        userAPI({password: password}).then(() => {resolve(true)})
+                                        userAPI({password: password}).then(
+                                            () => messageApi.info('success')).then(
+                                            () => {
+                                                resolve(true)
+                                                navigate('/login')
+                                            },
+                                        )
                                     }
                                 });
 
@@ -108,9 +118,10 @@ const ManagePage: React.FC = () => {
                 {
                     name: 'Reset all to default',
                     handle: () => {
-                        userAPI({reset: true}).then(() => {
-                            updateUsername().then(() => messageApi.info('User reset successfully')).then()
-                        })
+                        userAPI({reset: true}).then(
+                            () => messageApi.info('success')).then(
+                            () => navigate('/login')
+                        )
                     },
                     confirmMessage: 'Sure to reset username and password to default?',
                 }
@@ -168,7 +179,7 @@ const ManagePage: React.FC = () => {
                     title='Actions'
                     key='actions'
                     render={(_, row: ActionRow) => (
-                        <Space key={row.key} size='middle'>
+                        <Flex key={row.key} justify='flex-start' gap='middle' style={{flexWrap: 'wrap'}}>
                             {row?.actions.map((action: Action) =>
                                 action.confirmMessage ? (
                                     <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
@@ -182,7 +193,7 @@ const ManagePage: React.FC = () => {
                                     </Typography.Link>
                                 )
                             )}
-                        </Space>
+                        </Flex>
                     )}
                 />
             </Table>
