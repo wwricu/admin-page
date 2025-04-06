@@ -31,12 +31,10 @@ const ManagePage: React.FC = () => {
     const [username, setUsername] = useState<string>();
     const navigate = useNavigate();
 
-    const updateUsername = () => getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
-        setUsername(res ?? '');
-    })
-
     useEffect(() => {
-        updateUsername().then()
+        getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
+            setUsername(res ?? '');
+        })
     })
 
     const actionTableData: ActionRow[] = [
@@ -75,7 +73,6 @@ const ManagePage: React.FC = () => {
                                         reject()
                                     } else {
                                         userAPI({username: username}).then(
-                                            () => updateUsername()).then(
                                             () => messageApi.info('success')).then(
                                             () => {
                                                 resolve(true)
@@ -121,12 +118,10 @@ const ManagePage: React.FC = () => {
                 {
                     name: 'Reset all to default',
                     handle: () => {
-                        userAPI({reset: true}).then(() => {
-                            updateUsername().then(
-                                () => messageApi.info('success')).then(
-                                () => navigate('/login')
-                            )
-                        })
+                        userAPI({reset: true}).then(
+                            () => messageApi.info('success')).then(
+                            () => navigate('/login')
+                        )
                     },
                     confirmMessage: 'Sure to reset username and password to default?',
                 }
