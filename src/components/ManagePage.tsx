@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useRef, useState} from 'react'
-import {Input, InputRef, message, Modal, Popconfirm, Space, Table, Typography} from 'antd'
+import {Flex, Input, InputRef, message, Modal, Popconfirm, Table, Typography} from 'antd'
 import {databaseAPI, getConfigAPI, userAPI} from "../api/manage.ts";
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
@@ -179,7 +179,7 @@ const ManagePage: React.FC = () => {
                     title='Actions'
                     key='actions'
                     render={(_, row: ActionRow) => (
-                        <Space key={row.key} size='middle'>
+                        <Flex key={row.key} justify='flex-start' gap='middle' style={{flexWrap: 'wrap'}}>
                             {row?.actions.map((action: Action) =>
                                 action.confirmMessage ? (
                                     <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
@@ -193,7 +193,7 @@ const ManagePage: React.FC = () => {
                                     </Typography.Link>
                                 )
                             )}
-                        </Space>
+                        </Flex>
                     )}
                 />
             </Table>
