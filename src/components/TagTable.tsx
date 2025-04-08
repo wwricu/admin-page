@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, Space, TableProps} from 'antd'
+import {Button, message, Space, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
@@ -61,6 +61,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
     const [editingKey, setEditingKey] = useState<number | undefined>()
     const [creating, setCreating] = useState<boolean>(false)
     const isEditing = (tag: TagVO) => tag.id === editingKey
+    const [messageApi, contextHolder] = message.useMessage()
 
     useEffect(() => {
         getAllTag(tagType).then((tagList: TagVO[]) => {
@@ -100,7 +101,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                 const index = newData.findIndex((item) => tag.id === item.id)
                 newData.splice(index, 1)
                 setData(newData)
-                // TODO: toast success
+                messageApi.success("success").then()
             }
         })
     }
@@ -187,6 +188,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
 
     return (
         <>
+            {contextHolder}
             <Form form={form} component={false}>
                 <Button style={{marginTop: 4, marginLeft: 4}} type='primary' onClick={create}>
                     <PlusOutlined/>New
