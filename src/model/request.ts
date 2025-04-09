@@ -43,3 +43,9 @@ export interface ConfigRO {
     key: ConfigKeyEnum
     value?: string
 }
+
+export interface UserRO {
+    username?: string
+    password?: string
+    reset?: boolean
+}
