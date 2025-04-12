@@ -32,3 +32,13 @@
         }
     }
 }
+
+{$DIRECT_HOSTNAME} {
+    handle /gp* {
+        reverse_proxy {
+            to http://v2ray:8443
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+        }
+    }
+}
