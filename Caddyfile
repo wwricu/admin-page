@@ -1,4 +1,4 @@
-wwr.icu {
+{$HOSTNAME} {
     tls me@wwr.icu
     encode gzip
 
