@@ -1,4 +1,4 @@
-wwr.icu {
+{$HOSTNAME} {
     tls me@wwr.icu
     encode gzip
 
@@ -27,6 +27,16 @@ wwr.icu {
     handle_path /* {
         reverse_proxy {
             to http://blog-page:3000
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+        }
+    }
+}
+
+{$DIRECT_HOSTNAME} {
+    handle /gp* {
+        reverse_proxy {
+            to http://v2ray:8443
             header_up Host {host}
             header_up X-Real-IP {remote}
         }
