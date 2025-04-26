@@ -1,4 +1,4 @@
-import {Layout} from "antd"
+import {Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom"
@@ -16,7 +16,12 @@ const LazyManagement = React.lazy(() => import("./components/ManagePage.tsx"))
 const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 
 const Loading: React.FC = () => {
-    return <div>Loading...</div>
+    return <Spin style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)'
+    }} size="large"/>
 }
 
 const AppLayout: React.FC = () => {
