@@ -2,6 +2,14 @@
     tls me@wwr.icu
     encode gzip
 
+    handle /gp* {
+        reverse_proxy {
+            to http://v2ray:8443
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+        }
+    }
+
     handle_path /api* {
         reverse_proxy {
             to http://basic-service:8000
