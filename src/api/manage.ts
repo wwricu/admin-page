@@ -25,5 +25,5 @@ export const trashGetAllAPI = async () => {
 }
 
 export const trashEditAPI = async (trashBinRO: TrashBinRO) => {
-    return await myAxios.post('/manage/trash/all', trashBinRO).then((res: AxiosResponse<void>) => res.data)
+    return await myAxios.post('/manage/trash/edit', trashBinRO).then((res: AxiosResponse<void>) => res.data)
 }

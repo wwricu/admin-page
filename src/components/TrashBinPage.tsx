@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react'
 import {Flex, message, Popconfirm, Table, Typography} from 'antd'
 import {TrashBinVO} from "../model/response.ts";
-import {trashGetAllAPI} from "../api/manage.ts";
+import {trashEditAPI, trashGetAllAPI} from "../api/manage.ts";
 
 const {Column} = Table
 
@@ -60,17 +60,25 @@ const TrashBinPage: React.FC = () => {
                             <Popconfirm
                                 title='Sure to recover?'
                                 onConfirm={() => {
-                                    messageApi.success(trashBinVO.id).then()
+                                    trashEditAPI({
+                                        id: trashBinVO.id,
+                                        type: trashBinVO.type,
+                                        delete: false
+                                    }).then(messageApi.success(trashBinVO.id)).then()
                                 }}
                             >
-                                <Typography.Link color='red'>
+                                <Typography.Link>
                                     Recover
                                 </Typography.Link>
                             </Popconfirm>
                             <Popconfirm title="Sure to Delete?" onConfirm={() => {
-                                messageApi.success(trashBinVO.id).then()
+                                trashEditAPI({
+                                    id: trashBinVO.id,
+                                    type: trashBinVO.type,
+                                    delete: true
+                                }).then(messageApi.success(trashBinVO.id)).then()
                             }}>
-                                <Typography.Link color='red'>
+                                <Typography.Link>
                                     Delete
                                 </Typography.Link>
                             </Popconfirm>
