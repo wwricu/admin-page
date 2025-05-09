@@ -26,3 +26,9 @@ export enum ConfigKeyEnum {
     USERNAME = 'username',
     PASSWORD = 'password'
 }
+
+export enum EntityTypeEnum {
+    BLOG_POST = 'blog_post',
+    POST_TAG = 'post_tag',
+    POST_CAT = 'post_category'
+}

@@ -14,6 +14,7 @@ const LazyEditor = React.lazy(() => import("./components/EditorPage"))
 const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
 const LazyManagement = React.lazy(() => import("./components/ManagePage.tsx"))
 const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
+const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"))
 
 const Loading: React.FC = () => {
     return <Spin style={{
@@ -87,6 +88,11 @@ export default function App() {
                     <Route path="/edit/:id" element={(
                         <Suspense fallback={<Loading/>}>
                             <LazyEditor/>
+                        </Suspense>
+                    )}/>
+                    <Route path="/trash" element={(
+                        <Suspense fallback={<Loading/>}>
+                            <LazyTrashBinPage/>
                         </Suspense>
                     )}/>
                     <Route path="/" element={<Navigate to="/post" replace/>}/>
