@@ -2,7 +2,7 @@
 
 import React, {useEffect, useRef, useState} from 'react'
 import {Flex, Input, InputRef, message, Modal, Popconfirm, Table, Typography} from 'antd'
-import {databaseAPI, getConfigAPI, userAPI} from "../api/manage.ts";
+import {databaseAPI, getConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts";
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
 import {baseUrl} from "../api/common.ts";
@@ -28,13 +28,22 @@ const ManagePage: React.FC = () => {
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
     const [modalApi, modalContextHolder] = Modal.useModal();
     const inputRef = useRef<InputRef>(null);
-    const [username, setUsername] = useState<string>();
     const navigate = useNavigate();
+
+    const [username, setUsername] = useState<string>();
+    const [totpEnforce, setTotpEnforce] = useState<boolean>(false);
+
+    const getTotpEnforce = () => {
+        getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE).then((res: string | null) => {
+            setTotpEnforce(!!res);
+        })
+    }
 
     useEffect(() => {
         getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
             setUsername(res ?? '');
         })
+        getTotpEnforce()
     })
 
     const actionTableData: ActionRow[] = [
@@ -79,7 +88,6 @@ const ManagePage: React.FC = () => {
                                                 navigate('/login')
                                             }
                                         )
-
                                     }
                                 });
 
@@ -110,7 +118,6 @@ const ManagePage: React.FC = () => {
                                         )
                                     }
                                 });
-
                             }
                         });
                     },
@@ -152,7 +159,58 @@ const ManagePage: React.FC = () => {
                     }
                 }
             ]
-        }
+        },
+        {
+            key: '4',
+            title: 'TOTP',
+            actions: [
+                {
+                    name: totpEnforce ? 'Disable' : 'Enforce',
+                    handle: () => {
+                        if (totpEnforce) {
+                            Modal.confirm({
+                                title: 'Disable TOTP?',
+                                onOk() {
+                                   return new Promise((resolve: (value: unknown) => void) => {
+                                        totpEnforceAPI(false).then(
+                                            messageApi.info('success')).then(
+                                            getTotpEnforce).then(
+                                            () => resolve(true)
+                                        )
+                                    });
+                                }
+                              })
+                            return
+                        }
+                        totpEnforceAPI(true).then(secret => {
+                            if (!secret) {
+                                messageApi.error('Failed to enforce totp').then(console.error)
+                                return
+                            }
+                            modalApi.confirm({
+                                icon: null,
+                                title: 'Confirm totp',
+                                content: <>
+                                    {secret}
+                                    <Input
+                                        ref={inputRef}
+                                        style={{marginTop: '15px', marginBottom: '15px'}}
+                                    />
+                                </>,
+                                onOk: () => {
+                                    return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
+                                        totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
+                                            messageApi.info('success')).then(
+                                            () => resolve(true)).then(
+                                            getTotpEnforce).finally(reject)
+                                    });
+                                }
+                            });
+                        })
+                    }
+                }
+            ]
+        },
     ]
 
     return (
