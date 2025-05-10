@@ -32,6 +32,6 @@ export const totpEnforceAPI = async (enforce: boolean) => {
     return await myAxios.get(`/manage/totp/enforce?enforce=${enforce}`).then((res: AxiosResponse<string | null>) => res.data)
 }
 
-export const totpConfirmAPI = async (otp: string) => {
-    return await myAxios.get(`/manage/totp/confirm?otp=${otp}`).then((res: AxiosResponse<void>) => res.data)
+export const totpConfirmAPI = async (totp: string) => {
+    return await myAxios.get(`/manage/totp/confirm?totp=${totp}`).then((res: AxiosResponse<void>) => res.data)
 }

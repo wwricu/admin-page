@@ -36,7 +36,7 @@ export interface LoginRO {
     username: string
     password: string
     captcha?: string
-    otp?: string
+    totp?: string
 }
 
 export interface ConfigRO {

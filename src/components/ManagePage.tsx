@@ -198,9 +198,8 @@ const ManagePage: React.FC = () => {
                                     />
                                 </>,
                                 onOk: () => {
-                                    const otp = inputRef?.current?.input?.value ?? ''
                                     return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
-                                        totpConfirmAPI(otp).then(
+                                        totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
                                             messageApi.info('success')).then(
                                             () => resolve(true)).then(
                                             getTotpEnforce).finally(reject)
