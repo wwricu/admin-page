@@ -50,5 +50,5 @@ export interface TrashBinVO {
     name: string
     type: EntityTypeEnum
     status?: PostStatusEnum
-    deleted_time: string
+    delete_time: string
 }

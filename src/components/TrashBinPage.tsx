@@ -7,17 +7,17 @@ import {trashEditAPI, trashGetAllAPI} from "../api/manage.ts";
 
 const {Column} = Table
 
-
-
 const TrashBinPage: React.FC = () => {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [trashBinVOList, setTrashBinVOList] = useState<TrashBinVO[]>([])
 
-    useEffect(() => {
+    const getAllTrashBinVO = () => {
         trashGetAllAPI().then((data: TrashBinVO[]) => {
             setTrashBinVOList(data)
         })
-    }, [])
+    }
+
+    useEffect(getAllTrashBinVO, [])
 
 
     return (
@@ -36,25 +36,26 @@ const TrashBinPage: React.FC = () => {
                     key='name'
                     width={200}
                 />
-               <Column
+                <Column
                     <TrashBinVO>
                     title='Type'
                     dataIndex='type'
                     key='type'
                     width={200}
                 />
-               <Column
+                <Column
                     <TrashBinVO>
-                    title='Deleted Time'
-                    dataIndex='deleted_time'
-                    key='deleted_time'
+                    title='Delete Time'
+                    dataIndex='delete_time'
+                    key='delete_time'
                     width={200}
+                    render={(_, {delete_time}: TrashBinVO) => delete_time.slice(0, 10)}
                 />
                 <Column
                     <TrashBinVO>
                     title='Action'
                     key='action'
-                    width={180}
+                    width={100}
                     render={(_, trashBinVO: TrashBinVO) => (
                         <Flex justify='space-evenly' style={{flexWrap: 'wrap'}}>
                             <Popconfirm
@@ -64,7 +65,7 @@ const TrashBinPage: React.FC = () => {
                                         id: trashBinVO.id,
                                         type: trashBinVO.type,
                                         delete: false
-                                    }).then(messageApi.success(trashBinVO.id)).then()
+                                    }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
                                 }}
                             >
                                 <Typography.Link>
@@ -76,7 +77,7 @@ const TrashBinPage: React.FC = () => {
                                     id: trashBinVO.id,
                                     type: trashBinVO.type,
                                     delete: true
-                                }).then(messageApi.success(trashBinVO.id)).then()
+                                }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
                             }}>
                                 <Typography.Link>
                                     Delete
