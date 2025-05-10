@@ -52,7 +52,7 @@ const AppLayout: React.FC = () => {
 
 export default function App() {
     return (
-        <Router basename='/admin'>
+        <Router basename='/'>
             <Routes>
                 <Route path="/login" element={(
                     <Suspense fallback={<Loading/>}>
