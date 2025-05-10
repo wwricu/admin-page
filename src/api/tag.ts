@@ -27,5 +27,5 @@ export const getAllTag = async (
 }
 
 export const deleteTag = async (tagId: number) => {
-    return await myAxios.get(`/tag/delete/${tagId}`).then((res: AxiosResponse<number>) => res.data)
+    return await myAxios.get(`/tag/delete/${tagId}`).then((res: AxiosResponse<void>) => res.data)
 }

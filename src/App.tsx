@@ -1,4 +1,4 @@
-import {Layout} from "antd"
+import {Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom"
@@ -14,9 +14,15 @@ const LazyEditor = React.lazy(() => import("./components/EditorPage"))
 const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
 const LazyManagement = React.lazy(() => import("./components/ManagePage.tsx"))
 const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
+const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"))
 
 const Loading: React.FC = () => {
-    return <div>Loading...</div>
+    return <Spin style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)'
+    }} size="large"/>
 }
 
 const AppLayout: React.FC = () => {
@@ -46,7 +52,7 @@ const AppLayout: React.FC = () => {
 
 export default function App() {
     return (
-        <Router basename='/admin'>
+        <Router basename='/'>
             <Routes>
                 <Route path="/login" element={(
                     <Suspense fallback={<Loading/>}>
@@ -82,6 +88,11 @@ export default function App() {
                     <Route path="/edit/:id" element={(
                         <Suspense fallback={<Loading/>}>
                             <LazyEditor/>
+                        </Suspense>
+                    )}/>
+                    <Route path="/trash" element={(
+                        <Suspense fallback={<Loading/>}>
+                            <LazyTrashBinPage/>
                         </Suspense>
                     )}/>
                     <Route path="/" element={<Navigate to="/post" replace/>}/>

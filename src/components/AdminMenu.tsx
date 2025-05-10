@@ -6,6 +6,7 @@ import {
     BorderlessTableOutlined, EditOutlined,
     TagsOutlined,
     MenuOutlined,
+    DeleteOutlined,
 } from '@ant-design/icons'
 import {Button, Divider, Flex, Menu} from 'antd'
 import {Link, useNavigate} from "react-router-dom"
@@ -43,6 +44,11 @@ const AdminMenu: React.FC = () => {
                     },
                     {
                         key: '5',
+                        icon: <DeleteOutlined/>,
+                        label: <Link to='/trash'>Trash</Link>,
+                    },
+                    {
+                        key: '6',
                         icon: <MenuOutlined/>,
                         label: <Link to='/management'>Management</Link>,
                     }
