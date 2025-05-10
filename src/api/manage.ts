@@ -27,3 +27,11 @@ export const trashGetAllAPI = async () => {
 export const trashEditAPI = async (trashBinRO: TrashBinRO) => {
     return await myAxios.post('/manage/trash/edit', trashBinRO).then((res: AxiosResponse<void>) => res.data)
 }
+
+export const totpEnforceAPI = async (enforce: boolean) => {
+    return await myAxios.get(`/manage/totp/enforce?enforce=${enforce}`).then((res: AxiosResponse<string | null>) => res.data)
+}
+
+export const totpConfirmAPI = async (otp: string) => {
+    return await myAxios.get(`/manage/totp/confirm?otp=${otp}`).then((res: AxiosResponse<void>) => res.data)
+}
