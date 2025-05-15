@@ -125,7 +125,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                     width={180}
                     render={(_, postDetailVO: PostDetailVO) => (
                         <Flex justify='space-evenly' style={{flexWrap: 'wrap'}}>
-                            <Typography.Link href={`${import.meta.env.BASE_URL}/edit/${postDetailVO.id}`}>
+                            <Typography.Link href={`/edit/${postDetailVO.id}`}>
                                 Edit
                             </Typography.Link>
                             <Popconfirm
