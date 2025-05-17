@@ -25,7 +25,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
         setPageIndex(pageIndex)
         setPageSize(pageSize)
         getAllPost(pageIndex, pageSize, postStatus).then((res: PostDetailPageVO) => {
-            setList(res?.post_details)
+            setList(res?.data)
             setCount(res?.count)
         })
     }
@@ -41,7 +41,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
 
     useEffect(() => {
         getAllPost(1, pageSize, postStatus).then((res: PostDetailPageVO) => {
-            setList(res?.post_details)
+            setList(res?.data)
             setCount(res?.count)
         })
     }, [pageSize, postStatus])
