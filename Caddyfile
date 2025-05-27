@@ -17,6 +17,11 @@
             header_up X-Real-IP {remote}
         }
     }
+
+    log {
+        format console
+        output file /var/log/caddy.log
+    }
 }
 
 {$ADMIN_HOSTNAME} {
@@ -43,5 +48,10 @@
         root * /root
         file_server
         try_files {path} {path}/ /index.html
+    }
+
+    log {
+        format console
+        output file /var/log/proxy.log
     }
 }
