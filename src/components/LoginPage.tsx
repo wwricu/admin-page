@@ -2,11 +2,9 @@ import {LockOutlined, UserOutlined} from '@ant-design/icons'
 import {LoginForm, ProConfigProvider, ProFormText} from '@ant-design/pro-components'
 import {Flex, Input, Modal, theme} from 'antd'
 import icon from '/favicon.ico'
-import {loginAPI} from "../api/common.ts"
+import {getTotpStatus, loginAPI} from "../api/common.ts"
 import {useNavigate} from "react-router-dom"
 import {useEffect, useState} from "react";
-import {getConfigAPI} from "../api/manage.ts";
-import {ConfigKeyEnum} from "../model/enum.ts";
 
 
 export default function LoginPage() {
@@ -16,8 +14,8 @@ export default function LoginPage() {
     const [modalApi, modalContextHolder] = Modal.useModal();
 
     useEffect(() => {
-        getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE).then((res: string | null) => {
-            setTotpEnforce(Boolean(res));
+        getTotpStatus().then((res: boolean) => {
+            setTotpEnforce(res)
         })
     })
 
