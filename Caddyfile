@@ -44,6 +44,14 @@
         }
     }
 
+      handle /bp {
+        reverse_proxy {
+            to http://bad_proxy:8443
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+        }
+    }
+
     handle_path /* {
         root * /root
         file_server
