@@ -21,7 +21,6 @@ export enum DatabaseActionEnum {
 
 export enum ConfigKeyEnum {
     ABOUT_CONTENT = 'about_content',
-    ABOUT_AVATAR = 'about_avatar',
     TOTP_ENFORCE = 'totp_enforce',
     USERNAME = 'username',
     PASSWORD = 'password'

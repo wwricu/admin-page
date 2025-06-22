@@ -44,7 +44,7 @@
         }
     }
 
-      handle /bp {
+    handle /bp {
         reverse_proxy {
             to http://bad_proxy:8443
             header_up Host {host}
