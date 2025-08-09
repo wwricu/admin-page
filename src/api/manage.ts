@@ -5,11 +5,11 @@ import {myAxios} from "./common.ts";
 import {TrashBinVO} from "../model/response.ts";
 
 export const databaseAPI = async (action: DatabaseActionEnum) => {
-    return await myAxios.get(`/manage/database?action=${action}`).then((res: AxiosResponse<null>) => res.data)
+    return await myAxios.get(`/manage/database?action=${action}`).then((_: AxiosResponse<void>) => {})
 }
 
 export const setConfigAPI = async (config: ConfigRO) => {
-    return await myAxios.post('/manage/config/set', config).then((res: AxiosResponse<null>) => res.data)
+    return await myAxios.post('/manage/config/set', config).then((_: AxiosResponse<void>) => {})
 }
 
 export const getConfigAPI = async (key: ConfigKeyEnum) => {
@@ -17,7 +17,7 @@ export const getConfigAPI = async (key: ConfigKeyEnum) => {
 }
 
 export const userAPI = async (userRO: UserRO) => {
-    return await myAxios.post('/manage/user', userRO).then((res: AxiosResponse<null>) => res.data)
+    return await myAxios.post('/manage/user', userRO).then((_: AxiosResponse<void>) => {})
 }
 
 export const trashGetAllAPI = async () => {
@@ -25,7 +25,7 @@ export const trashGetAllAPI = async () => {
 }
 
 export const trashEditAPI = async (trashBinRO: TrashBinRO) => {
-    return await myAxios.post('/manage/trash/edit', trashBinRO).then((res: AxiosResponse<void>) => res.data)
+    return await myAxios.post('/manage/trash/edit', trashBinRO).then((_: AxiosResponse<void>) => {})
 }
 
 export const totpEnforceAPI = async (enforce: boolean) => {
@@ -33,5 +33,5 @@ export const totpEnforceAPI = async (enforce: boolean) => {
 }
 
 export const totpConfirmAPI = async (totp: string) => {
-    return await myAxios.get(`/manage/totp/confirm?totp=${totp}`).then((res: AxiosResponse<void>) => res.data)
+    return await myAxios.get(`/manage/totp/confirm?totp=${totp}`).then((_: AxiosResponse<void>) => {})
 }
