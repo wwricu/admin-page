@@ -1,7 +1,7 @@
 import {Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content} from "antd/es/layout/layout"
-import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom"
+import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import './App.css'
 import React, {Suspense, useEffect} from "react"
@@ -27,11 +27,21 @@ const Loading: React.FC = () => {
 
 const AppLayout: React.FC = () => {
     const navigate = useNavigate()
+    const location = useLocation();
+    const loginUrl = '/login'
+
     useEffect(() => {
         infoAPI().then((res: boolean) => {
-            if (!res) navigate("/login")
+            if (location.pathname === loginUrl && res) {
+                navigate('/')
+            } else if (location.pathname !== loginUrl && !res) {
+                navigate(loginUrl)
+            }
+            // Other page with login status
         }).catch(() => {
-            navigate("/login")
+            if (location.pathname !== loginUrl) {
+                navigate(loginUrl)
+            }
         })
     }, [navigate])
     return (
