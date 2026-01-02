@@ -1,4 +1,4 @@
-name: Deploy dev
+name: Publish dev
 on:
   push:
     branches:
@@ -7,7 +7,6 @@ on:
       - '**.yml'
       - '**.md'
       - '**.sh'
-      - '**.json'
       - '**.txt'
       - '**.sql'
       - '**.csv'
