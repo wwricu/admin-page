@@ -164,11 +164,12 @@ export default function EditorPage() {
             {contextHolder}
             <Card
                 title={(
-                        <Flex vertical justify='space-evenly' gap='middle' style={{marginTop: 18, marginBottom: 8}}>
+                        <Flex vertical justify='space-evenly' gap='middle' style={{marginTop: 16, marginBottom: 16}}>
                             <Flex justify='space-between' gap='middle'>
                                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                                 <Select<TagItem>
                                     showSearch
+                                    allowClear
                                     labelInValue
                                     placeholder='No Category'
                                     optionFilterProp='label'
@@ -215,7 +216,7 @@ export default function EditorPage() {
                                         }}
                                         value={preview}
                                         placeholder="Preview"
-                                        style={{ height: 160, resize: 'none' }}
+                                        style={{ height: 140, resize: 'none' }}
                                     />
                                     <Flex gap='small'>
                                         <Popconfirm title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
@@ -232,8 +233,13 @@ export default function EditorPage() {
                             </Flex>
                         </Flex>
                 )}
-                style={{ margin: 24}}
+                style={{ margin: 4, padding: 0}}
+                styles={{
+                    header: { paddingBottom: 2, paddingLeft: 12, paddingRight: 12 },
+                    body: { padding: 12, paddingTop: 16 }
+                }}
             >
+                <div style={{ height: 'calc(100vh - 300px)' }}>
                 <TinyMCE
                     id='tinyMCE'
                     onInit={(_, editor) => {
@@ -258,16 +264,18 @@ export default function EditorPage() {
                         })
                     }}
                     init={{
-                        height: '90vh',
+                        height: '100%',
                         menubar: false,
+                        resize: false,
                         images_upload_handler: tinyMCEImageUploadHandler,
                         automatic_uploads: true,
+                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | image link table',
                         plugins: [
                             'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
-                        ],
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | image link table',
+                        ]
                     }}
                 />
+                </div>
             </Card>
         </>
     )

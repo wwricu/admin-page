@@ -54,8 +54,10 @@ const AdminMenu: React.FC = () => {
                     }
                 ]}
             />
-            <Divider/>
-            <Button onClick={() => logoutAPI().then(() => navigate('/login'))} style={{margin: 16}}>Logout</Button>
+            <Flex vertical justify='flex-end'>
+                <Divider style={{marginBottom: 0}}/>
+                <Button onClick={() => logoutAPI().then(() => navigate('/login'))} style={{margin: 16}}>Logout</Button>
+            </Flex>
         </Flex>
     )
 }

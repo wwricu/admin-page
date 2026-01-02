@@ -141,7 +141,7 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                                     {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
                                 </Typography.Link>
                             </Popconfirm>
-                            <Popconfirm title="Sure to Delete?" onConfirm={() => deletePostAPI(postDetailVO.id)}>
+                            <Popconfirm title="Sure to Delete?" onConfirm={() => deletePostAPI(postDetailVO.id).then(_ => updatePostPage(pageIndex, pageSize))}>
                                 <Typography.Link color='red'>
                                     Delete
                                 </Typography.Link>
