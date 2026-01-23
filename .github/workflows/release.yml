@@ -1,13 +1,11 @@
-name: Publish Release
+name: Publish release
 on:
   push:
     branches:
       - release
     paths-ignore:
-      - '**.yml'
       - '**.md'
       - '**.sh'
-      - '**.json'
       - '**.txt'
       - '**.sql'
       - '**.csv'
