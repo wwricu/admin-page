@@ -192,7 +192,7 @@ export default function EditorPage() {
                                 />
                             </Flex>
                             <Flex justify='space-between' gap='middle'>
-                                <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={5 / 2}>
+                                <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={300 / 180}>
                                     <Upload
                                         name='file'
                                         listType='picture-card'

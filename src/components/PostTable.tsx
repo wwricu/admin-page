@@ -111,15 +111,6 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                 />
                 <Column
                     <PostDetailVO>
-                    title='Preview'
-                    dataIndex='preview'
-                    key='preview'
-                    render={(_, {preview}: PostDetailVO) => (
-                        <Typography.Text>{preview}</Typography.Text>
-                    )}
-                />
-                <Column
-                    <PostDetailVO>
                     title='Action'
                     key='action'
                     width={180}
@@ -137,14 +128,12 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
                                     ).then(_ => updatePostPage(pageIndex, pageSize))
                                 }}
                             >
-                                <Typography.Link color='red'>
+                                <Typography.Link>
                                     {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
                                 </Typography.Link>
                             </Popconfirm>
                             <Popconfirm title="Sure to Delete?" onConfirm={() => deletePostAPI(postDetailVO.id).then(_ => updatePostPage(pageIndex, pageSize))}>
-                                <Typography.Link color='red'>
-                                    Delete
-                                </Typography.Link>
+                                <Typography.Link>Delete</Typography.Link>
                             </Popconfirm>
                         </Flex>
                     )}
