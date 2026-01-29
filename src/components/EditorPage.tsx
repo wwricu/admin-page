@@ -5,8 +5,6 @@ import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
 import {
     Button,
-    Card,
-    Flex,
     type GetProp,
     Image,
     Input,
@@ -22,7 +20,7 @@ import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.t
 import {LoadingOutlined, PlusOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"
-import TinyMCE from "./Editor.tsx";
+import TinyMCE from "./Editor.tsx"
 const { TextArea } = Input
 
 type ProgressFn = (percent: number) => void
@@ -40,10 +38,6 @@ interface BlobInfo {
     base64: () => string
     blobUri: () => string
     uri: () => string | undefined
-}
-
-const selectorStyle = {
-    width: '50%'
 }
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
@@ -117,7 +111,7 @@ export default function EditorPage() {
     })
 
     const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type='button'>
+        <button className={'border-none bg-none'} type='button'>
             {loading ? <LoadingOutlined /> : <PlusOutlined />}
             <div style={{ marginTop: 8 }}>Upload</div>
         </button>
@@ -162,84 +156,79 @@ export default function EditorPage() {
     return (
         <>
             {contextHolder}
-            <Card
-                title={(
-                        <Flex vertical justify='space-evenly' gap='middle' style={{marginTop: 16, marginBottom: 16}}>
-                            <Flex justify='space-between' gap='middle'>
-                                <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
+            <div className='flex flex-col w-full h-full bg-white p-1 pb-0'>
+                <div className='flex justify-start items-center gap-1 p-1 pb-0'>
+                    <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={300 / 180}>
+                        <Upload
+                            name='file'
+                            listType='picture-card'
+                            showUploadList={false}
+                            action={`${baseUrl}/post/upload`}
+                            maxCount={1}
+                            beforeUpload={beforeUpload}
+                            onChange={onChange}
+                            data={getExtraData}
+                            openFileDialogOnClick={coverId === undefined || imageUrl === undefined}
+                        >
+                            {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
+                        </Upload>
+                    </ImgCrop>
+                    <div className={'h-full w-full grid grid-cols-5 gap-1 pr-2'}>
+                        <div className='col-span-3 flex flex-col gap-1'>
+                            <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
+                            <TextArea
+                                className={'flex-1'}
+                                showCount
+                                maxLength={200}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                                    setPreview(e.target.value)
+                                }}
+                                value={preview}
+                                style={{resize: 'none', height: '100%'}}
+                                placeholder="Preview"
+                            />
+                        </div>
+                        <div className='col-span-2 flex flex-col justify-between gap-1'>
+                            <div className='flex flex-col gap-1'>
                                 <Select<TagItem>
+                                    className={'w-full'}
                                     showSearch
                                     allowClear
                                     labelInValue
                                     placeholder='No Category'
                                     optionFilterProp='label'
                                     value={category}
-                                    style={selectorStyle}
                                     options={allCategories}
                                     onChange={(value) => {setCategory(value)}}
                                 />
                                 <Select<TagItem[]>
+                                    className={'w-full'}
                                     showSearch
                                     labelInValue
                                     allowClear
                                     mode='multiple'
                                     placeholder='No Tag'
                                     optionFilterProp='label'
-                                    style={selectorStyle}
                                     value={tags}
                                     onChange={(values) => {setTags(values)}}
                                     options={allTags}
                                 />
-                            </Flex>
-                            <Flex justify='space-between' gap='middle'>
-                                <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={300 / 180}>
-                                    <Upload
-                                        name='file'
-                                        listType='picture-card'
-                                        showUploadList={false}
-                                        action={`${baseUrl}/post/upload`}
-                                        maxCount={1}
-                                        beforeUpload={beforeUpload}
-                                        onChange={onChange}
-                                        data={getExtraData}
-                                        openFileDialogOnClick={coverId === undefined || imageUrl === undefined}
-                                    >
-                                        {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
-                                    </Upload>
-                                </ImgCrop>
-                                <Flex vertical gap='small' style={{width: '100%'}}>
-                                    <TextArea
-                                        showCount
-                                        maxLength={200}
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                                            setPreview(e.target.value)
-                                        }}
-                                        value={preview}
-                                        placeholder="Preview"
-                                        style={{ height: 140, resize: 'none' }}
-                                    />
-                                    <Flex gap='small'>
-                                        <Popconfirm title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
-                                            <Button type='primary'>
-                                                Save
-                                            </Button>
-                                        </Popconfirm>
-                                        <Button onClick={() => {
-                                            setCoverId(undefined)
-                                            setImageUrl(undefined)
-                                        }}>Reset cover</Button>
-                                    </Flex>
-                                </Flex>
-                            </Flex>
-                        </Flex>
-                )}
-                style={{ margin: 4, padding: 0}}
-                styles={{
-                    header: { paddingBottom: 2, paddingLeft: 12, paddingRight: 12 },
-                    body: { padding: 12, paddingTop: 16 }
-                }}
-            >
-                <div style={{ height: 'calc(100vh - 300px)' }}>
+                            </div>
+                            <div className={'flex gap-1'}>
+                                <Popconfirm className={'flex-1'} title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
+                                    <Button type='primary'>
+                                        Save
+                                    </Button>
+                                </Popconfirm>
+                                <Button className={'flex-1'} onClick={() => {
+                                    setCoverId(undefined)
+                                    setImageUrl(undefined)
+                                }}>Reset cover</Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className={'h-full'}>
                 <TinyMCE
                     id='tinyMCE'
                     onInit={(_, editor) => {
@@ -277,7 +266,7 @@ export default function EditorPage() {
                     }}
                 />
                 </div>
-            </Card>
+            </div>
         </>
     )
 }

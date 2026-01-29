@@ -10,13 +10,13 @@ import {
 } from '@ant-design/icons'
 import {Button, Divider, Flex, Menu} from 'antd'
 import {Link, useNavigate} from "react-router-dom"
-import {logoutAPI} from "../api/common.ts";
+import {logoutAPI} from "../api/common.ts"
 
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
     return (
-        <Flex vertical justify='space-between' style={{minHeight: '100vh'}}>
+        <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
             <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}

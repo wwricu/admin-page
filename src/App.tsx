@@ -27,7 +27,7 @@ const Loading: React.FC = () => {
 
 const AppLayout: React.FC = () => {
     const navigate = useNavigate()
-    const location = useLocation();
+    const location = useLocation()
     const loginUrl = '/login'
 
     useEffect(() => {
@@ -45,14 +45,14 @@ const AppLayout: React.FC = () => {
         })
     }, [navigate])
     return (
-        <Layout style={{minHeight: '100vh', width: '100vw'}}>
+        <Layout>
             <Layout>
                 <Sider theme='light'>
                     <Suspense fallback={<Loading/>}>
                         <LazyMenu/>
                     </Suspense>
                 </Sider>
-                <Content style={{padding: '24'}}>
+                <Content>
                     <Outlet/>
                 </Content>
             </Layout>
