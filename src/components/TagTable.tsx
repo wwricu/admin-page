@@ -1,12 +1,11 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, message, Space, TableProps} from 'antd'
+import {message, Space, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
-import {deleteTag, getAllTag, newTag, updateTag} from "../api/tag"
-import {PlusOutlined} from "@ant-design/icons";
+import {deleteTag, getAllTag, updateTag} from "../api/tag"
 
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -59,7 +58,6 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
     const [form] = Form.useForm()
     const [data, setData] = useState<TagVO[]>([])
     const [editingKey, setEditingKey] = useState<number | undefined>()
-    const [creating, setCreating] = useState<boolean>(false)
     const isEditing = (tag: TagVO) => tag.id === editingKey
     const [messageApi, contextHolder] = message.useMessage()
 
@@ -69,23 +67,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         })
     }, [tagType])
 
-    const create = () => {
-        setCreating(true)
-        const newData = [...data]
-        const tag: TagVO = {
-            id: 0,
-            name: '',
-            type: tagType,
-            count: 0
-        }
-        newData.unshift(tag)
-        form.setFieldsValue(tag)
-        setEditingKey(tag.id)
-        setData(newData)
-    }
-
     const edit = (tag: Partial<TagVO> & { id: React.Key }) => {
-        setCreating(false)
         form.setFieldsValue({ name: '', ...tag })
         setEditingKey(tag.id)
     }
@@ -114,8 +96,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                 return
             }
             const tag = newData[index]
-            const tagApi = creating ? newTag : updateTag
-            tagApi({...tag, ...row,}).then((tagVO) => {
+            updateTag({...tag, ...row,}).then((tagVO) => {
                 newData.splice(index, 1, tagVO)
                 setData(newData)
             })
@@ -188,9 +169,6 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         <>
             {contextHolder}
             <Form form={form} component={false}>
-                <Button style={{marginTop: 4, marginLeft: 4}} type='primary' onClick={create}>
-                    <PlusOutlined/>New
-                </Button>
                 <Table<TagVO>
                     rowKey={(tagVO: TagVO) => tagVO.id}
                     components={{body: { cell: EditableCell }}}
