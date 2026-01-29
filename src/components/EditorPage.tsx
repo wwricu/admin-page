@@ -267,11 +267,12 @@ export default function EditorPage() {
                         height: '100%',
                         menubar: false,
                         resize: false,
+                        statusbar: false,
                         images_upload_handler: tinyMCEImageUploadHandler,
                         automatic_uploads: true,
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | image link table',
+                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | subscript superscript charmap | table image link | searchreplace lineheight fullscreen',
                         plugins: [
-                            'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount'
+                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'lineheight', 'link', 'lists', 'media', 'searchreplace', 'table'
                         ]
                     }}
                 />
