@@ -6,15 +6,18 @@ import {
     BorderlessTableOutlined, EditOutlined,
     TagsOutlined,
     MenuOutlined,
-    DeleteOutlined,
+    DeleteOutlined, PlusOutlined,
 } from '@ant-design/icons'
-import {Button, Divider, Flex, Menu} from 'antd'
+import {Button, Divider, Flex, Menu, Popconfirm} from 'antd'
 import {Link, useNavigate} from "react-router-dom"
 import {logoutAPI} from "../api/common.ts"
+import {PostDetailVO} from "../model/response.ts";
+import {createPostAPI} from "../api/post.ts";
 
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
+
     return (
         <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
             <Menu
@@ -22,6 +25,41 @@ const AdminMenu: React.FC = () => {
                 defaultSelectedKeys={['1']}
                 theme='light'
                 items={[
+                    {
+                        key: 'Create',
+                        icon: <PlusOutlined/>,
+                        label: 'Create',
+                        children: [
+                            {
+                                key: 'New Post',
+                                label: (
+                                    <Popconfirm
+                                        className={'w-full'}
+                                        title="Create a new post?"
+                                        onConfirm={() => {
+                                            createPostAPI().then((postDetailVO: PostDetailVO) => {
+                                                navigate(`/edit/${postDetailVO.id}`)
+                                            })
+                                        }}
+                                    >
+                                        <p>New Post</p>
+                                    </Popconfirm>
+                                ),
+                            },
+                            {
+                                key: 'New Category',
+                                label: (
+                                    <div>New Category</div>
+                                ),
+                            },
+                            {
+                                key: 'New Tag',
+                                label: (
+                                    <div>New Tag</div>
+                                ),
+                            }
+                        ]
+                    },
                     {
                         key: '1',
                         icon: <BookOutlined/>,
@@ -47,6 +85,7 @@ const AdminMenu: React.FC = () => {
                         icon: <DeleteOutlined/>,
                         label: <Link to='/trash'>Trash</Link>,
                     },
+
                     {
                         key: '6',
                         icon: <MenuOutlined/>,

@@ -1,12 +1,10 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, Flex, Popconfirm, Table, Tag, Typography} from 'antd'
-import {createPostAPI, deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '../api/post'
+import {Flex, Popconfirm, Table, Tag, Typography} from 'antd'
+import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '../api/post'
 import {PostDetailPageVO, PostDetailVO, TagVO} from '../model/response'
 import {PostStatusEnum} from '../model/enum'
-import {useNavigate} from "react-router-dom";
-import {PlusOutlined} from "@ant-design/icons";
 
 const {Column} = Table
 
@@ -15,7 +13,6 @@ interface PostTableProps {
 }
 
 const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) => {
-    const navigate = useNavigate()
     const [list, setList] = useState<PostDetailVO[]>([])
     const [count, setCount] = useState<number>()
     const [pageIndex, setPageIndex] = useState<number>(1)
@@ -48,14 +45,6 @@ const AdminPostPage: React.FC<PostTableProps> = ({postStatus}: PostTableProps) =
 
     return (
         <div>
-            <Button
-                style={{marginTop: 4, marginLeft: 4}} type='primary'
-                onClick={() => {createPostAPI().then((postDetailVO: PostDetailVO) => {
-                    navigate(`/edit/${postDetailVO.id}`)
-                })}}
-            >
-                <PlusOutlined/>New Post
-            </Button>
             <Table<PostDetailVO>
                 style={{margin: 4}}
                 dataSource={list}
