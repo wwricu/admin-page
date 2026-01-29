@@ -214,7 +214,7 @@ export default function EditorPage() {
                                     options={allTags}
                                 />
                             </div>
-                            <div className={'flex gap-1'}>
+                            <div className={'flex gap-1 flex-wrap'}>
                                 <Popconfirm className={'flex-1'} title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
                                     <Button type='primary'>
                                         Save

@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useRef, useState} from 'react'
-import {Flex, Input, InputRef, message, Modal, Popconfirm, Table, Typography} from 'antd'
+import {Button, Flex, Input, InputRef, message, Modal, Popconfirm, Table} from 'antd'
 import {databaseAPI, getConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts";
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
 import AboutEditor from "./AboutEditor.tsx";
@@ -224,6 +224,8 @@ const ManagePage: React.FC = () => {
             />
             <Table
                 <ActionRow>
+                scroll={{ x: true }}
+                size='small'
                 dataSource={actionTableData}
                 pagination={false}
                 style={{margin: 4}}
@@ -237,18 +239,16 @@ const ManagePage: React.FC = () => {
                     title='Actions'
                     key='actions'
                     render={(_, row: ActionRow) => (
-                        <Flex key={row.key} justify='flex-start' gap='middle' style={{flexWrap: 'wrap'}}>
+                        <Flex key={row.key} justify='flex-start' gap='middle'>
                             {row?.actions.map((action: Action) =>
                                 action.confirmMessage ? (
                                     <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
-                                        <Typography.Link>
-                                            {action.name}
-                                        </Typography.Link>
+                                        <Button size='small'>{action.name}</Button>
                                     </Popconfirm>
                                 ) : (
-                                    <Typography.Link key={action.name} onClick={action.handle}>
+                                    <Button key={action.name} size='small' onClick={action.handle}>
                                         {action.name}
-                                    </Typography.Link>
+                                    </Button>
                                 )
                             )}
                         </Flex>

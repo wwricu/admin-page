@@ -1,8 +1,8 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {message, Space, TableProps} from 'antd'
-import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
+import {Button, message, Space, TableProps} from 'antd'
+import { Form, Input, InputNumber, Popconfirm, Table} from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
 import {deleteTag, getAllTag, updateTag} from "../api/tag"
@@ -99,6 +99,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             updateTag({...tag, ...row,}).then((tagVO) => {
                 newData.splice(index, 1, tagVO)
                 setData(newData)
+                messageApi.success("success").then()
             })
             setEditingKey(undefined)
         } catch (errInfo) {
@@ -126,22 +127,22 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
                   <span>
-                    <Typography.Link onClick={() => save(tag.id)} style={{ marginInlineEnd: 8 }}>
+                    <Button variant='solid' color='primary' size='small' onClick={() => save(tag.id)} style={{ marginInlineEnd: 8 }}>
                       Save
-                    </Typography.Link>
+                    </Button>
                     <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                      <a>Cancel</a>
+                      <Button size='small'>Cancel</Button>
                     </Popconfirm>
                   </span>
                 ) : (
                   <Space size='middle'>
-                      <Typography.Link disabled={editingKey !== undefined} onClick={() => edit(tag)}>
+                      <Button size='small' disabled={editingKey !== undefined} onClick={() => edit(tag)}>
                           Edit
-                      </Typography.Link>
+                      </Button>
                       <Popconfirm title="Sure to Delete?" onConfirm={() => remove(tag)}>
-                          <Typography.Link color='red'>
+                          <Button variant='solid' size='small' color='danger'>
                               Delete
-                          </Typography.Link>
+                          </Button>
                       </Popconfirm>
                   </Space>
                 )
@@ -170,6 +171,8 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             {contextHolder}
             <Form form={form} component={false}>
                 <Table<TagVO>
+                    size={'small'}
+                    scroll={{ x: true }}
                     rowKey={(tagVO: TagVO) => tagVO.id}
                     components={{body: { cell: EditableCell }}}
                     bordered
