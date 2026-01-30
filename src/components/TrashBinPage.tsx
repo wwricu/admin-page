@@ -19,13 +19,12 @@ const TrashBinPage: React.FC = () => {
 
     useEffect(getAllTrashBinVO, [])
 
-
     return (
         <>
             {messageContextHolder}
             <Table
                 <TrashBinVO>
-                style={{margin: 4}}
+                className='m-1'
                 dataSource={trashBinVOList}
                 rowKey={(trashBinVO: TrashBinVO) => `${trashBinVO.id}:${trashBinVO.type}`}
             >
@@ -57,7 +56,7 @@ const TrashBinPage: React.FC = () => {
                     key='action'
                     width={100}
                     render={(_, trashBinVO: TrashBinVO) => (
-                        <Flex justify='space-evenly' style={{flexWrap: 'wrap'}}>
+                        <Flex justify='space-evenly' className='flex-nowrap'>
                             <Popconfirm
                                 title='Sure to recover?'
                                 onConfirm={() => {

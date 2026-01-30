@@ -71,7 +71,7 @@ const ManagePage: React.FC = () => {
                             title: 'Set username',
                             content: <Input
                                 ref={inputRef}
-                                style={{ marginTop: '15px', marginBottom: '15px' }}
+                                className='my-3.75'
                                 defaultValue={username}
                             />,
                             onOk: () => {
@@ -101,7 +101,7 @@ const ManagePage: React.FC = () => {
                         modalApi.confirm({
                             icon: null,
                             title: 'Input new Password',
-                            content: <Input ref={inputRef} style={{ marginTop: '15px', marginBottom: '15px' }} />,
+                            content: <Input className='my-3.75' ref={inputRef}/>,
                             onOk: () => {
                                 const password = inputRef?.current?.input?.value
                                 return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
@@ -194,7 +194,7 @@ const ManagePage: React.FC = () => {
                                     {secret}
                                     <Input
                                         ref={inputRef}
-                                        style={{marginTop: '15px', marginBottom: '15px'}}
+                                        className='my-3.75'
                                     />
                                 </>,
                                 onOk: () => {
@@ -224,11 +224,11 @@ const ManagePage: React.FC = () => {
             />
             <Table
                 <ActionRow>
+                className='m-1'
                 scroll={{ x: true }}
                 size='small'
                 dataSource={actionTableData}
                 pagination={false}
-                style={{margin: 4}}
             >
                 <Column
                     title='Name'
