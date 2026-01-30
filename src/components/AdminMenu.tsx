@@ -1,27 +1,73 @@
 'use client'
 
-import React from 'react'
+import React, {ChangeEvent, useState} from 'react'
 import {
     BookOutlined,
     BorderlessTableOutlined, EditOutlined,
     TagsOutlined,
     MenuOutlined,
-    DeleteOutlined,
+    DeleteOutlined, PlusOutlined,
 } from '@ant-design/icons'
-import {Button, Divider, Flex, Menu} from 'antd'
+import {Button, Divider, Flex, Input, Menu, message, Modal, Popconfirm} from 'antd'
 import {Link, useNavigate} from "react-router-dom"
-import {logoutAPI} from "../api/common.ts";
-
+import {logoutAPI} from "../api/common.ts"
+import {PostDetailVO} from "../model/response.ts";
+import {createPostAPI} from "../api/post.ts";
+import {newTag} from "../api/tag.ts";
+import {TagTypeEnum} from "../model/enum.ts";
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
+    const [inputValue, setInputValue] = useState<string>('')
+
     return (
-        <Flex vertical justify='space-between' style={{minHeight: '100vh'}}>
+        <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
             <Menu
                 mode="inline"
                 defaultSelectedKeys={['1']}
                 theme='light'
                 items={[
+                    {
+                        key: 'Create',
+                        icon: <PlusOutlined/>,
+                        label: 'Create',
+                        children: [
+                            {
+                                key: 'New Post',
+                                label: (
+                                    <Popconfirm
+                                        className={'w-full'}
+                                        title="Create a new post?"
+                                        onConfirm={() => {
+                                            createPostAPI().then((postDetailVO: PostDetailVO) => {
+                                                navigate(`/edit/${postDetailVO.id}`)
+                                            })
+                                        }}
+                                    >
+                                        New Post
+                                    </Popconfirm>
+                                ),
+                            },
+                            {
+                                key: 'New Category',
+                                label: 'New Category',
+                                onClick: () => {
+                                    setCreatingName('category')
+                                    setIsModalOpen(true)
+                                }
+                            },
+                            {
+                                key: 'New Tag',
+                                label: 'New Tag',
+                                onClick: () => {
+                                    setCreatingName('tag')
+                                    setIsModalOpen(true)
+                                }
+                            }
+                        ]
+                    },
                     {
                         key: '1',
                         icon: <BookOutlined/>,
@@ -47,6 +93,7 @@ const AdminMenu: React.FC = () => {
                         icon: <DeleteOutlined/>,
                         label: <Link to='/trash'>Trash</Link>,
                     },
+
                     {
                         key: '6',
                         icon: <MenuOutlined/>,
@@ -58,6 +105,31 @@ const AdminMenu: React.FC = () => {
                 <Divider style={{marginBottom: 0}}/>
                 <Button onClick={() => logoutAPI().then(() => navigate('/login'))} style={{margin: 16}}>Logout</Button>
             </Flex>
+            <Modal
+                closable={false}
+                open={isModalOpen}
+                onCancel={() => setIsModalOpen(false)}
+                onOk={() => {
+                    if (!inputValue) {
+                        message.error('Please enter name', 1).then()
+                        return
+                    }
+                    const type = creatingName === 'category' ? TagTypeEnum.POST_CAT : TagTypeEnum.POST_TAG
+                    newTag({ name: inputValue, type: type }).then(() => {
+                        setInputValue('')
+                        setIsModalOpen(false)
+                        message.success('success', 2).then()
+                        navigate(`/${creatingName}`)
+                    })
+                }}
+            >
+                <Input
+                    value={inputValue}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {setInputValue(e.target.value)}}
+                    placeholder={`Input new ${creatingName} name`}
+                    className={'my-2'}>
+                </Input>
+            </Modal>
         </Flex>
     )
 }

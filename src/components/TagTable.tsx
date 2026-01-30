@@ -2,11 +2,10 @@
 
 import React, {useEffect, useState} from 'react'
 import {Button, message, Space, TableProps} from 'antd'
-import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
+import { Form, Input, InputNumber, Popconfirm, Table} from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
-import {deleteTag, getAllTag, newTag, updateTag} from "../api/tag"
-import {PlusOutlined} from "@ant-design/icons";
+import {deleteTag, getAllTag, updateTag} from "../api/tag"
 
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -59,7 +58,6 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
     const [form] = Form.useForm()
     const [data, setData] = useState<TagVO[]>([])
     const [editingKey, setEditingKey] = useState<number | undefined>()
-    const [creating, setCreating] = useState<boolean>(false)
     const isEditing = (tag: TagVO) => tag.id === editingKey
     const [messageApi, contextHolder] = message.useMessage()
 
@@ -69,23 +67,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         })
     }, [tagType])
 
-    const create = () => {
-        setCreating(true)
-        const newData = [...data]
-        const tag: TagVO = {
-            id: 0,
-            name: '',
-            type: tagType,
-            count: 0
-        }
-        newData.unshift(tag)
-        form.setFieldsValue(tag)
-        setEditingKey(tag.id)
-        setData(newData)
-    }
-
     const edit = (tag: Partial<TagVO> & { id: React.Key }) => {
-        setCreating(false)
         form.setFieldsValue({ name: '', ...tag })
         setEditingKey(tag.id)
     }
@@ -114,10 +96,10 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                 return
             }
             const tag = newData[index]
-            const tagApi = creating ? newTag : updateTag
-            tagApi({...tag, ...row,}).then((tagVO) => {
+            updateTag({...tag, ...row,}).then((tagVO) => {
                 newData.splice(index, 1, tagVO)
                 setData(newData)
+                messageApi.success("success").then()
             })
             setEditingKey(undefined)
         } catch (errInfo) {
@@ -145,22 +127,22 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
                   <span>
-                    <Typography.Link onClick={() => save(tag.id)} style={{ marginInlineEnd: 8 }}>
+                    <Button variant='solid' color='primary' size='small' onClick={() => save(tag.id)} style={{ marginInlineEnd: 8 }}>
                       Save
-                    </Typography.Link>
+                    </Button>
                     <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                      <a>Cancel</a>
+                      <Button size='small'>Cancel</Button>
                     </Popconfirm>
                   </span>
                 ) : (
                   <Space size='middle'>
-                      <Typography.Link disabled={editingKey !== undefined} onClick={() => edit(tag)}>
+                      <Button size='small' disabled={editingKey !== undefined} onClick={() => edit(tag)}>
                           Edit
-                      </Typography.Link>
+                      </Button>
                       <Popconfirm title="Sure to Delete?" onConfirm={() => remove(tag)}>
-                          <Typography.Link color='red'>
+                          <Button variant='solid' size='small' color='danger'>
                               Delete
-                          </Typography.Link>
+                          </Button>
                       </Popconfirm>
                   </Space>
                 )
@@ -188,10 +170,9 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         <>
             {contextHolder}
             <Form form={form} component={false}>
-                <Button style={{marginTop: 4, marginLeft: 4}} type='primary' onClick={create}>
-                    <PlusOutlined/>New
-                </Button>
                 <Table<TagVO>
+                    size={'small'}
+                    scroll={{ x: true }}
                     rowKey={(tagVO: TagVO) => tagVO.id}
                     components={{body: { cell: EditableCell }}}
                     bordered
