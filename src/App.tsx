@@ -1,4 +1,4 @@
-import {Button, Drawer, Layout, Spin} from "antd"
+import {Button, ConfigProvider, Drawer, Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
@@ -6,7 +6,8 @@ import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import './App.css'
 import React, {Suspense, useEffect, useState} from "react"
 import {infoAPI} from "./api/common.ts"
-import {MenuOutlined} from "@ant-design/icons";
+import {MenuOutlined} from "@ant-design/icons"
+import useAutoTheme from "./theme.ts"
 
 const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
@@ -81,7 +82,7 @@ const AppLayout: React.FC = () => {
     )
 }
 
-export default function App() {
+const AppRouter = () => {
     return (
         <Router basename='/'>
             <Routes>
@@ -130,5 +131,14 @@ export default function App() {
                 </Route>
             </Routes>
         </Router>
+    )
+}
+
+export default function App() {
+    const theme = useAutoTheme()
+    return (
+        <ConfigProvider theme={theme}>
+            <AppRouter/>
+        </ConfigProvider>
     )
 }
