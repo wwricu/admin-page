@@ -36,8 +36,8 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
         <td {...restProps}>
             {editing ? (
                 <Form.Item
+                    className='m-0'
                     name={dataIndex}
-                    style={{ margin: 0 }}
                     rules={[
                         {
                             required: true,
@@ -127,7 +127,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
                   <span>
-                    <Button variant='solid' color='primary' size='small' onClick={() => save(tag.id)} style={{ marginInlineEnd: 8 }}>
+                    <Button className='me-2' variant='solid' color='primary' size='small' onClick={() => save(tag.id)}>
                       Save
                     </Button>
                     <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
@@ -171,6 +171,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             {contextHolder}
             <Form form={form} component={false}>
                 <Table<TagVO>
+                    className='m-1'
                     size={'small'}
                     scroll={{ x: true }}
                     rowKey={(tagVO: TagVO) => tagVO.id}
@@ -180,7 +181,6 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
                     columns={mergedColumns}
                     rowClassName="editable-row"
                     pagination={{ onChange: cancel, simple: true}}
-                    style={{margin: 4}}
                 />
             </Form>
         </>

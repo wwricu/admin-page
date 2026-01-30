@@ -57,14 +57,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     width={200}
                     render={(_, { title }: PostDetailVO) =>
                         <Tooltip title={title}>
-                            <div
-                                style={{
-                                    width: '200px',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
-                            >
+                            <div className='w-50 whitespace-nowrap overflow-hidden text-ellipsis'>
                                 {title}
                             </div>
                         </Tooltip>
@@ -88,7 +81,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     width={150}
                     render={(_, { category }: PostDetailVO) =>
                         category ? (
-                            <Tag color={'blue'} style={{maxWidth: 150, overflow: 'hidden'}}>
+                            <Tag className='max-w-37.5 overflow-hidden' color={'blue'}>
                                 {category.name.toUpperCase()}
                             </Tag>
                         ) : <></>
@@ -104,7 +97,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                         <>
                             {tag_list.map((tag: TagVO) => {
                                 return (
-                                    <Tag color={'blue'} key={tag.id} style={{maxWidth: 200, overflow: 'hidden'}}>
+                                    <Tag className={'mw-50 overflow-hidden'} color={'blue'} key={tag.id}>
                                         {tag.name.toUpperCase()}
                                     </Tag>
                                 )

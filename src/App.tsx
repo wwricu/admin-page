@@ -18,12 +18,7 @@ const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"))
 
 const Loading: React.FC = () => {
-    return <Spin style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)'
-    }} size="large"/>
+    return <Spin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" size="large"/>
 }
 
 const AppLayout: React.FC = () => {
