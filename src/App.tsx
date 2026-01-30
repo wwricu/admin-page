@@ -1,12 +1,12 @@
-import {Layout, Spin} from "antd"
+import {Button, Drawer, Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
-import {Content} from "antd/es/layout/layout"
+import {Content, Header} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import './App.css'
-import React, {Suspense, useEffect} from "react"
+import React, {Suspense, useEffect, useState} from "react"
 import {infoAPI} from "./api/common.ts"
-
+import {MenuOutlined} from "@ant-design/icons";
 
 const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
@@ -29,6 +29,7 @@ const AppLayout: React.FC = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const loginUrl = '/login'
+    const [open, setOpen] = useState(false)
 
     useEffect(() => {
         infoAPI().then((res: boolean) => {
@@ -44,19 +45,39 @@ const AppLayout: React.FC = () => {
             }
         })
     }, [navigate])
+
     return (
-        <Layout>
-            <Layout>
-                <Sider theme='light'>
-                    <Suspense fallback={<Loading/>}>
-                        <LazyMenu/>
-                    </Suspense>
-                </Sider>
-                <Content>
-                    <Outlet/>
-                </Content>
+        <>
+            <Layout className='h-screen'>
+                <Header className='lg:hidden'>
+                    <Button color="default" variant="text" onClick={() => setOpen(true)}>
+                        <MenuOutlined/>
+                    </Button>
+                </Header>
+                <Layout>
+                    <Sider className='max-lg:hidden' theme='light'>
+                        <Suspense fallback={<Loading/>}>
+                            <LazyMenu/>
+                        </Suspense>
+                    </Sider>
+                    <Content><Outlet/></Content>
+                </Layout>
             </Layout>
-        </Layout>
+            <Drawer
+                width={200}
+                title={null}
+                placement='left'
+                closable={false}
+                onClose={() => setOpen(false)}
+                open={open}
+                key={'left'}
+                styles={{body: {padding: 0}}}
+            >
+                <Suspense fallback={<Loading/>}>
+                    <LazyMenu/>
+                </Suspense>
+            </Drawer>
+        </>
     )
 }
 
