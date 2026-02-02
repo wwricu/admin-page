@@ -113,7 +113,7 @@ export default function EditorPage() {
     const uploadButton = (
         <button className={'border-none bg-none'} type='button'>
             {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
+            <div className='mt-2'>Upload</div>
         </button>
     )
     useEffect(() => {
@@ -177,14 +177,13 @@ export default function EditorPage() {
                         <div className='col-span-3 flex flex-col gap-1'>
                             <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                             <TextArea
-                                className={'flex-1'}
+                                className={'flex-1 resize-none h-full'}
                                 showCount
                                 maxLength={200}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                                     setPreview(e.target.value)
                                 }}
                                 value={preview}
-                                style={{resize: 'none', height: '100%'}}
                                 placeholder="Preview"
                             />
                         </div>

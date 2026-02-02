@@ -102,8 +102,8 @@ const AdminMenu: React.FC = () => {
                 ]}
             />
             <Flex vertical justify='flex-end'>
-                <Divider style={{marginBottom: 0}}/>
-                <Button onClick={() => logoutAPI().then(() => navigate('/login'))} style={{margin: 16}}>Logout</Button>
+                <Divider className='mb-0'/>
+                <Button className='mx-4 mb-5' onClick={() => logoutAPI().then(() => navigate('/login'))}>Logout</Button>
             </Flex>
             <Modal
                 closable={false}

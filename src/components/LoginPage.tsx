@@ -49,12 +49,12 @@ export default function LoginPage() {
                                     title: 'Input totp',
                                     content: <Flex justify='center'>
                                         <Input.OTP
+                                            className='my-3.75'
                                             onChange={(totp: string) => {
                                                 if (totp.length == 6) {
                                                     login(record.username, record.password, totp)
                                                 }
                                             }}
-                                            style={{marginTop: '15px', marginBottom: '15px'}}
                                         />
                                     </Flex>
                                 });
