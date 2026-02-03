@@ -7,8 +7,9 @@ import {
     TagsOutlined,
     MenuOutlined,
     DeleteOutlined, PlusOutlined,
+    ExclamationCircleFilled
 } from '@ant-design/icons'
-import {Button, Divider, Flex, Input, Menu, message, Modal, Popconfirm} from 'antd'
+import {Button, Divider, Flex, Input, Menu, message, Modal, Popover} from 'antd'
 import {Link, useLocation, useNavigate} from "react-router-dom"
 import {logoutAPI} from "../api/common.ts"
 import {PostDetailVO} from "../model/response.ts";
@@ -23,6 +24,7 @@ const AdminMenu: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
+    const [popoverOpen, setPopoverOpen] = useState(false);
 
     useEffect(() => {
         setActiveKey(location.pathname.split('/').filter(Boolean)[0] || '')
@@ -43,20 +45,44 @@ const AdminMenu: React.FC = () => {
                             {
                                 key: 'New Post',
                                 label: (
-                                    <Popconfirm
-                                        className='w-full'
-                                        title="Create a new post?"
-                                        onConfirm={() => {
-                                            createPostAPI().then((postDetailVO: PostDetailVO) => {
-                                                navigate(`/edit/${postDetailVO.id}`)
-                                            })
-                                        }}
-                                    >
-                                        <div className={'w-100'}>
-                                            New Post
-                                        </div>
-                                    </Popconfirm>
+                                    <Popover
+                                        trigger='click'
+                                        open={popoverOpen}
+                                        onOpenChange={setPopoverOpen}
+                                        content={
+                                            <div>
+                                                <div className='mb-2 h-5.5'>
+                                                    <ExclamationCircleFilled className='w-5.5 h-5.5' style={{fontSize: 14, color: '#faad14'}}/>
+                                                    Create new post?
+                                                </div>
+                                                <div className='text-end'>
+                                                    <Button size='small' onClick={() => setPopoverOpen(false)}>Cancel</Button>
+                                                    <Button
+                                                        className='ml-2'
+                                                        size='small'
+                                                        type='primary'
+                                                        onClick={() => {
+                                                            createPostAPI().then((postDetailVO: PostDetailVO) => {
+                                                                navigate(`/edit/${postDetailVO.id}`)
+                                                                setPopoverOpen(false)
+                                                                message.success('New post created').then()
+                                                            })
+                                                        }}
+                                                    >
+                                                        OK
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        }
+                                      >
+                                        <div>New Post</div>
+                                    </Popover>
                                 ),
+                                onClick: () => {
+                                    if (!popoverOpen) { // TODO: MUST check this or popover cannot be closed inline, but WHY?
+                                        setPopoverOpen(true)
+                                    }
+                                }
                             },
                             {
                                 key: 'New Category',

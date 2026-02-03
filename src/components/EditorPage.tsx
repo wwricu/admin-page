@@ -3,16 +3,7 @@ import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
 import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
-import {
-    Button,
-    type GetProp,
-    Image,
-    Input,
-    message, Popconfirm,
-    Select,
-    Upload,
-    type UploadProps
-} from 'antd'
+import {Button, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
 import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
 import {baseUrl, uploadFileAPI} from "../api/common.ts"
@@ -21,6 +12,7 @@ import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-desi
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"
 import TinyMCE from "./Editor.tsx"
+
 const { TextArea } = Input
 
 type TagItem = {
@@ -227,8 +219,8 @@ export default function EditorPage() {
                         More Options
                     </Button>
                     <Popconfirm className='flex-1' title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
-                        <Button type='primary'>
-                            Save
+                        <Button variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
+                            Save {postStatus} post
                         </Button>
                     </Popconfirm>
                 </div>
