@@ -51,7 +51,3 @@ export const logoutAPI = async () => {
 export const infoAPI = async () => {
     return await myAxios.get('/info').then((res: AxiosResponse<boolean>) => res.data)
 }
-
-export const getTotpStatus = async () => {
-    return await myAxios.get('/totp').then((res: AxiosResponse<boolean>) => res.data)
-}
