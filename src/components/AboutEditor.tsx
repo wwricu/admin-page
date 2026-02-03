@@ -37,8 +37,10 @@ export default function AboutEditor({onOk, ...props}: ModalProps) {
                 }}
                 init={{
                     menubar: false,
+                    branding: false,
                     width: '100%',
-                    height: '600px'
+                    height: '500px',
+                    plugins: ['wordcount']
                 }}
             />
         </Modal>
