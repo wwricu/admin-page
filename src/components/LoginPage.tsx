@@ -1,7 +1,7 @@
-import {loginAPI} from "../api/common.ts"
+import {infoAPI, loginAPI} from "../api/common.ts"
 import {useNavigate} from "react-router-dom"
-import {useState} from "react"
-import {Form, Button, Input} from "antd"
+import {useEffect, useState} from "react"
+import {Form, Button, Input, message} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons"
 import {AxiosError} from "axios"
 import {LoginRO} from "../model/request.ts"
@@ -11,6 +11,14 @@ export default function LoginPage() {
     const navigate = useNavigate()
     const [loginForm] = Form.useForm()
     const [loginPhase, setLoginPhase] = useState<'account' | 'totp'>('account')
+
+    useEffect(() => {
+        infoAPI().then((res: boolean) => {
+            if (res) {
+                message.success('Logging in...', 1).then(() => navigate('/'))
+            }
+        })
+    }, [navigate])
 
     const login = (username: string, password: string, totp: string | undefined = undefined) => {
         loginAPI(
