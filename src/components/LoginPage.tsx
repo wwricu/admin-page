@@ -33,7 +33,7 @@ export default function LoginPage() {
         <>
             {modalContextHolder}
             <ProConfigProvider hashed={false}>
-                <div style={{backgroundColor: token.colorBgContainer}}>
+                <div style={{backgroundColor: token.colorBgContainer, height: '100vh'}}>
                     <LoginForm
                         logo={icon}
                         title="wwr.icu"
