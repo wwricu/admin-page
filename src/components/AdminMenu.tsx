@@ -1,6 +1,6 @@
 'use client'
 
-import React, {ChangeEvent, useState} from 'react'
+import React, {ChangeEvent, useEffect, useState} from 'react'
 import {
     BookOutlined,
     BorderlessTableOutlined, EditOutlined,
@@ -9,7 +9,7 @@ import {
     DeleteOutlined, PlusOutlined,
 } from '@ant-design/icons'
 import {Button, Divider, Flex, Input, Menu, message, Modal, Popconfirm} from 'antd'
-import {Link, useNavigate} from "react-router-dom"
+import {Link, useLocation, useNavigate} from "react-router-dom"
 import {logoutAPI} from "../api/common.ts"
 import {PostDetailVO} from "../model/response.ts";
 import {createPostAPI} from "../api/post.ts";
@@ -18,19 +18,25 @@ import {TagTypeEnum} from "../model/enum.ts";
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
+    const location = useLocation()
+    const [activeKey, setActiveKey] = useState<string>('')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
+
+    useEffect(() => {
+        setActiveKey(location.pathname.split('/').filter(Boolean)[0] || '')
+    }, [location]);
 
     return (
         <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
             <Menu
                 mode="inline"
-                defaultSelectedKeys={['1']}
-                theme='light'
+                selectedKeys={[activeKey]}
+                multiple={false}
                 items={[
                     {
-                        key: 'Create',
+                        key: 'create',
                         icon: <PlusOutlined/>,
                         label: 'Create',
                         children: [
@@ -38,7 +44,7 @@ const AdminMenu: React.FC = () => {
                                 key: 'New Post',
                                 label: (
                                     <Popconfirm
-                                        className={'w-full'}
+                                        className='w-full'
                                         title="Create a new post?"
                                         onConfirm={() => {
                                             createPostAPI().then((postDetailVO: PostDetailVO) => {
@@ -46,7 +52,9 @@ const AdminMenu: React.FC = () => {
                                             })
                                         }}
                                     >
-                                        New Post
+                                        <div className={'w-100'}>
+                                            New Post
+                                        </div>
                                     </Popconfirm>
                                 ),
                             },
@@ -69,33 +77,33 @@ const AdminMenu: React.FC = () => {
                         ]
                     },
                     {
-                        key: '1',
+                        key: 'post',
                         icon: <BookOutlined/>,
                         label: <Link to='/post'>Post</Link>,
                     },
                     {
-                        key: '2',
+                        key: 'draft',
                         icon: <EditOutlined/>,
                         label: <Link to='/draft'>Draft</Link>,
                     },
                     {
-                        key: '3',
+                        key: 'category',
                         icon: <BorderlessTableOutlined/>,
                         label: <Link to='/category'>Category</Link>,
                     },
                     {
-                        key: '4',
+                        key: 'tag',
                         icon: <TagsOutlined/>,
                         label: <Link to='/tag'>Tag</Link>,
                     },
                     {
-                        key: '5',
+                        key: 'trash',
                         icon: <DeleteOutlined/>,
                         label: <Link to='/trash'>Trash</Link>,
                     },
 
                     {
-                        key: '6',
+                        key: 'management',
                         icon: <MenuOutlined/>,
                         label: <Link to='/management'>Management</Link>,
                     }
