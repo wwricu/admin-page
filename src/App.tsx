@@ -1,4 +1,4 @@
-import {Button, ConfigProvider, Drawer, Layout, message, Spin} from "antd"
+import {Button, ConfigProvider, Drawer, Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom"
@@ -28,10 +28,10 @@ const AppLayout: React.FC = () => {
     useEffect(() => {
         infoAPI().then((res: boolean) => {
             if (!res) {
-                message.success('Please login...', 1).then(() => navigate('/login'))
+                navigate('/login')
             }
         }).catch(() => {
-            message.success('Please login...', 1).then(() => navigate('/login'))
+            navigate('/login')
         })
     }, [navigate])
 
