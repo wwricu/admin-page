@@ -17,20 +17,18 @@ import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
 import {baseUrl, uploadFileAPI} from "../api/common.ts"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.ts"
-import {LoadingOutlined, PlusOutlined} from "@ant-design/icons"
+import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"
 import TinyMCE from "./Editor.tsx"
 const { TextArea } = Input
-
-type ProgressFn = (percent: number) => void
 
 type TagItem = {
     value: number
     label: string
 }
 
-interface BlobInfo {
+type BlobInfo = {
     id: () => string
     name: () => string
     filename: () => string
@@ -69,6 +67,7 @@ export default function EditorPage() {
     const [preview, setPreview] = useState<string>('')
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
+    const [hidePublishOption, setHidePublishOption] = useState<boolean>(true)
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
     const [imageUrl, setImageUrl] = useState<string>()
@@ -76,7 +75,7 @@ export default function EditorPage() {
     const { id } = useParams()
     const postId = parseInt(id!)
 
-    const tinyMCEImageUploadHandler = (blobInfo: BlobInfo, progress: ProgressFn) => new Promise((resolve: (value: string) => void, reject: (reason?: string) => void) => {
+    const tinyMCEImageUploadHandler = (blobInfo: BlobInfo, progress: (percent: number) => void) => new Promise((resolve: (value: string) => void, reject: (reason?: string) => void) => {
         const formData = new FormData()
         formData.append('post_id', postId.toString())
         formData.append('file_type', PostResourceTypeEnum.IMAGE)
@@ -153,11 +152,31 @@ export default function EditorPage() {
         })
     }
 
-    return (
-        <>
-            {contextHolder}
-            <div className='flex flex-col w-full h-full bg-white p-1 pb-0'>
-                <div className='flex justify-start items-center gap-1 p-1 pb-0'>
+    const moreOptionPanel = () => (
+        <div className={`flex flex-col gap-1 max-md:p-4 md:p-8 ${hidePublishOption && 'hidden'}`}>
+            <Select<TagItem>
+                showSearch
+                allowClear
+                labelInValue
+                placeholder='No Category'
+                optionFilterProp='label'
+                value={category}
+                options={allCategories}
+                onChange={(value) => {setCategory(value)}}
+            />
+            <Select<TagItem[]>
+                showSearch
+                labelInValue
+                allowClear
+                mode='multiple'
+                placeholder='No Tag'
+                optionFilterProp='label'
+                value={tags}
+                onChange={(values) => {setTags(values)}}
+                options={allTags}
+            />
+            <div className='flex justify-start gap-1 max-sm:flex-wrap'>
+                <div className='flex flex-col items-center gap-1'>
                     <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={300 / 180}>
                         <Upload
                             name='file'
@@ -173,61 +192,48 @@ export default function EditorPage() {
                             {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
                         </Upload>
                     </ImgCrop>
-                    <div className={'h-full w-full grid grid-cols-5 gap-1 pr-2'}>
-                        <div className='col-span-3 flex flex-col gap-1'>
-                            <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
-                            <TextArea
-                                className={'flex-1 resize-none h-full'}
-                                showCount
-                                maxLength={200}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                                    setPreview(e.target.value)
-                                }}
-                                value={preview}
-                                placeholder="Preview"
-                            />
-                        </div>
-                        <div className='col-span-2 flex flex-col justify-between gap-1'>
-                            <div className='flex flex-col gap-1'>
-                                <Select<TagItem>
-                                    className={'w-full'}
-                                    showSearch
-                                    allowClear
-                                    labelInValue
-                                    placeholder='No Category'
-                                    optionFilterProp='label'
-                                    value={category}
-                                    options={allCategories}
-                                    onChange={(value) => {setCategory(value)}}
-                                />
-                                <Select<TagItem[]>
-                                    className={'w-full'}
-                                    showSearch
-                                    labelInValue
-                                    allowClear
-                                    mode='multiple'
-                                    placeholder='No Tag'
-                                    optionFilterProp='label'
-                                    value={tags}
-                                    onChange={(values) => {setTags(values)}}
-                                    options={allTags}
-                                />
-                            </div>
-                            <div className={'flex gap-1 flex-wrap'}>
-                                <Popconfirm className={'flex-1'} title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
-                                    <Button type='primary'>
-                                        Save
-                                    </Button>
-                                </Popconfirm>
-                                <Button className={'flex-1'} onClick={() => {
-                                    setCoverId(undefined)
-                                    setImageUrl(undefined)
-                                }}>Reset cover</Button>
-                            </div>
-                        </div>
-                    </div>
+                    <Popconfirm className='w-full' title="Sure to reset cover?" onConfirm={() => {
+                        setCoverId(undefined)
+                        setImageUrl(undefined)
+                    }}>
+                        <Button>Reset cover</Button>
+                    </Popconfirm>
                 </div>
-                <div className={'h-full'}>
+                <TextArea
+                    style={{ resize: 'none' }}
+                    className='max-sm:h-30'
+                    showCount
+                    maxLength={200}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+                        setPreview(e.target.value)
+                    }}
+                    value={preview}
+                    placeholder="Preview"
+                />
+            </div>
+        </div>
+    )
+
+    return (
+        <>
+            {contextHolder}
+            <div className='flex flex-col gap-2 w-full h-full bg-white p-1 pb-0'>
+                <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
+                <div className='flex justify-start items-center gap-2'>
+                    <Button
+                        className='flex-1'
+                        icon={hidePublishOption ? <DownOutlined /> : <UpOutlined />}
+                        onClick={() => setHidePublishOption(!hidePublishOption)}>
+                        More Options
+                    </Button>
+                    <Popconfirm className='flex-1' title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
+                        <Button type='primary'>
+                            Save
+                        </Button>
+                    </Popconfirm>
+                </div>
+                {moreOptionPanel()}
+                <div className='h-screen'>
                 <TinyMCE
                     id='tinyMCE'
                     onInit={(_, editor) => {
