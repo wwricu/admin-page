@@ -5,7 +5,7 @@ import {Form, Button, Input, message} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons"
 import {AxiosError} from "axios"
 import {LoginRO} from "../model/request.ts"
-import icon from '/favicon.ico'
+import icon from '/doge.png'
 
 export default function LoginPage() {
     const navigate = useNavigate()
