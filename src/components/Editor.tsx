@@ -5,23 +5,14 @@ import 'tinymce/models/dom/model'
 import 'tinymce/themes/silver'
 import 'tinymce/icons/default'
 
-// https://www.tiny.cloud/docs/tinymce/latest/plugins/
-// import 'tinymce/plugins/anchor'
-// import 'tinymce/plugins/autoresize'
-// import 'tinymce/plugins/autosave'
-// import 'tinymce/plugins/code'
-// import 'tinymce/plugins/directionality'
-// import 'tinymce/plugins/help'
-// import 'tinymce/plugins/help/js/i18n/keynav/en'
-// import 'tinymce/plugins/insertdatetime'
-// import 'tinymce/plugins/nonbreaking'
-// import 'tinymce/plugins/pagebreak'
-// import 'tinymce/plugins/preview'
-// import 'tinymce/plugins/quickbars'
-// import 'tinymce/plugins/visualblocks'
-// import 'tinymce/plugins/visualchars'
-// import 'tinymce/plugins/importcss'
+import 'tinymce/skins/content/default/content'
+import 'tinymce/skins/content/dark/content'
+import 'tinymce/skins/ui/oxide/skin'
+// import 'tinymce/skins/ui/oxide/content'
+import 'tinymce/skins/ui/oxide-dark/skin'
+// import 'tinymce/skins/ui/oxide-dark/content'
 
+// More on https://www.tiny.cloud/docs/tinymce/latest/plugins/
 import 'tinymce/plugins/advlist'
 import 'tinymce/plugins/autolink'
 import 'tinymce/plugins/emoticons/js/emojis'
@@ -38,21 +29,8 @@ import 'tinymce/plugins/table'
 import 'tinymce/plugins/wordcount'
 import 'tinymce/plugins/fullscreen'
 
-
-// import 'tinymce/skins/content/default/content'
-// import 'tinymce/skins/content/dark/content.min.css'
-import 'tinymce/skins/ui/oxide/skin'
-import 'tinymce/skins/ui/oxide/content'
-// import 'tinymce/skins/ui/oxide-dark/skin'
-// import 'tinymce/skins/ui/oxide-dark/content'
-
 import {IAllProps} from "@tinymce/tinymce-react/lib/cjs/main/ts/components/Editor"
 
 export default function TinyMCE(props: IAllProps) {
-    return (
-        <Editor
-            licenseKey='gpl'
-            {...props}
-        />
-    )
+    return <Editor licenseKey='gpl' {...props}/>
 }
