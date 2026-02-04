@@ -265,9 +265,15 @@ export default function EditorPage() {
                         statusbar: false,
                         images_upload_handler: tinyMCEImageUploadHandler,
                         automatic_uploads: true,
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | subscript superscript charmap | table image link | searchreplace lineheight fullscreen',
+                        toolbar: `blocks fontfamily fontsize |
+                                  bold italic underline strikethrough  |
+                                  alignleft aligncenter alignright alignjustify bullist numlist lineheight  |
+                                  subscript superscript charmap codesample |
+                                  table image link emoticons |
+                                  searchreplace fullscreen`,
                         plugins: [
-                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'lineheight', 'link', 'lists', 'media', 'searchreplace', 'table'
+                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'lineheight', 'link',
+                            'emoticons', 'lists', 'advlist', 'media', 'searchreplace', 'table'
                         ]
                     }}
                 />
