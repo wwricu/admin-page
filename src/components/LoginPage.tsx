@@ -22,7 +22,7 @@ export default function LoginPage() {
     }, [navigate])
 
     return (
-        <div className='justify-items-center h-screen p-6'>
+        <div className='flex justify-center h-screen p-6'>
             <Form
                 className='w-82'
                 name="basic"
@@ -68,7 +68,7 @@ export default function LoginPage() {
                     </Form.Item>
                 </div>
                 <Form.Item<LoginRO>
-                    className={`justify-items-center ${loginPhase === 'totp' ? '' : 'hidden'}`}
+                    className={loginPhase === 'totp' ? '' : 'hidden'}
                     name="totp"
                 >
                     <Input.OTP
