@@ -12,10 +12,10 @@ import {
 import {Button, Divider, Flex, Input, Menu, message, Modal, Popover} from 'antd'
 import {Link, useLocation, useNavigate} from "react-router-dom"
 import {logoutAPI} from "../api/common.ts"
-import {PostDetailVO} from "../model/response.ts";
-import {createPostAPI} from "../api/post.ts";
-import {newTag} from "../api/tag.ts";
-import {TagTypeEnum} from "../model/enum.ts";
+import {PostDetailVO} from "../model/response.ts"
+import {createPostAPI} from "../api/post.ts"
+import {newTag} from "../api/tag.ts"
+import {TagTypeEnum} from "../model/enum.ts"
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
@@ -24,11 +24,11 @@ const AdminMenu: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
-    const [popoverOpen, setPopoverOpen] = useState(false);
+    const [popoverOpen, setPopoverOpen] = useState(false)
 
     useEffect(() => {
         setActiveKey(location.pathname.split('/').filter(Boolean)[0] || '')
-    }, [location]);
+    }, [location])
 
     return (
         <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
