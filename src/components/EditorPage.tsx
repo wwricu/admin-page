@@ -209,7 +209,7 @@ export default function EditorPage() {
     return (
         <>
             {contextHolder}
-            <div className='flex flex-col gap-2 w-full h-full bg-white p-1 pb-0'>
+            <div className='flex flex-col gap-2 w-full h-full p-1 pb-0'>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                 <div className='flex justify-start items-center gap-2'>
                     <Button
