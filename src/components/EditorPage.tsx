@@ -3,7 +3,7 @@ import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
 import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
-import {Button, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
+import {Button, type GetProp, Image as AntdImage, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
 import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
 import {baseUrl, uploadFileAPI} from "../api/common.ts"
@@ -12,6 +12,19 @@ import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-desi
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"
 import TinyMCE from "./Editor.tsx"
+
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import {CKEditorUploader} from './CKEditorUploader'
+import { Editor, ClassicEditor, Essentials, Paragraph, Bold, Italic, CodeBlock,
+    Heading, Highlight, Alignment, BlockQuote, Emoji, Mention, Font, Fullscreen,
+    AutoLink, Link, SpecialCharacters, SpecialCharactersEssentials, List, ListProperties,
+    GeneralHtmlSupport, FindAndReplace,
+    Strikethrough, Subscript, Superscript, Code,
+    Table, TableCaption, TableToolbar, TableLayout, TableColumnResize,
+    Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, LinkImage, ImageInsert
+} from 'ckeditor5';
+
+import 'ckeditor5/ckeditor5.css';
 
 const { TextArea } = Input
 
@@ -52,6 +65,7 @@ const beforeUpload = (file: FileType) => {
 
 export default function EditorPage() {
     const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
+    const ckEditorRef: MutableRefObject<Editor | undefined> = useRef()
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
@@ -134,7 +148,8 @@ export default function EditorPage() {
             id: postId,
             title: title,
             cover_id: coverId,
-            content: editorRef.current?.getContent() ?? '',
+            // content: editorRef.current?.getContent() ?? '',
+            content: ckEditorRef.current?.getData() ?? '',
             preview: preview,
             category_id: category?.value,
             tag_id_list: tags.map((tagItem) => tagItem.value),
@@ -146,12 +161,16 @@ export default function EditorPage() {
     }
 
     const loadPostContent = () => {
-        const editor = editorRef.current
-        if (!editor) {
-            return
-        }
+        const tinyEditor = editorRef.current
+        const ckEditor = ckEditorRef.current
         getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
-            editor.setContent(postDetailVO.content)
+            if (tinyEditor) {
+                tinyEditor.setContent(postDetailVO.content)
+            }
+            if (ckEditor) {
+                ckEditor.setData(postDetailVO.content)
+                // ckEditor.setData(postDetailVO.content)
+            }
             setTitle(postDetailVO.title)
             setPostStatus(postDetailVO.status as PostStatusEnum)
             if (postDetailVO.category) {
@@ -207,7 +226,7 @@ export default function EditorPage() {
                             data={getExtraData}
                             openFileDialogOnClick={coverId === undefined || imageUrl === undefined}
                         >
-                            {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
+                            {imageUrl ? <AntdImage src={imageUrl} alt='cover'/> : uploadButton}
                         </Upload>
                     </ImgCrop>
                     <Popconfirm className='w-full' title="Sure to reset cover?" onConfirm={() => {
@@ -252,6 +271,52 @@ export default function EditorPage() {
                 </div>
                 {moreOptionPanel()}
                 <div className='h-screen'>
+                <CKEditor
+                    editor={ ClassicEditor }
+                    onReady={(editor: Editor) => {
+                        ckEditorRef.current = editor
+                        loadPostContent()
+                    }}
+                    config={{
+                        licenseKey: 'GPL',
+                        plugins: [ Essentials, Paragraph, Bold, Italic, CodeBlock, Heading, Highlight, Alignment,
+                            BlockQuote, Font, Fullscreen, Emoji, Mention, AutoLink, Link,
+                            SpecialCharacters, SpecialCharactersEssentials, List, ListProperties, GeneralHtmlSupport,
+                            Table, TableCaption, TableToolbar, TableLayout, TableColumnResize, FindAndReplace,
+                            Strikethrough, Subscript, Superscript, Code,
+                            Image, ImageToolbar, ImageCaption, ImageStyle, ImageResize, LinkImage, ImageInsert, CKEditorUploader
+                        ],
+                        toolbar: {
+                            items: [
+                                'undo', 'redo', '|',
+                                'alignment', 'heading', '|',
+                                'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+                                'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code', 'codeblock',
+                                'blockquote', 'highlight', '|',
+                                'bulletedList', 'numberedList', 'insertTable', 'insertImage', 'emoji', 'link', 'specialCharacters', '|',
+                                'findandreplace', 'fullscreen'
+                            ],
+                            shouldNotGroupWhenFull: true
+                        },
+                        table: {
+                            contentToolbar: [
+                                'toggleTableCaption', 'tableColumn', 'tableRow', 'mergeTableCells'
+                            ]
+                        },
+                        image: {
+                            toolbar: [
+                                'imageStyle:block', 'imageStyle:side', '|',
+                                'toggleImageCaption', 'imageTextAlternative', '|',
+                                'linkImage'
+                            ],
+                        },
+                        uploader: {
+                            postId: id!!,
+                            fileType: PostResourceTypeEnum.IMAGE
+                        }
+                    }}
+                />
+
                 <TinyMCE
                     id='tinyMCE'
                     onInit={(_, editor) => {
@@ -265,9 +330,9 @@ export default function EditorPage() {
                         statusbar: false,
                         images_upload_handler: tinyMCEImageUploadHandler,
                         automatic_uploads: true,
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | subscript superscript charmap | table image link | searchreplace lineheight fullscreen',
+                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | subscript superscript charmap | table image link | searchreplace fullscreen',
                         plugins: [
-                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'lineheight', 'link', 'lists', 'media', 'searchreplace', 'table'
+                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'link', 'lists', 'media', 'searchreplace', 'table'
                         ]
                     }}
                 />
