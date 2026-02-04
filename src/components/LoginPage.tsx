@@ -25,7 +25,6 @@ export default function LoginPage() {
         <div className='flex justify-center h-screen p-6'>
             <Form
                 className='w-82'
-                name="basic"
                 form={loginForm}
                 onFinish={(record: Record<string, string>) =>
                     loginAPI({username: record.username, password: record.password, totp: record.totp}).then(
@@ -67,20 +66,23 @@ export default function LoginPage() {
                         <Button block size='large' type="primary" htmlType="submit">Login</Button>
                     </Form.Item>
                 </div>
-                <Form.Item<LoginRO>
-                    className={loginPhase === 'totp' ? '' : 'hidden'}
-                    name="totp"
-                >
-                    <Input.OTP
-                        size='large'
-                        value={totpValue}
-                        onChange={(totp: string) => {
-                            if (totp.length == 6) {
-                                loginForm.submit()
-                            }
-                        }}
-                    />
-                </Form.Item>
+                <div className='flex justify-center'>
+                    {/* Flex to work around with mobile safari; TODO: Fix OTP width on safari */}
+                    <Form.Item<LoginRO>
+                        className={loginPhase === 'totp' ? '' : 'hidden'}
+                        name="totp"
+                    >
+                        <Input.OTP
+                            size='large'
+                            value={totpValue}
+                            onChange={(totp: string) => {
+                                if (totp.length == 6) {
+                                    loginForm.submit()
+                                }
+                            }}
+                        />
+                    </Form.Item>
+                </div>
             </Form>
         </div>
     )
