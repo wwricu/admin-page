@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
@@ -46,4 +47,10 @@ body {
 
 .ck-editor__editable_inline {
     height: 100% !important;
+}
+
+/* Tailwind preflight reset cke style */
+.ck-content {
+  @apply prose;
+  max-width: none !important;
 }
