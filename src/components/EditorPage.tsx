@@ -263,11 +263,19 @@ export default function EditorPage() {
                         menubar: false,
                         resize: false,
                         statusbar: false,
+                        content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
+                        skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
                         images_upload_handler: tinyMCEImageUploadHandler,
                         automatic_uploads: true,
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | subscript superscript charmap | table image link | searchreplace lineheight fullscreen',
+                        toolbar: `blocks fontfamily fontsize |
+                                  bold italic underline strikethrough  |
+                                  subscript superscript charmap codesample |
+                                  table image link emoticons |
+                                  alignleft aligncenter alignright alignjustify bullist numlist lineheight |
+                                  searchreplace fullscreen`,
                         plugins: [
-                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'lineheight', 'link', 'lists', 'media', 'searchreplace', 'table'
+                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'lineheight', 'link',
+                            'emoticons', 'lists', 'advlist', 'media', 'searchreplace', 'table', 'importcss'
                         ]
                     }}
                 />
