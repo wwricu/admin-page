@@ -1,5 +1,4 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
-import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
 import {Button, type GetProp, Image as AntdImage, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
@@ -52,8 +51,7 @@ const beforeUpload = (file: FileType) => {
 }
 
 export default function EditorPage() {
-    const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
-    const ckEditorRef: MutableRefObject<Editor | undefined> = useRef()
+    const editorRef: MutableRefObject<Editor | undefined> = useRef()
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
@@ -122,8 +120,7 @@ export default function EditorPage() {
             id: postId,
             title: title,
             cover_id: coverId,
-            // content: editorRef.current?.getContent() ?? '',
-            content: ckEditorRef.current?.getData() ?? '',
+            content: editorRef.current?.getData() ?? '',
             preview: preview,
             category_id: category?.value,
             tag_id_list: tags.map((tagItem) => tagItem.value),
@@ -135,12 +132,8 @@ export default function EditorPage() {
     }
 
     const loadPostContent = () => {
-        const tinyEditor = editorRef.current
-        const ckEditor = ckEditorRef.current
+        const ckEditor = editorRef.current
         getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
-            if (tinyEditor) {
-                tinyEditor.setContent(postDetailVO.content)
-            }
             if (ckEditor) {
                 ckEditor.setData(postDetailVO.content)
                 // ckEditor.setData(postDetailVO.content)
@@ -248,7 +241,7 @@ export default function EditorPage() {
                 <CKEditor
                     editor={ ClassicEditor }
                     onReady={(editor: Editor) => {
-                        ckEditorRef.current = editor
+                        editorRef.current = editor
                         loadPostContent()
                     }}
                     config={{
@@ -263,8 +256,8 @@ export default function EditorPage() {
                         toolbar: {
                             items: [
                                 'undo', 'redo', '|',
-                                'alignment', 'heading', '|',
-                                'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+                                'heading', '|',
+                                'alignment', 'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
                                 'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code', 'codeblock',
                                 'blockquote', 'highlight', '|',
                                 'bulletedList', 'numberedList', 'insertTable', 'insertImage', 'emoji', 'link', 'specialCharacters', '|',
