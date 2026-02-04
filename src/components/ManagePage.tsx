@@ -2,11 +2,11 @@
 
 import React, {useEffect, useRef, useState} from 'react'
 import {Button, Flex, Input, InputRef, message, Modal, Popconfirm, Table} from 'antd'
-import {databaseAPI, getConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts";
-import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts";
-import AboutEditor from "./AboutEditor.tsx";
-import {baseUrl} from "../api/common.ts";
-import {useNavigate} from "react-router-dom";
+import {databaseAPI, getConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts"
+import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
+import AboutEditor from "./AboutEditor.tsx"
+import {baseUrl} from "../api/common.ts"
+import {useNavigate} from "react-router-dom"
 
 const {Column} = Table
 
@@ -25,23 +25,24 @@ type ActionRow = {
 
 const ManagePage: React.FC = () => {
     const [messageApi, messageContextHolder] = message.useMessage()
-    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
-    const [modalApi, modalContextHolder] = Modal.useModal();
-    const inputRef = useRef<InputRef>(null);
-    const navigate = useNavigate();
+    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
+    // TODO: useState to control Input, now modalApi closure cannot react to useState outside so use inputRef
+    const [modalApi, modalContextHolder] = Modal.useModal()
+    const inputRef = useRef<InputRef>(null)
+    const navigate = useNavigate()
 
-    const [username, setUsername] = useState<string>();
-    const [totpEnforce, setTotpEnforce] = useState<boolean>(false);
+    const [username, setUsername] = useState<string>()
+    const [totpEnforce, setTotpEnforce] = useState<boolean>(false)
 
     const getTotpEnforce = () => {
         getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE).then((res: string | null) => {
-            setTotpEnforce(!!res);
+            setTotpEnforce(!!res)
         })
     }
 
     useEffect(() => {
         getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
-            setUsername(res ?? '');
+            setUsername(res ?? '')
         })
         getTotpEnforce()
     })
@@ -89,10 +90,10 @@ const ManagePage: React.FC = () => {
                                             }
                                         )
                                     }
-                                });
+                                })
 
                             }
-                        });
+                        })
                     },
                 },
                 {
@@ -117,9 +118,9 @@ const ManagePage: React.FC = () => {
                                             },
                                         )
                                     }
-                                });
+                                })
                             }
-                        });
+                        })
                     },
                 },
                 {
@@ -177,7 +178,7 @@ const ManagePage: React.FC = () => {
                                             getTotpEnforce).then(
                                             () => resolve(true)
                                         )
-                                    });
+                                    })
                                 }
                               })
                             return
@@ -189,23 +190,22 @@ const ManagePage: React.FC = () => {
                             }
                             modalApi.confirm({
                                 icon: null,
-                                title: 'Confirm totp',
-                                content: <>
-                                    {secret}
+                                title: `Totp secret: ${secret}`,
+                                content: (
                                     <Input
                                         ref={inputRef}
-                                        className='my-3.75'
+                                        placeholder='Verify 6-pin code to enable totp'
                                     />
-                                </>,
+                                ),
                                 onOk: () => {
                                     return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
                                         totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
                                             messageApi.info('success')).then(
                                             () => resolve(true)).then(
                                             getTotpEnforce).finally(reject)
-                                    });
+                                    })
                                 }
-                            });
+                            })
                         })
                     }
                 }

@@ -1,97 +1,89 @@
-import {LockOutlined, UserOutlined} from '@ant-design/icons'
-import {LoginForm, ProConfigProvider, ProFormText} from '@ant-design/pro-components'
-import {Flex, Input, Modal, theme} from 'antd'
-import icon from '/favicon.ico'
-import {getTotpStatus, loginAPI} from "../api/common.ts"
+import {infoAPI, loginAPI} from "../api/common.ts"
 import {useNavigate} from "react-router-dom"
-import {useEffect, useState} from "react";
-
+import {useEffect, useState} from "react"
+import {Form, Button, Input, message} from "antd"
+import {LockOutlined, UserOutlined} from "@ant-design/icons"
+import {AxiosError} from "axios"
+import {LoginRO} from "../model/request.ts"
+import icon from '/favicon.ico'
 
 export default function LoginPage() {
-    const {token} = theme.useToken()
     const navigate = useNavigate()
-    const [totpEnforce, setTotpEnforce] = useState<boolean>(false)
-    const [modalApi, modalContextHolder] = Modal.useModal();
+    const [loginForm] = Form.useForm()
+    const [loginPhase, setLoginPhase] = useState<'account' | 'totp'>('account')
+    const [totpValue, setTotpValue] = useState<string | undefined>(undefined)
 
     useEffect(() => {
-        getTotpStatus().then((res: boolean) => {
-            setTotpEnforce(res)
+        infoAPI().then((res: boolean) => {
+            if (res) {
+                message.success('Logging in...', 1).then(() => navigate('/'))
+            }
         })
-    })
-
-    const login = (username: string, password: string, totp: string | undefined = undefined) => {
-        loginAPI({
-            username: username,
-            password: password,
-            totp: totp
-        }).then(() => {
-            navigate('/')
-        })
-    }
+    }, [navigate])
 
     return (
-        <>
-            {modalContextHolder}
-            <ProConfigProvider hashed={false}>
-                <div style={{backgroundColor: token.colorBgContainer}}>
-                    <LoginForm
-                        logo={icon}
-                        title="wwr.icu"
-                        subTitle=" "
-                        onFinish={(record: Record<string, string>) => {
-                            if (!totpEnforce) {
-                                login(record.username, record.password)
+        <div className='flex justify-center h-screen p-6'>
+            <Form
+                className='w-82'
+                form={loginForm}
+                onFinish={(record: Record<string, string>) =>
+                    loginAPI({username: record.username, password: record.password, totp: record.totp}).then(
+                        () => navigate('/')).catch(
+                        (err: AxiosError) => {
+                            setTotpValue(undefined)
+                            if (err.status === 422) {
+                                setLoginPhase('totp')
+                                return
                             }
-                            if (totpEnforce) {
-                                modalApi.info({
-                                    icon: null,
-                                    okText: 'Cancel',
-                                    title: 'Input totp',
-                                    content: <Flex justify='center'>
-                                        <Input.OTP
-                                            className='my-3.75'
-                                            onChange={(totp: string) => {
-                                                if (totp.length == 6) {
-                                                    login(record.username, record.password, totp)
-                                                }
-                                            }}
-                                        />
-                                    </Flex>
-                                });
-                            }
-                        }}
-                    >
-                        <ProFormText
-                            name="username"
-                            fieldProps={{
-                                size: 'large',
-                                prefix: <UserOutlined className={'prefixIcon'}/>,
-                            }}
-                            placeholder={'username'}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'please enter username!',
-                                },
-                            ]}
-                        />
-                        <ProFormText.Password
-                            name="password"
-                            fieldProps={{
-                                size: 'large',
-                                prefix: <LockOutlined className={'prefixIcon'}/>,
-                            }}
-                            placeholder={'password'}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'please enter your Password!',
-                                }
-                            ]}
-                        />
-                    </LoginForm>
+                            throw err
+                        })
+                }
+            >
+                <div className='flex justify-center items-start gap-4 w-full h-20'>
+                    <img
+                        alt='icon'
+                        src={icon}
+                        width={44}
+                        height={44}
+                    />
+                    <p className='text-4xl font-semibold'>wwr.icu</p>
                 </div>
-            </ProConfigProvider>
-        </>
+                <div className={loginPhase === 'account' ? '' : 'hidden'}>
+                    <Form.Item<LoginRO>
+                        name="username"
+                        rules={[{ required: true, message: 'Please input your username!' }]}
+                    >
+                        <Input allowClear size='large' prefix={<UserOutlined/>}/>
+                    </Form.Item>
+
+                    <Form.Item<LoginRO>
+                        name="password"
+                        rules={[{ required: true, message: 'Please input your password!' }]}
+                    >
+                        <Input.Password size='large' prefix={<LockOutlined/>}/>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button block size='large' type="primary" htmlType="submit">Login</Button>
+                    </Form.Item>
+                </div>
+                <div className='flex justify-center'>
+                    {/* Flex to work around with mobile safari; TODO: Fix OTP width on safari */}
+                    <Form.Item<LoginRO>
+                        className={loginPhase === 'totp' ? '' : 'hidden'}
+                        name="totp"
+                    >
+                        <Input.OTP
+                            size='large'
+                            value={totpValue}
+                            onChange={(totp: string) => {
+                                if (totp.length == 6) {
+                                    loginForm.submit()
+                                }
+                            }}
+                        />
+                    </Form.Item>
+                </div>
+            </Form>
+        </div>
     )
 }

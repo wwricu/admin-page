@@ -17,7 +17,6 @@ export default function AboutEditor({onOk, ...props}: ModalProps) {
                 onOk(e)
             }
         })
-
     }
 
     const fetchAbout = () => {
@@ -37,8 +36,12 @@ export default function AboutEditor({onOk, ...props}: ModalProps) {
                 }}
                 init={{
                     menubar: false,
+                    branding: false,
+                    content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
+                    skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
                     width: '100%',
-                    height: '600px'
+                    height: '500px',
+                    plugins: ['wordcount']
                 }}
             />
         </Modal>

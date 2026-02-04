@@ -1,15 +1,16 @@
 'use client'
 
-import React, {ChangeEvent, useState} from 'react'
+import React, {ChangeEvent, useEffect, useState} from 'react'
 import {
     BookOutlined,
     BorderlessTableOutlined, EditOutlined,
     TagsOutlined,
     MenuOutlined,
     DeleteOutlined, PlusOutlined,
+    ExclamationCircleFilled
 } from '@ant-design/icons'
-import {Button, Divider, Flex, Input, Menu, message, Modal, Popconfirm} from 'antd'
-import {Link, useNavigate} from "react-router-dom"
+import {Button, Divider, Flex, Input, Menu, message, Modal, Popover} from 'antd'
+import {Link, useLocation, useNavigate} from "react-router-dom"
 import {logoutAPI} from "../api/common.ts"
 import {PostDetailVO} from "../model/response.ts";
 import {createPostAPI} from "../api/post.ts";
@@ -18,37 +19,70 @@ import {TagTypeEnum} from "../model/enum.ts";
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
+    const location = useLocation()
+    const [activeKey, setActiveKey] = useState<string>('')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
+    const [popoverOpen, setPopoverOpen] = useState(false);
+
+    useEffect(() => {
+        setActiveKey(location.pathname.split('/').filter(Boolean)[0] || '')
+    }, [location]);
 
     return (
         <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
             <Menu
                 mode="inline"
-                defaultSelectedKeys={['1']}
-                theme='light'
+                selectedKeys={[activeKey]}
+                multiple={false}
                 items={[
                     {
-                        key: 'Create',
+                        key: 'create',
                         icon: <PlusOutlined/>,
                         label: 'Create',
                         children: [
                             {
                                 key: 'New Post',
                                 label: (
-                                    <Popconfirm
-                                        className={'w-full'}
-                                        title="Create a new post?"
-                                        onConfirm={() => {
-                                            createPostAPI().then((postDetailVO: PostDetailVO) => {
-                                                navigate(`/edit/${postDetailVO.id}`)
-                                            })
-                                        }}
-                                    >
-                                        New Post
-                                    </Popconfirm>
+                                    <Popover
+                                        trigger='click'
+                                        open={popoverOpen}
+                                        onOpenChange={setPopoverOpen}
+                                        content={
+                                            <div>
+                                                <div className='mb-2 h-5.5'>
+                                                    <ExclamationCircleFilled className='w-5.5 h-5.5' style={{fontSize: 14, color: '#faad14'}}/>
+                                                    Create new post?
+                                                </div>
+                                                <div className='text-end'>
+                                                    <Button size='small' onClick={() => setPopoverOpen(false)}>Cancel</Button>
+                                                    <Button
+                                                        className='ml-2'
+                                                        size='small'
+                                                        type='primary'
+                                                        onClick={() => {
+                                                            createPostAPI().then((postDetailVO: PostDetailVO) => {
+                                                                navigate(`/edit/${postDetailVO.id}`)
+                                                                setPopoverOpen(false)
+                                                                message.success('New post created').then()
+                                                            })
+                                                        }}
+                                                    >
+                                                        OK
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        }
+                                      >
+                                        <div>New Post</div>
+                                    </Popover>
                                 ),
+                                onClick: () => {
+                                    if (!popoverOpen) { // TODO: MUST check this or popover cannot be closed inline, but WHY?
+                                        setPopoverOpen(true)
+                                    }
+                                }
                             },
                             {
                                 key: 'New Category',
@@ -69,33 +103,33 @@ const AdminMenu: React.FC = () => {
                         ]
                     },
                     {
-                        key: '1',
+                        key: 'post',
                         icon: <BookOutlined/>,
                         label: <Link to='/post'>Post</Link>,
                     },
                     {
-                        key: '2',
+                        key: 'draft',
                         icon: <EditOutlined/>,
                         label: <Link to='/draft'>Draft</Link>,
                     },
                     {
-                        key: '3',
+                        key: 'category',
                         icon: <BorderlessTableOutlined/>,
                         label: <Link to='/category'>Category</Link>,
                     },
                     {
-                        key: '4',
+                        key: 'tag',
                         icon: <TagsOutlined/>,
                         label: <Link to='/tag'>Tag</Link>,
                     },
                     {
-                        key: '5',
+                        key: 'trash',
                         icon: <DeleteOutlined/>,
                         label: <Link to='/trash'>Trash</Link>,
                     },
 
                     {
-                        key: '6',
+                        key: 'management',
                         icon: <MenuOutlined/>,
                         label: <Link to='/management'>Management</Link>,
                     }
