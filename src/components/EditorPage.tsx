@@ -126,6 +126,7 @@ export default function EditorPage() {
             })
             setAllCategories(tagItems)
         })
+        loadPostContent()
     }, [id])
 
     const updatePost = (status: PostStatusEnum) => {
@@ -141,6 +142,31 @@ export default function EditorPage() {
         }
         updatePostDetailAPI(postUpdateRO).then(() => {
             messageApi.info('success').then()
+        })
+    }
+
+    const loadPostContent = () => {
+        const editor = editorRef.current
+        if (!editor) {
+            return
+        }
+        getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
+            editor.setContent(postDetailVO.content)
+            setTitle(postDetailVO.title)
+            setPostStatus(postDetailVO.status as PostStatusEnum)
+            if (postDetailVO.category) {
+                setCategory({ label: postDetailVO.category.name, value: postDetailVO.category.id })
+            }
+            setImageUrl(postDetailVO.cover?.url)
+            setPreview(postDetailVO.preview)
+            if (postDetailVO.tag_list?.length > 0) {
+                setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
+                    return {
+                        label: tagVO.name,
+                        value: tagVO.id
+                    }
+                }))
+            }
         })
     }
 
@@ -230,24 +256,7 @@ export default function EditorPage() {
                     id='tinyMCE'
                     onInit={(_, editor) => {
                         editorRef.current = editor
-                        getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
-                            editor.setContent(postDetailVO.content)
-                            setTitle(postDetailVO.title)
-                            setPostStatus(postDetailVO.status as PostStatusEnum)
-                            if (postDetailVO.category) {
-                                setCategory({label: postDetailVO.category.name, value: postDetailVO.category.id})
-                            }
-                            setImageUrl(postDetailVO.cover?.url)
-                            setPreview(postDetailVO.preview)
-                            if (postDetailVO.tag_list?.length > 0) {
-                                setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
-                                    return {
-                                        label: tagVO.name,
-                                        value: tagVO.id
-                                    }
-                                }))
-                            }
-                        })
+                        loadPostContent()
                     }}
                     init={{
                         height: '100%',
