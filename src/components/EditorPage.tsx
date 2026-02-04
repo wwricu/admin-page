@@ -1,17 +1,15 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
-// import {Editor} from '@tinymce/tinymce-react'
 import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
 import {Button, type GetProp, Image as AntdImage, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
 import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
-import {baseUrl, uploadFileAPI} from "../api/common.ts"
+import {baseUrl} from "../api/common.ts"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"
-import TinyMCE from "./Editor.tsx"
 
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import {CKEditorUploader} from './CKEditorUploader'
@@ -31,16 +29,6 @@ const { TextArea } = Input
 type TagItem = {
     value: number
     label: string
-}
-
-type BlobInfo = {
-    id: () => string
-    name: () => string
-    filename: () => string
-    blob: () => Blob
-    base64: () => string
-    blobUri: () => string
-    uri: () => string | undefined
 }
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
@@ -80,20 +68,6 @@ export default function EditorPage() {
     const [coverId, setCoverId] = useState<number>()
     const { id } = useParams()
     const postId = parseInt(id!)
-
-    const tinyMCEImageUploadHandler = (blobInfo: BlobInfo, progress: (percent: number) => void) => new Promise((resolve: (value: string) => void, reject: (reason?: string) => void) => {
-        const formData = new FormData()
-        formData.append('post_id', postId.toString())
-        formData.append('file_type', PostResourceTypeEnum.IMAGE)
-        formData.append('file', blobInfo.blob(), blobInfo.filename())
-        formData.append('file', blobInfo.blob(), blobInfo.filename())
-        uploadFileAPI(formData).then((fileUploadVO) => {
-            progress(100)
-            resolve(fileUploadVO.location)
-        }).catch(() => {
-            reject('failed')
-        })
-    })
 
     const onChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
@@ -314,26 +288,6 @@ export default function EditorPage() {
                             postId: id!!,
                             fileType: PostResourceTypeEnum.IMAGE
                         }
-                    }}
-                />
-
-                <TinyMCE
-                    id='tinyMCE'
-                    onInit={(_, editor) => {
-                        editorRef.current = editor
-                        loadPostContent()
-                    }}
-                    init={{
-                        height: '100%',
-                        menubar: false,
-                        resize: false,
-                        statusbar: false,
-                        images_upload_handler: tinyMCEImageUploadHandler,
-                        automatic_uploads: true,
-                        toolbar: 'blocks fontfamily fontsize | bold italic underline strikethrough codesample | subscript superscript charmap | table image link | searchreplace fullscreen',
-                        plugins: [
-                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'link', 'lists', 'media', 'searchreplace', 'table'
-                        ]
                     }}
                 />
                 </div>
