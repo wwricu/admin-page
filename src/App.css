@@ -22,3 +22,28 @@ body {
   width: 300px !important;
   height: 200px !important;
 }
+
+/**
+ * Make ck-editor take all its parent's vertical space, also only editable zone scrollable with toolbar fixed
+ * <ck-editor>
+ *   <ck-editor__top/>
+ *   <ck-editor__main>
+ *     <ck-editor__editable/>
+ *   </ck-editor__main>
+ * </ck-editor>
+ *
+*/
+.ck-editor {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ck-editor__main {
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+.ck-editor__editable_inline {
+    height: 100% !important;
+}

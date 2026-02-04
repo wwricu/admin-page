@@ -228,7 +228,7 @@ export default function EditorPage() {
     return (
         <>
             {contextHolder}
-            <div className='flex flex-col gap-2 w-full h-full p-1 pb-0'>
+            <div className='flex flex-col gap-2 w-full h-screen p-1 pb-0'>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                 <div className='flex justify-start items-center gap-2'>
                     <Button
@@ -244,7 +244,7 @@ export default function EditorPage() {
                     </Popconfirm>
                 </div>
                 {moreOptionPanel()}
-                <div className='h-screen'>
+                <div className='flex-1 min-h-0'>
                 <CKEditor
                     editor={ ClassicEditor }
                     onReady={(editor: Editor) => {
