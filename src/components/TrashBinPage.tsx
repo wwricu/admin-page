@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, message, Popconfirm, Space, Table, Tooltip} from 'antd'
+import {Button, message, Popconfirm, Space, Table} from 'antd'
 import {TrashBinVO} from "../model/response.ts";
 import {trashEditAPI, trashGetAllAPI} from "../api/manage.ts";
 
@@ -34,28 +34,21 @@ const TrashBinPage: React.FC = () => {
                     title='Name'
                     dataIndex='name'
                     key='name'
-                    width={200}
-                    render={(_, { name }: TrashBinVO) =>
-                        <Tooltip title={name}>
-                            <div className='w-50 whitespace-nowrap overflow-hidden text-ellipsis'>
-                                {name}
-                            </div>
-                        </Tooltip>
-                    }
                 />
                 <Column
                     <TrashBinVO>
                     title='Type'
                     dataIndex='type'
                     key='type'
-                    width={120}
+                    width={100}
                 />
                 <Column
                     <TrashBinVO>
-                    title='Delete at'
+                    title='Delete time'
                     dataIndex='delete_time'
+                    ellipsis={true}
                     key='delete_time'
-                    width={120}
+                    width={100}
                     render={(_, {delete_time}: TrashBinVO) =>
                         <div className={'whitespace-nowrap'}>{delete_time.slice(0, 10)}</div>
                     }
@@ -64,7 +57,7 @@ const TrashBinPage: React.FC = () => {
                     <TrashBinVO>
                     title='Action'
                     key='action'
-                    width={100}
+                    width={160}
                     render={(_, trashBinVO: TrashBinVO) => (
                         <Space size='middle'>
                             <Popconfirm
@@ -74,7 +67,10 @@ const TrashBinPage: React.FC = () => {
                                         id: trashBinVO.id,
                                         type: trashBinVO.type,
                                         delete: false
-                                    }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
+                                    }).then(() => {
+                                        messageApi.success(`${trashBinVO.type} ${trashBinVO.name} recovered`).then()
+                                        getAllTrashBinVO()
+                                    })
                                 }}
                             >
                                 <Button variant='outlined' size='small' color='primary'>
@@ -89,7 +85,10 @@ const TrashBinPage: React.FC = () => {
                                         id: trashBinVO.id,
                                         type: trashBinVO.type,
                                         delete: true
-                                    }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
+                                    }).then(() => {
+                                        messageApi.success(`${trashBinVO.type} ${trashBinVO.name} deleted`).then()
+                                        getAllTrashBinVO()
+                                    })
                                 }
                             >
                                 <Button variant='solid' size='small' color='danger'>

@@ -54,8 +54,7 @@ export default function ManagePage() {
     const actionTableData: ActionRow[] = [
         {
             key: 'about',
-            // title: 'About Page',
-            title: <div className={'whitespace-nowrap'}>About Page</div>,
+            title: 'About Page',
             actions: [
                 {
                     name: 'Edit',
@@ -88,8 +87,8 @@ export default function ManagePage() {
                                         reject()
                                     } else {
                                         userAPI({username: username}).then(
-                                            () => messageApi.success('success')).then(
                                             () => {
+                                                messageApi.success('success').then()
                                                 setDynamicModal(null)
                                                 resolve()
                                                 navigate('/login')
@@ -137,8 +136,10 @@ export default function ManagePage() {
                     name: 'Reset all to default',
                     handle: () => {
                         userAPI({reset: true}).then(
-                            () => messageApi.success('success')).then(
-                            () => navigate('/login')
+                            () => {
+                                messageApi.success('success').then()
+                                navigate('/login')
+                            }
                         )
                     },
                     confirmMessage: 'Sure to reset username and password to default?',
@@ -255,7 +256,7 @@ export default function ManagePage() {
                     title='Name'
                     dataIndex='title'
                     key='title'
-                    minWidth={100}
+                    ellipsis={true}
                 />
                 <Column
                     title='Actions'

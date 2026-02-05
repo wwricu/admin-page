@@ -43,7 +43,6 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
         <div>
             <Table<PostDetailVO>
                 size={'small'}
-                className='m-1'
                 scroll={{ x: true }}
                 dataSource={list}
                 rowKey={(postDetailVO: PostDetailVO) => postDetailVO.id}
@@ -54,10 +53,9 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     title='Title'
                     dataIndex='title'
                     key='title'
-                    width={200}
                     render={(_, { title }: PostDetailVO) =>
                         <Tooltip title={title}>
-                            <div className='w-50 whitespace-nowrap overflow-hidden text-ellipsis'>
+                            <div className='w-80 whitespace-nowrap overflow-hidden text-ellipsis'>
                                 {title}
                             </div>
                         </Tooltip>
@@ -65,10 +63,11 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                 />
                 <Column
                     <PostDetailVO>
-                    title='Created at'
+                    title='Created time'
                     dataIndex='create_time'
                     key='create_time'
-                    width={120}
+                    ellipsis={true}
+                    width={100}
                     render={(_, {create_time}: PostDetailVO) =>
                         <div className={'whitespace-nowrap'}>{create_time.slice(0, 10)}</div>
                     }
@@ -92,7 +91,6 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     title='Tags'
                     dataIndex='tag_list'
                     key='tag_list'
-                    width={300}
                     render={(_, {tag_list}: PostDetailVO) => (
                         <>
                             {tag_list.map((tag: TagVO) => {
