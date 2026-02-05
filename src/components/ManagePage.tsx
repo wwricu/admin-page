@@ -167,21 +167,14 @@ const ManagePage: React.FC = () => {
             title: 'TOTP',
             actions: [
                 {
-                    name: totpEnforce ? 'Disable' : 'Enforce',
+                    name: totpEnforce ? 'Disable TOTP' : 'Enforce TOTP',
+                    confirmMessage: totpEnforce ? 'Download database to local?' : undefined,
                     handle: () => {
                         if (totpEnforce) {
-                            Modal.confirm({
-                                title: 'Disable TOTP?',
-                                onOk() {
-                                   return new Promise((resolve: (value: unknown) => void) => {
-                                        totpEnforceAPI(false).then(
-                                            messageApi.info('success')).then(
-                                            getTotpEnforce).then(
-                                            () => resolve(true)
-                                        )
-                                    })
-                                }
-                              })
+                            totpEnforceAPI(false).then(
+                                getTotpEnforce).then(
+                                messageApi.info('success')
+                            )
                             return
                         }
                         totpEnforceAPI(true).then(secret => {
@@ -207,9 +200,10 @@ const ManagePage: React.FC = () => {
                                 onOk: () => {
                                     return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
                                         totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
-                                            messageApi.info('success')).then(
-                                            () => resolve(true)).then(
-                                            getTotpEnforce).finally(reject)
+                                            getTotpEnforce).then(
+                                            () => messageApi.info('success')).then(
+                                            () => resolve(true)
+                                        ).finally(reject)
                                     })
                                 }
                             })
