@@ -74,7 +74,10 @@ const TrashBinPage: React.FC = () => {
                                         id: trashBinVO.id,
                                         type: trashBinVO.type,
                                         delete: false
-                                    }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
+                                    }).then(() => {
+                                        messageApi.success(`${trashBinVO.type} ${trashBinVO.name} recovered`).then()
+                                        getAllTrashBinVO()
+                                    })
                                 }}
                             >
                                 <Button variant='outlined' size='small' color='primary'>
@@ -89,7 +92,10 @@ const TrashBinPage: React.FC = () => {
                                         id: trashBinVO.id,
                                         type: trashBinVO.type,
                                         delete: true
-                                    }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
+                                    }).then(() => {
+                                        messageApi.success(`${trashBinVO.type} ${trashBinVO.name} deleted`).then()
+                                        getAllTrashBinVO()
+                                    })
                                 }
                             >
                                 <Button variant='solid' size='small' color='danger'>

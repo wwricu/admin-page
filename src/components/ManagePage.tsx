@@ -88,8 +88,8 @@ export default function ManagePage() {
                                         reject()
                                     } else {
                                         userAPI({username: username}).then(
-                                            () => messageApi.success('success')).then(
                                             () => {
+                                                messageApi.success('success').then()
                                                 setDynamicModal(null)
                                                 resolve()
                                                 navigate('/login')
@@ -137,8 +137,10 @@ export default function ManagePage() {
                     name: 'Reset all to default',
                     handle: () => {
                         userAPI({reset: true}).then(
-                            () => messageApi.success('success')).then(
-                            () => navigate('/login')
+                            () => {
+                                messageApi.success('success').then()
+                                navigate('/login')
+                            }
                         )
                     },
                     confirmMessage: 'Sure to reset username and password to default?',
