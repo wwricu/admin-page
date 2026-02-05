@@ -22,17 +22,21 @@ type ActionRow = {
     actions: Action[]
 }
 
-
 const ManagePage: React.FC = () => {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
-    // TODO: useState to control Input, now modalApi closure cannot react to useState outside so use inputRef
-    const [modalApi, modalContextHolder] = Modal.useModal()
     const inputRef = useRef<InputRef>(null)
     const navigate = useNavigate()
 
     const [username, setUsername] = useState<string>()
     const [totpEnforce, setTotpEnforce] = useState<boolean>(false)
+
+    const [dynamicModal, setDynamicModal] = useState<{
+        open: boolean
+        title: string
+        content: React.ReactNode
+        onOk: () => Promise<void>
+    } | null>(null)
 
     const getTotpEnforce = () => {
         getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE).then((res: string | null) => {
@@ -67,17 +71,17 @@ const ManagePage: React.FC = () => {
                 {
                     name: 'Set username',
                     handle: () => {
-                        modalApi.confirm({
-                            icon: null,
+                        setDynamicModal({
+                            open: true,
                             title: 'Set username',
                             content: <Input
                                 ref={inputRef}
-                                className='my-3.75'
                                 defaultValue={username}
+                                style={{ marginTop: 16, marginBottom: 16 }}
                             />,
                             onOk: () => {
                                 const username = inputRef?.current?.input?.value
-                                return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
+                                return new Promise((resolve: (value: void) => void, reject: () => void) => {
                                     if (!username) {
                                         messageApi.error('Please input valid username').then()
                                         reject()
@@ -85,13 +89,12 @@ const ManagePage: React.FC = () => {
                                         userAPI({username: username}).then(
                                             () => messageApi.info('success')).then(
                                             () => {
-                                                resolve(true)
+                                                resolve()
                                                 navigate('/login')
                                             }
                                         )
                                     }
                                 })
-
                             }
                         })
                     },
@@ -99,13 +102,17 @@ const ManagePage: React.FC = () => {
                 {
                     name: 'Set password',
                     handle: () => {
-                        modalApi.confirm({
-                            icon: null,
+                        setDynamicModal({
+                            open: true,
                             title: 'Input new Password',
-                            content: <Input.Password className='my-3.75' ref={inputRef}/>,
+                            content: <Input.Password
+                                ref={inputRef}
+                                placeholder='New password'
+                                style={{ marginTop: 16, marginBottom: 16 }}
+                            />,
                             onOk: () => {
                                 const password = inputRef?.current?.input?.value
-                                return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
+                                return new Promise((resolve: (value: void) => void, reject: () => void) => {
                                     if (!password) {
                                         messageApi.error('Please input valid password').then()
                                         reject()
@@ -113,7 +120,7 @@ const ManagePage: React.FC = () => {
                                         userAPI({password: password}).then(
                                             () => messageApi.info('success')).then(
                                             () => {
-                                                resolve(true)
+                                                resolve()
                                                 navigate('/login')
                                             },
                                         )
@@ -182,27 +189,21 @@ const ManagePage: React.FC = () => {
                                 messageApi.error('Failed to enforce totp').then(console.error)
                                 return
                             }
-                            modalApi.confirm({
-                                icon: null,
-                                title: `${secret}`,
-                                okButtonProps: {
-                                  size: 'small'
-                                },
-                                cancelButtonProps: {
-                                  size: 'small'
-                                },
-                                content: (
-                                    <Input
-                                        ref={inputRef}
-                                        placeholder='Verify 6-pin code to enable totp'
-                                    />
-                                ),
+                            setDynamicModal({
+                                open: true,
+                                title: secret,
+                                content: <Input
+                                    ref={inputRef}
+                                    placeholder='6-pin code from authenticator'
+                                    style={{ marginTop: 16, marginBottom: 16 }}
+                                />,
                                 onOk: () => {
-                                    return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
+                                    // const promise: Promise<T> = new Promise((resolve: (value: T) => void, reject: () => void) => {})
+                                    return new Promise((resolve: (value: void) => void, reject: () => void) => {
                                         totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
                                             getTotpEnforce).then(
                                             () => messageApi.info('success')).then(
-                                            () => resolve(true)
+                                            () => resolve()
                                         ).finally(reject)
                                     })
                                 }
@@ -217,7 +218,21 @@ const ManagePage: React.FC = () => {
     return (
         <>
             {messageContextHolder}
-            {modalContextHolder}
+            {
+                dynamicModal &&
+                (
+                    <Modal
+                        closable={false}
+                        open={dynamicModal.open}
+                        title={dynamicModal.title}
+                        onOk={dynamicModal.onOk}
+                        onCancel={() => setDynamicModal(null)}
+                        centered
+                    >
+                        {dynamicModal.content}
+                    </Modal>
+                )
+            }
             <AboutEditor
                 open={isAboutModalOpen}
                 onCancel={() => setIsAboutModalOpen(false)}
