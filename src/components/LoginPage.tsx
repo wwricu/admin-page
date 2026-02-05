@@ -11,7 +11,6 @@ export default function LoginPage() {
     const navigate = useNavigate()
     const [loginForm] = Form.useForm()
     const [loginPhase, setLoginPhase] = useState<'account' | 'totp'>('account')
-    const [totpValue, setTotpValue] = useState<string | undefined>(undefined)
 
     useEffect(() => {
         infoAPI().then((res: boolean) => {
@@ -26,11 +25,16 @@ export default function LoginPage() {
             <Form
                 className='w-82'
                 form={loginForm}
+                onValuesChange={(changedValues, allValues) => {
+                    if (changedValues.totp !== undefined && allValues.totp?.length === 6) {
+                        loginForm.submit()
+                    }
+                }}
                 onFinish={(record: Record<string, string>) =>
                     loginAPI({username: record.username, password: record.password, totp: record.totp}).then(
                         () => navigate('/')).catch(
                         (err: AxiosError) => {
-                            setTotpValue(undefined)
+                            loginForm.setFieldsValue({ totp: '' })
                             if (err.status === 422) {
                                 setLoginPhase('totp')
                                 return
@@ -68,19 +72,8 @@ export default function LoginPage() {
                 </div>
                 <div className='flex justify-center'>
                     {/* Flex to work around with mobile safari; TODO: Fix OTP width on safari */}
-                    <Form.Item<LoginRO>
-                        className={loginPhase === 'totp' ? '' : 'hidden'}
-                        name="totp"
-                    >
-                        <Input.OTP
-                            size='large'
-                            value={totpValue}
-                            onChange={(totp: string) => {
-                                if (totp.length == 6) {
-                                    loginForm.submit()
-                                }
-                            }}
-                        />
+                    <Form.Item<LoginRO> name="totp" className={loginPhase === 'totp' ? '' : 'hidden'}>
+                        <Input.OTP size='large'/>
                     </Form.Item>
                 </div>
             </Form>
