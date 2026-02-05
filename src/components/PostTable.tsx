@@ -65,7 +65,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                 />
                 <Column
                     <PostDetailVO>
-                    title='Created At'
+                    title='Created at'
                     dataIndex='create_time'
                     key='create_time'
                     width={120}

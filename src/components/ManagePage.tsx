@@ -18,11 +18,11 @@ type Action = {
 
 type ActionRow = {
     key: string,
-    title: string,
+    title: string | React.ReactNode,
     actions: Action[]
 }
 
-const ManagePage: React.FC = () => {
+export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
     const inputRef = useRef<InputRef>(null)
@@ -54,7 +54,8 @@ const ManagePage: React.FC = () => {
     const actionTableData: ActionRow[] = [
         {
             key: 'about',
-            title: 'About Page',
+            // title: 'About Page',
+            title: <div className={'whitespace-nowrap'}>About Page</div>,
             actions: [
                 {
                     name: 'Edit',
@@ -77,7 +78,7 @@ const ManagePage: React.FC = () => {
                             content: <Input
                                 ref={inputRef}
                                 defaultValue={username}
-                                style={{ marginTop: 16, marginBottom: 16 }}
+                                style={{ marginTop: 12, marginBottom: 12 }}
                             />,
                             onOk: () => {
                                 const username = inputRef?.current?.input?.value
@@ -108,7 +109,7 @@ const ManagePage: React.FC = () => {
                             content: <Input.Password
                                 ref={inputRef}
                                 placeholder='New password'
-                                style={{ marginTop: 16, marginBottom: 16 }}
+                                style={{ marginTop: 12, marginBottom: 12 }}
                             />,
                             onOk: () => {
                                 const password = inputRef?.current?.input?.value
@@ -195,7 +196,7 @@ const ManagePage: React.FC = () => {
                                 content: <Input
                                     ref={inputRef}
                                     placeholder='6-pin code from authenticator'
-                                    style={{ marginTop: 16, marginBottom: 16 }}
+                                    style={{ marginTop: 12, marginBottom: 12 }}
                                 />,
                                 onOk: () => {
                                     // const promise: Promise<T> = new Promise((resolve: (value: T) => void, reject: () => void) => {})
@@ -240,7 +241,6 @@ const ManagePage: React.FC = () => {
             />
             <Table
                 <ActionRow>
-                className='m-1'
                 scroll={{ x: true }}
                 size='small'
                 dataSource={actionTableData}
@@ -275,5 +275,3 @@ const ManagePage: React.FC = () => {
         </>
     )
 }
-
-export default ManagePage

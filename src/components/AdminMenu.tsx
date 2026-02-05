@@ -174,7 +174,7 @@ const AdminMenu: React.FC = () => {
                     value={inputValue}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {setInputValue(e.target.value)}}
                     placeholder={`Input new ${creatingName} name`}
-                    style={{ marginTop: 16, marginBottom: 16 }}
+                    style={{ marginTop: 12, marginBottom: 12 }}
                 >
                 </Input>
             </Modal>
