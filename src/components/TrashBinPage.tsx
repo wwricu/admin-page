@@ -34,7 +34,7 @@ const TrashBinPage: React.FC = () => {
                     title='Name'
                     dataIndex='name'
                     key='name'
-                    minWidth={200}
+                    width={200}
                     render={(_, { name }: TrashBinVO) =>
                         <Tooltip title={name}>
                             <div className='w-50 whitespace-nowrap overflow-hidden text-ellipsis'>
@@ -48,14 +48,14 @@ const TrashBinPage: React.FC = () => {
                     title='Type'
                     dataIndex='type'
                     key='type'
-                    minWidth={120}
+                    width={120}
                 />
                 <Column
                     <TrashBinVO>
                     title='Delete Time'
                     dataIndex='delete_time'
                     key='delete_time'
-                    minWidth={120}
+                    width={120}
                     render={(_, {delete_time}: TrashBinVO) => delete_time.slice(0, 10)}
                 />
                 <Column
