@@ -157,7 +157,8 @@ const ManagePage: React.FC = () => {
                     name: 'Download to local',
                     handle: () => {
                         window.open(`${baseUrl}/manage/database?action=${DatabaseActionEnum.DOWNLOAD}`)
-                    }
+                    },
+                    confirmMessage: 'Download database to local?'
                 }
             ]
         },
