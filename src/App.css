@@ -29,6 +29,18 @@ body {
   }
 }
 
+@media (max-width: 768px) {
+  .max-md-p-4 {
+    padding: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .max-md-p-6 {
+    padding: 24px;
+  }
+}
+
 @media (max-width: 1024px) {
   .max-lg-hidden {
     display: none;
