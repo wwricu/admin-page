@@ -21,6 +21,7 @@ const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const [activeKey, setActiveKey] = useState<string>('')
+    const [modalTitle, setModalTitle] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
@@ -88,6 +89,7 @@ const AdminMenu: React.FC = () => {
                                 key: 'New Category',
                                 label: 'New Category',
                                 onClick: () => {
+                                    setModalTitle('New Category')
                                     setCreatingName('category')
                                     setIsModalOpen(true)
                                 }
@@ -96,6 +98,7 @@ const AdminMenu: React.FC = () => {
                                 key: 'New Tag',
                                 label: 'New Tag',
                                 onClick: () => {
+                                    setModalTitle('New Tag')
                                     setCreatingName('tag')
                                     setIsModalOpen(true)
                                 }
@@ -140,9 +143,13 @@ const AdminMenu: React.FC = () => {
                 <Button className='mx-4 mb-5' onClick={() => logoutAPI().then(() => navigate('/login'))}>Logout</Button>
             </Flex>
             <Modal
+                title={modalTitle}
                 closable={false}
                 open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
+                onCancel={() => {
+                    setIsModalOpen(false)
+                    setModalTitle('')
+                }}
                 onOk={() => {
                     if (!inputValue) {
                         message.error('Please enter name', 1).then()
@@ -154,6 +161,7 @@ const AdminMenu: React.FC = () => {
                         setIsModalOpen(false)
                         message.success('success', 2).then()
                         navigate(`/${creatingName}`)
+                        setModalTitle('')
                     })
                 }}
             >
@@ -161,7 +169,8 @@ const AdminMenu: React.FC = () => {
                     value={inputValue}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {setInputValue(e.target.value)}}
                     placeholder={`Input new ${creatingName} name`}
-                    className={'my-2'}>
+                    style={{ marginTop: 12, marginBottom: 12 }}
+                >
                 </Input>
             </Modal>
         </Flex>
