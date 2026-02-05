@@ -7,7 +7,6 @@ import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
 import {deleteTag, getAllTag, updateTag} from "../api/tag"
 
-
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean
     dataIndex: string
@@ -15,10 +14,6 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     inputType: 'number' | 'text'
     record: TagVO
     index: number
-}
-
-interface TagTableProps {
-    tagType: TagTypeEnum
 }
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
@@ -34,27 +29,27 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
 
     return (
         <td {...restProps}>
-            {editing ? (
-                <Form.Item
-                    className='m-0'
-                    name={dataIndex}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please Input ${title}!`,
-                        }
-                    ]}
-                >
-                    {inputNode}
-                </Form.Item>
-            ) : (
-                children
-            )}
+            {
+                editing ? (
+                    <Form.Item
+                        className='m-0'
+                        name={dataIndex}
+                        rules={[
+                            {
+                                required: true,
+                                message: `Please Input ${title}!`,
+                            }
+                        ]}
+                    >
+                        {inputNode}
+                    </Form.Item>
+                ) : ( children )
+            }
         </td>
     )
 }
 
-const TagTable: React.FC<TagTableProps> = ({tagType}) => {
+export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
     const [form] = Form.useForm()
     const [data, setData] = useState<TagVO[]>([])
     const [editingKey, setEditingKey] = useState<number | undefined>()
@@ -126,20 +121,20 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             dataIndex: 'Action',
             render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
-                  <span>
-                    <Button className='me-2' variant='solid' color='primary' size='small' onClick={() => save(tag.id)}>
-                      Save
-                    </Button>
-                    <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-                      <Button size='small'>Cancel</Button>
-                    </Popconfirm>
-                  </span>
+                    <Space size='middle'>
+                        <Popconfirm title={`Save ${tag.name}?`} onConfirm={() => save(tag.id)}>
+                            <Button variant='outlined' color='primary' size='small'>
+                              Save
+                            </Button>
+                        </Popconfirm>
+                        <Button size='small' onClick={cancel}>Cancel</Button>
+                    </Space>
                 ) : (
                   <Space size='middle'>
                       <Button size='small' disabled={editingKey !== undefined} onClick={() => edit(tag)}>
                           Edit
                       </Button>
-                      <Popconfirm title="Sure to Delete?" onConfirm={() => remove(tag)}>
+                      <Popconfirm title={`Delete ${tag.name}?`} onConfirm={() => remove(tag)}>
                           <Button variant='solid' size='small' color='danger'>
                               Delete
                           </Button>
@@ -158,7 +153,7 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
             ...col,
             onCell: (record: TagVO) => ({
                 record,
-                inputType: col.dataIndex === 'age' ? 'number' : 'text',
+                inputType: 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
@@ -186,5 +181,3 @@ const TagTable: React.FC<TagTableProps> = ({tagType}) => {
         </>
     )
 }
-
-export default TagTable
