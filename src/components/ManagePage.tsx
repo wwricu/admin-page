@@ -102,7 +102,7 @@ const ManagePage: React.FC = () => {
                         modalApi.confirm({
                             icon: null,
                             title: 'Input new Password',
-                            content: <Input className='my-3.75' ref={inputRef}/>,
+                            content: <Input.Password className='my-3.75' ref={inputRef}/>,
                             onOk: () => {
                                 const password = inputRef?.current?.input?.value
                                 return new Promise((resolve: (value: unknown) => void, reject: () => void) => {
@@ -190,7 +190,13 @@ const ManagePage: React.FC = () => {
                             }
                             modalApi.confirm({
                                 icon: null,
-                                title: `Totp secret: ${secret}`,
+                                title: `${secret}`,
+                                okButtonProps: {
+                                  size: 'small'
+                                },
+                                cancelButtonProps: {
+                                  size: 'small'
+                                },
                                 content: (
                                     <Input
                                         ref={inputRef}
