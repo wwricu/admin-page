@@ -88,8 +88,9 @@ export default function ManagePage() {
                                         reject()
                                     } else {
                                         userAPI({username: username}).then(
-                                            () => messageApi.info('success')).then(
+                                            () => messageApi.success('success')).then(
                                             () => {
+                                                setDynamicModal(null)
                                                 resolve()
                                                 navigate('/login')
                                             }
@@ -119,12 +120,13 @@ export default function ManagePage() {
                                         reject()
                                     } else {
                                         userAPI({password: password}).then(
-                                            () => messageApi.info('success')).then(
                                             () => {
+                                                messageApi.success('success').then()
+                                                setDynamicModal(null)
                                                 resolve()
                                                 navigate('/login')
                                             },
-                                        )
+                                        ).catch(() => reject())
                                     }
                                 })
                             }
@@ -135,7 +137,7 @@ export default function ManagePage() {
                     name: 'Reset all to default',
                     handle: () => {
                         userAPI({reset: true}).then(
-                            () => messageApi.info('success')).then(
+                            () => messageApi.success('success')).then(
                             () => navigate('/login')
                         )
                     },
@@ -150,14 +152,14 @@ export default function ManagePage() {
                 {
                     name: 'Backup to cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.BACKUP).then(() => {
-                        messageApi.info('Database backup successfully.').then()
+                        messageApi.success('Database backup successfully.').then()
                     })},
                     confirmMessage: 'Sure to backup database? This will override cloud database'
                 },
                 {
                     name: 'Restore from cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.RESTORE).then(() => {
-                        messageApi.info('Database restore successfully.').then()
+                        messageApi.success('Database restore successfully.').then()
                     })},
                     confirmMessage: 'Sure to backup database? This will override local database'
                 },
@@ -181,7 +183,7 @@ export default function ManagePage() {
                         if (totpEnforce) {
                             totpEnforceAPI(false).then(
                                 getTotpEnforce).then(
-                                messageApi.info('success')
+                                () => messageApi.success('success').then()
                             )
                             return
                         }
@@ -203,9 +205,12 @@ export default function ManagePage() {
                                     return new Promise((resolve: (value: void) => void, reject: () => void) => {
                                         totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
                                             getTotpEnforce).then(
-                                            () => messageApi.info('success')).then(
-                                            () => resolve()
-                                        ).finally(reject)
+                                            () => {
+                                                messageApi.success('success').then()
+                                                setDynamicModal(null)
+                                                resolve()
+                                            }
+                                        ).catch(() => reject())
                                     })
                                 }
                             })
@@ -259,7 +264,12 @@ export default function ManagePage() {
                         <Flex key={row.key} justify='flex-start' gap='middle'>
                             {row?.actions.map((action: Action) =>
                                 action.confirmMessage ? (
-                                    <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
+                                    <Popconfirm
+                                        key={action.name}
+                                        title={`Sure to ${action.name}?`}
+                                        onConfirm={action.handle}
+                                        okButtonProps={{variant: 'solid', color: 'danger'}}
+                                    >
                                         <Button size='small'>{action.name}</Button>
                                     </Popconfirm>
                                 ) : (

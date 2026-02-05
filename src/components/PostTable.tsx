@@ -133,11 +133,14 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                                     {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
                                 </Button>
                             </Popconfirm>
-                            <Popconfirm title={`Delete "${postDetailVO.title}"?`} onConfirm={() =>
-                                deletePostAPI(postDetailVO.id).then(_ => {
-                                    message.success('success').then()
-                                    updatePostPage(pageIndex, pageSize)
-                                })
+                            <Popconfirm
+                                title={`Delete ${postDetailVO.status} "${postDetailVO.title}"?`}
+                                okButtonProps={{variant: 'solid', color: postDetailVO.status === 'published' ? 'danger' : 'primary'}}
+                                onConfirm={() =>
+                                    deletePostAPI(postDetailVO.id).then(_ => {
+                                        message.success('success').then()
+                                        updatePostPage(pageIndex, pageSize)
+                                    })
                             }>
                                 <Button variant='solid' color='danger' size='small'>Delete</Button>
                             </Popconfirm>
