@@ -76,7 +76,7 @@ const AdminMenu: React.FC = () => {
                                             </div>
                                         }
                                       >
-                                        <div>New Post</div>
+                                        New Post
                                     </Popover>
                                 ),
                                 onClick: () => {
@@ -169,7 +169,7 @@ const AdminMenu: React.FC = () => {
                     value={inputValue}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {setInputValue(e.target.value)}}
                     placeholder={`Input new ${creatingName} name`}
-                    style={{ marginTop: 12, marginBottom: 12 }}
+                    style={{ marginTop: 16, marginBottom: 16 }}
                 >
                 </Input>
             </Modal>
