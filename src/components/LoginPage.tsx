@@ -19,7 +19,7 @@ export default function LoginPage() {
                 message.success('Logging in...', 1).then(() => navigate('/'))
             }
         })
-    }, [location.pathname])
+    }, [location.pathname, navigate])
 
     return (
         <Flex justify='center' style={{height: '100vh', padding: 24}}>

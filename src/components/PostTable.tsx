@@ -121,7 +121,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                                     updatePostStatusDetailAPI(postDetailVO.id, postDetailVO.status === 'published' ?
                                         PostStatusEnum.DRAFT :
                                         PostStatusEnum.PUBLISHED
-                                    ).then(_ => {
+                                    ).then(() => {
                                         message.success('success').then()
                                         updatePostPage(pageIndex, pageSize)
                                     })
@@ -135,7 +135,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                                 title={`Delete ${postDetailVO.status} "${postDetailVO.title}"?`}
                                 okButtonProps={{variant: 'solid', color: postDetailVO.status === 'published' ? 'danger' : 'primary'}}
                                 onConfirm={() =>
-                                    deletePostAPI(postDetailVO.id).then(_ => {
+                                    deletePostAPI(postDetailVO.id).then(() => {
                                         message.success('success').then()
                                         updatePostPage(pageIndex, pageSize)
                                     })

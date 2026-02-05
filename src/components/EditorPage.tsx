@@ -107,27 +107,6 @@ export default function EditorPage() {
             <div style={{marginTop: 8}}>Upload</div>
         </button>
     )
-    useEffect(() => {
-        getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
-            const tagItems = tagList.map((tag) => {
-                return {
-                    value: tag.id,
-                    label: tag.name
-                }
-            })
-            setAllTags(tagItems)
-        })
-        getAllTag(TagTypeEnum.POST_CAT).then((tagList: TagVO[]) => {
-            const tagItems = tagList.map((tag) => {
-                return {
-                    value: tag.id,
-                    label: tag.name
-                }
-            })
-            setAllCategories(tagItems)
-        })
-        loadPostContent()
-    }, [id])
 
     const updatePost = (status: PostStatusEnum) => {
         const postUpdateRO: PostUpdateRO = {
@@ -169,6 +148,28 @@ export default function EditorPage() {
             }
         })
     }
+
+    useEffect(() => {
+        getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
+            const tagItems = tagList.map((tag) => {
+                return {
+                    value: tag.id,
+                    label: tag.name
+                }
+            })
+            setAllTags(tagItems)
+        })
+        getAllTag(TagTypeEnum.POST_CAT).then((tagList: TagVO[]) => {
+            const tagItems = tagList.map((tag) => {
+                return {
+                    value: tag.id,
+                    label: tag.name
+                }
+            })
+            setAllCategories(tagItems)
+        })
+        loadPostContent()
+    }, [id, loadPostContent])
 
     const moreOptionPanel = () => (
         <Flex vertical gap='small' style={{ padding: 16, ...(hidePublishOption && {display: 'none'}) }}>
