@@ -52,11 +52,13 @@ const TrashBinPage: React.FC = () => {
                 />
                 <Column
                     <TrashBinVO>
-                    title='Delete Time'
+                    title='Delete at'
                     dataIndex='delete_time'
                     key='delete_time'
                     width={120}
-                    render={(_, {delete_time}: TrashBinVO) => delete_time.slice(0, 10)}
+                    render={(_, {delete_time}: TrashBinVO) =>
+                        <div className={'whitespace-nowrap'}>{delete_time.slice(0, 10)}</div>
+                    }
                 />
                 <Column
                     <TrashBinVO>
