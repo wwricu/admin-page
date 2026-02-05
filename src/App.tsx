@@ -1,13 +1,14 @@
 import {Button, ConfigProvider, Drawer, Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
-import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useNavigate} from "react-router-dom"
+import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import './App.css'
 import React, {Suspense, useEffect, useState} from "react"
 import {infoAPI} from "./api/common.ts"
 import {MenuOutlined} from "@ant-design/icons"
 import useAutoTheme from "./theme.ts"
+import {RefreshProvider} from "./components/Common.tsx";
 
 const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
@@ -23,6 +24,7 @@ const Loading: React.FC = () => {
 
 const AppLayout: React.FC = () => {
     const navigate = useNavigate()
+    const location = useLocation()
     const [open, setOpen] = useState(false)
 
     useEffect(() => {
@@ -33,15 +35,26 @@ const AppLayout: React.FC = () => {
         }).catch(() => {
             navigate('/login')
         })
-    }, [navigate])
+    }, [location.pathname])
+
+    const getPosition = () => {
+        const url = location.pathname.split('/').filter(Boolean)[0] || null
+        if (!url) {
+            return null
+        }
+        return url[0].toUpperCase() + url.slice(1)
+    }
 
     return (
         <>
             <Layout className='h-screen'>
-                <Header className='lg:hidden'>
+                <Header className='flex items-center gap-1 lg:hidden'>
                     <Button color="default" variant="text" onClick={() => setOpen(true)}>
                         <MenuOutlined/>
                     </Button>
+                    <span className='align-middle'>
+                        {getPosition()}
+                    </span>
                 </Header>
                 <Layout>
                     <Sider className='max-lg:hidden' theme='light'>
@@ -126,7 +139,9 @@ export default function App() {
     const theme = useAutoTheme()
     return (
         <ConfigProvider theme={theme}>
-            <AppRouter/>
+            <RefreshProvider>
+                <AppRouter/>
+            </RefreshProvider>
         </ConfigProvider>
     )
 }

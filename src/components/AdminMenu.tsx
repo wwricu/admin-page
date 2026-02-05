@@ -12,23 +12,26 @@ import {
 import {Button, Divider, Flex, Input, Menu, message, Modal, Popover} from 'antd'
 import {Link, useLocation, useNavigate} from "react-router-dom"
 import {logoutAPI} from "../api/common.ts"
-import {PostDetailVO} from "../model/response.ts";
-import {createPostAPI} from "../api/post.ts";
-import {newTag} from "../api/tag.ts";
-import {TagTypeEnum} from "../model/enum.ts";
+import {PostDetailVO} from "../model/response.ts"
+import {createPostAPI} from "../api/post.ts"
+import {newTag} from "../api/tag.ts"
+import {TagTypeEnum} from "../model/enum.ts"
+import {useRefresh} from "./Common.tsx";
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const [activeKey, setActiveKey] = useState<string>('')
+    const [modalTitle, setModalTitle] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
-    const [popoverOpen, setPopoverOpen] = useState(false);
+    const [popoverOpen, setPopoverOpen] = useState(false)
+    const refresh = useRefresh()
 
     useEffect(() => {
         setActiveKey(location.pathname.split('/').filter(Boolean)[0] || '')
-    }, [location]);
+    }, [location])
 
     return (
         <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
@@ -75,7 +78,7 @@ const AdminMenu: React.FC = () => {
                                             </div>
                                         }
                                       >
-                                        <div>New Post</div>
+                                        New Post
                                     </Popover>
                                 ),
                                 onClick: () => {
@@ -88,6 +91,7 @@ const AdminMenu: React.FC = () => {
                                 key: 'New Category',
                                 label: 'New Category',
                                 onClick: () => {
+                                    setModalTitle('New Category')
                                     setCreatingName('category')
                                     setIsModalOpen(true)
                                 }
@@ -96,6 +100,7 @@ const AdminMenu: React.FC = () => {
                                 key: 'New Tag',
                                 label: 'New Tag',
                                 onClick: () => {
+                                    setModalTitle('New Tag')
                                     setCreatingName('tag')
                                     setIsModalOpen(true)
                                 }
@@ -140,9 +145,13 @@ const AdminMenu: React.FC = () => {
                 <Button className='mx-4 mb-5' onClick={() => logoutAPI().then(() => navigate('/login'))}>Logout</Button>
             </Flex>
             <Modal
+                title={modalTitle}
                 closable={false}
                 open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
+                onCancel={() => {
+                    setIsModalOpen(false)
+                    setModalTitle('')
+                }}
                 onOk={() => {
                     if (!inputValue) {
                         message.error('Please enter name', 1).then()
@@ -154,6 +163,10 @@ const AdminMenu: React.FC = () => {
                         setIsModalOpen(false)
                         message.success('success', 2).then()
                         navigate(`/${creatingName}`)
+                        if (creatingName === activeKey) {
+                            refresh.triggerRefresh()
+                        }
+                        setModalTitle('')
                     })
                 }}
             >
@@ -161,7 +174,8 @@ const AdminMenu: React.FC = () => {
                     value={inputValue}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {setInputValue(e.target.value)}}
                     placeholder={`Input new ${creatingName} name`}
-                    className={'my-2'}>
+                    style={{ marginTop: 12, marginBottom: 12 }}
+                >
                 </Input>
             </Modal>
         </Flex>
