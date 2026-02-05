@@ -32,14 +32,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
             {
                 editing ? (
                     <Form.Item
-                        className='m-0'
+                        className='m-0!'
                         name={dataIndex}
-                        rules={[
-                            {
-                                required: true,
-                                message: `Please Input ${title}!`,
-                            }
-                        ]}
+                        rules={[{ required: true, message: `Please Input ${title}!` }]}
                     >
                         {inputNode}
                     </Form.Item>
