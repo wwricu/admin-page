@@ -49,7 +49,7 @@ const ManagePage: React.FC = () => {
 
     const actionTableData: ActionRow[] = [
         {
-            key: '1',
+            key: 'about',
             title: 'About Page',
             actions: [
                 {
@@ -61,7 +61,7 @@ const ManagePage: React.FC = () => {
             ]
         },
         {
-            key: '2',
+            key: 'login',
             title: 'Login',
             actions: [
                 {
@@ -136,7 +136,7 @@ const ManagePage: React.FC = () => {
             ]
         },
         {
-            key: '3',
+            key: 'database',
             title: 'Database',
             actions: [
                 {
@@ -162,7 +162,7 @@ const ManagePage: React.FC = () => {
             ]
         },
         {
-            key: '4',
+            key: 'totp',
             title: 'TOTP',
             actions: [
                 {
@@ -240,6 +240,7 @@ const ManagePage: React.FC = () => {
                     title='Name'
                     dataIndex='title'
                     key='title'
+                    minWidth={100}
                 />
                 <Column
                     title='Actions'
