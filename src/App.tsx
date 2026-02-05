@@ -8,6 +8,7 @@ import React, {Suspense, useEffect, useState} from "react"
 import {infoAPI} from "./api/common.ts"
 import {MenuOutlined} from "@ant-design/icons"
 import useAutoTheme from "./theme.ts"
+import {RefreshProvider} from "./components/Common.tsx";
 
 const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
@@ -138,7 +139,9 @@ export default function App() {
     const theme = useAutoTheme()
     return (
         <ConfigProvider theme={theme}>
-            <AppRouter/>
+            <RefreshProvider>
+                <AppRouter/>
+            </RefreshProvider>
         </ConfigProvider>
     )
 }

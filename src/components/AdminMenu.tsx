@@ -16,6 +16,7 @@ import {PostDetailVO} from "../model/response.ts"
 import {createPostAPI} from "../api/post.ts"
 import {newTag} from "../api/tag.ts"
 import {TagTypeEnum} from "../model/enum.ts"
+import {useRefresh} from "./Common.tsx";
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
@@ -26,6 +27,7 @@ const AdminMenu: React.FC = () => {
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
     const [popoverOpen, setPopoverOpen] = useState(false)
+    const refresh = useRefresh()
 
     useEffect(() => {
         setActiveKey(location.pathname.split('/').filter(Boolean)[0] || '')
@@ -161,6 +163,9 @@ const AdminMenu: React.FC = () => {
                         setIsModalOpen(false)
                         message.success('success', 2).then()
                         navigate(`/${creatingName}`)
+                        if (creatingName === activeKey) {
+                            refresh.triggerRefresh()
+                        }
                         setModalTitle('')
                     })
                 }}

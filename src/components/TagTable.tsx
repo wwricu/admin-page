@@ -6,6 +6,7 @@ import { Form, Input, InputNumber, Popconfirm, Table} from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
 import {deleteTag, getAllTag, updateTag} from "../api/tag"
+import {useRefresh} from "./Common.tsx";
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean
@@ -50,12 +51,13 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
     const [editingKey, setEditingKey] = useState<number | undefined>()
     const isEditing = (tag: TagVO) => tag.id === editingKey
     const [messageApi, contextHolder] = message.useMessage()
+    const refresh = useRefresh()
 
     useEffect(() => {
         getAllTag(tagType).then((tagList: TagVO[]) => {
             setData(tagList)
         })
-    }, [tagType])
+    }, [tagType, refresh])
 
     const edit = (tag: Partial<TagVO> & { id: React.Key }) => {
         form.setFieldsValue({ name: '', ...tag })
