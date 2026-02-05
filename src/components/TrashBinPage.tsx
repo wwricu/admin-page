@@ -52,11 +52,13 @@ const TrashBinPage: React.FC = () => {
                 />
                 <Column
                     <TrashBinVO>
-                    title='Delete Time'
+                    title='Delete at'
                     dataIndex='delete_time'
                     key='delete_time'
                     width={120}
-                    render={(_, {delete_time}: TrashBinVO) => delete_time.slice(0, 10)}
+                    render={(_, {delete_time}: TrashBinVO) =>
+                        <div className={'whitespace-nowrap'}>{delete_time.slice(0, 10)}</div>
+                    }
                 />
                 <Column
                     <TrashBinVO>
@@ -66,7 +68,7 @@ const TrashBinPage: React.FC = () => {
                     render={(_, trashBinVO: TrashBinVO) => (
                         <Space size='middle'>
                             <Popconfirm
-                                title={`Recover ${trashBinVO.name}?`}
+                                title={`Recover ${trashBinVO.type} "${trashBinVO.name}"?`}
                                 onConfirm={() => {
                                     trashEditAPI({
                                         id: trashBinVO.id,
@@ -79,13 +81,17 @@ const TrashBinPage: React.FC = () => {
                                     Recover
                                 </Button>
                             </Popconfirm>
-                            <Popconfirm title={`Delete ${trashBinVO.name}?`} onConfirm={() => {
-                                trashEditAPI({
-                                    id: trashBinVO.id,
-                                    type: trashBinVO.type,
-                                    delete: true
-                                }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
-                            }}>
+                            <Popconfirm
+                                title={`Delete ${trashBinVO.type} "${trashBinVO.name}"?`}
+                                okButtonProps={{variant: 'solid', color: 'danger'}}
+                                onConfirm={() =>
+                                    trashEditAPI({
+                                        id: trashBinVO.id,
+                                        type: trashBinVO.type,
+                                        delete: true
+                                    }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
+                                }
+                            >
                                 <Button variant='solid' size='small' color='danger'>
                                     Delete
                                 </Button>

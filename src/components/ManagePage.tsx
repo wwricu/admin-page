@@ -18,11 +18,11 @@ type Action = {
 
 type ActionRow = {
     key: string,
-    title: string,
+    title: string | React.ReactNode,
     actions: Action[]
 }
 
-const ManagePage: React.FC = () => {
+export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
     const inputRef = useRef<InputRef>(null)
@@ -54,7 +54,8 @@ const ManagePage: React.FC = () => {
     const actionTableData: ActionRow[] = [
         {
             key: 'about',
-            title: 'About Page',
+            // title: 'About Page',
+            title: <div className={'whitespace-nowrap'}>About Page</div>,
             actions: [
                 {
                     name: 'Edit',
@@ -77,7 +78,7 @@ const ManagePage: React.FC = () => {
                             content: <Input
                                 ref={inputRef}
                                 defaultValue={username}
-                                style={{ marginTop: 16, marginBottom: 16 }}
+                                style={{ marginTop: 12, marginBottom: 12 }}
                             />,
                             onOk: () => {
                                 const username = inputRef?.current?.input?.value
@@ -87,8 +88,9 @@ const ManagePage: React.FC = () => {
                                         reject()
                                     } else {
                                         userAPI({username: username}).then(
-                                            () => messageApi.info('success')).then(
+                                            () => messageApi.success('success')).then(
                                             () => {
+                                                setDynamicModal(null)
                                                 resolve()
                                                 navigate('/login')
                                             }
@@ -108,7 +110,7 @@ const ManagePage: React.FC = () => {
                             content: <Input.Password
                                 ref={inputRef}
                                 placeholder='New password'
-                                style={{ marginTop: 16, marginBottom: 16 }}
+                                style={{ marginTop: 12, marginBottom: 12 }}
                             />,
                             onOk: () => {
                                 const password = inputRef?.current?.input?.value
@@ -118,12 +120,13 @@ const ManagePage: React.FC = () => {
                                         reject()
                                     } else {
                                         userAPI({password: password}).then(
-                                            () => messageApi.info('success')).then(
                                             () => {
+                                                messageApi.success('success').then()
+                                                setDynamicModal(null)
                                                 resolve()
                                                 navigate('/login')
                                             },
-                                        )
+                                        ).catch(() => reject())
                                     }
                                 })
                             }
@@ -134,7 +137,7 @@ const ManagePage: React.FC = () => {
                     name: 'Reset all to default',
                     handle: () => {
                         userAPI({reset: true}).then(
-                            () => messageApi.info('success')).then(
+                            () => messageApi.success('success')).then(
                             () => navigate('/login')
                         )
                     },
@@ -149,14 +152,14 @@ const ManagePage: React.FC = () => {
                 {
                     name: 'Backup to cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.BACKUP).then(() => {
-                        messageApi.info('Database backup successfully.').then()
+                        messageApi.success('Database backup successfully.').then()
                     })},
                     confirmMessage: 'Sure to backup database? This will override cloud database'
                 },
                 {
                     name: 'Restore from cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.RESTORE).then(() => {
-                        messageApi.info('Database restore successfully.').then()
+                        messageApi.success('Database restore successfully.').then()
                     })},
                     confirmMessage: 'Sure to backup database? This will override local database'
                 },
@@ -180,7 +183,7 @@ const ManagePage: React.FC = () => {
                         if (totpEnforce) {
                             totpEnforceAPI(false).then(
                                 getTotpEnforce).then(
-                                messageApi.info('success')
+                                () => messageApi.success('success').then()
                             )
                             return
                         }
@@ -195,16 +198,19 @@ const ManagePage: React.FC = () => {
                                 content: <Input
                                     ref={inputRef}
                                     placeholder='6-pin code from authenticator'
-                                    style={{ marginTop: 16, marginBottom: 16 }}
+                                    style={{ marginTop: 12, marginBottom: 12 }}
                                 />,
                                 onOk: () => {
                                     // const promise: Promise<T> = new Promise((resolve: (value: T) => void, reject: () => void) => {})
                                     return new Promise((resolve: (value: void) => void, reject: () => void) => {
                                         totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
                                             getTotpEnforce).then(
-                                            () => messageApi.info('success')).then(
-                                            () => resolve()
-                                        ).finally(reject)
+                                            () => {
+                                                messageApi.success('success').then()
+                                                setDynamicModal(null)
+                                                resolve()
+                                            }
+                                        ).catch(() => reject())
                                     })
                                 }
                             })
@@ -240,7 +246,6 @@ const ManagePage: React.FC = () => {
             />
             <Table
                 <ActionRow>
-                className='m-1'
                 scroll={{ x: true }}
                 size='small'
                 dataSource={actionTableData}
@@ -259,7 +264,12 @@ const ManagePage: React.FC = () => {
                         <Flex key={row.key} justify='flex-start' gap='middle'>
                             {row?.actions.map((action: Action) =>
                                 action.confirmMessage ? (
-                                    <Popconfirm key={action.name} title={`Sure to ${action.name}?`} onConfirm={action.handle}>
+                                    <Popconfirm
+                                        key={action.name}
+                                        title={`Sure to ${action.name}?`}
+                                        onConfirm={action.handle}
+                                        okButtonProps={{variant: 'solid', color: 'danger'}}
+                                    >
                                         <Button size='small'>{action.name}</Button>
                                     </Popconfirm>
                                 ) : (
@@ -275,5 +285,3 @@ const ManagePage: React.FC = () => {
         </>
     )
 }
-
-export default ManagePage
