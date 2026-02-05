@@ -1,5 +1,5 @@
 import {infoAPI, loginAPI} from "../api/common.ts"
-import {useNavigate} from "react-router-dom"
+import {useLocation, useNavigate} from "react-router-dom"
 import {useEffect, useState} from "react"
 import {Form, Button, Input, message} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons"
@@ -9,6 +9,7 @@ import icon from '/doge.png'
 
 export default function LoginPage() {
     const navigate = useNavigate()
+    const location = useLocation()
     const [loginForm] = Form.useForm()
     const [loginPhase, setLoginPhase] = useState<'account' | 'totp'>('account')
 
@@ -18,7 +19,7 @@ export default function LoginPage() {
                 message.success('Logging in...', 1).then(() => navigate('/'))
             }
         })
-    }, [navigate])
+    }, [location.pathname])
 
     return (
         <div className='flex justify-center h-screen p-6'>

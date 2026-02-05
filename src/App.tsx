@@ -34,7 +34,7 @@ const AppLayout: React.FC = () => {
         }).catch(() => {
             navigate('/login')
         })
-    }, [navigate])
+    }, [location.pathname])
 
     const getPosition = () => {
         const url = location.pathname.split('/').filter(Boolean)[0] || null
