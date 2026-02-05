@@ -54,8 +54,7 @@ export default function ManagePage() {
     const actionTableData: ActionRow[] = [
         {
             key: 'about',
-            // title: 'About Page',
-            title: <div className={'whitespace-nowrap'}>About Page</div>,
+            title: 'About Page',
             actions: [
                 {
                     name: 'Edit',
@@ -257,7 +256,7 @@ export default function ManagePage() {
                     title='Name'
                     dataIndex='title'
                     key='title'
-                    minWidth={100}
+                    ellipsis={true}
                 />
                 <Column
                     title='Actions'
