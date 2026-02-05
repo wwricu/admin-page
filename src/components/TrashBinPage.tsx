@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Flex, message, Popconfirm, Table, Typography} from 'antd'
+import {Button, message, Popconfirm, Space, Table, Tooltip} from 'antd'
 import {TrashBinVO} from "../model/response.ts";
 import {trashEditAPI, trashGetAllAPI} from "../api/manage.ts";
 
@@ -25,6 +25,7 @@ const TrashBinPage: React.FC = () => {
             <Table
                 <TrashBinVO>
                 className='m-1'
+                scroll={{ x: true }}
                 dataSource={trashBinVOList}
                 rowKey={(trashBinVO: TrashBinVO) => `${trashBinVO.id}:${trashBinVO.type}`}
             >
@@ -33,21 +34,28 @@ const TrashBinPage: React.FC = () => {
                     title='Name'
                     dataIndex='name'
                     key='name'
-                    width={200}
+                    minWidth={200}
+                    render={(_, { name }: TrashBinVO) =>
+                        <Tooltip title={name}>
+                            <div className='w-50 whitespace-nowrap overflow-hidden text-ellipsis'>
+                                {name}
+                            </div>
+                        </Tooltip>
+                    }
                 />
                 <Column
                     <TrashBinVO>
                     title='Type'
                     dataIndex='type'
                     key='type'
-                    width={200}
+                    minWidth={120}
                 />
                 <Column
                     <TrashBinVO>
                     title='Delete Time'
                     dataIndex='delete_time'
                     key='delete_time'
-                    width={200}
+                    minWidth={120}
                     render={(_, {delete_time}: TrashBinVO) => delete_time.slice(0, 10)}
                 />
                 <Column
@@ -56,9 +64,9 @@ const TrashBinPage: React.FC = () => {
                     key='action'
                     width={100}
                     render={(_, trashBinVO: TrashBinVO) => (
-                        <Flex justify='space-evenly' className='flex-nowrap'>
+                        <Space size='middle'>
                             <Popconfirm
-                                title='Sure to recover?'
+                                title={`Recover ${trashBinVO.name}?`}
                                 onConfirm={() => {
                                     trashEditAPI({
                                         id: trashBinVO.id,
@@ -67,22 +75,22 @@ const TrashBinPage: React.FC = () => {
                                     }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
                                 }}
                             >
-                                <Typography.Link>
+                                <Button variant='outlined' size='small' color='primary'>
                                     Recover
-                                </Typography.Link>
+                                </Button>
                             </Popconfirm>
-                            <Popconfirm title="Sure to Delete?" onConfirm={() => {
+                            <Popconfirm title={`Delete ${trashBinVO.name}?`} onConfirm={() => {
                                 trashEditAPI({
                                     id: trashBinVO.id,
                                     type: trashBinVO.type,
                                     delete: true
                                 }).then(messageApi.info(trashBinVO.id)).then(getAllTrashBinVO)
                             }}>
-                                <Typography.Link>
+                                <Button variant='solid' size='small' color='danger'>
                                     Delete
-                                </Typography.Link>
+                                </Button>
                             </Popconfirm>
-                        </Flex>
+                        </Space>
                     )}
                 />
             </Table>

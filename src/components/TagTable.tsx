@@ -134,8 +134,8 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
                       <Button size='small' disabled={editingKey !== undefined} onClick={() => edit(tag)}>
                           Edit
                       </Button>
-                      <Popconfirm title={`Delete ${tag.name}?`} onConfirm={() => remove(tag)}>
-                          <Button variant='solid' size='small' color='danger'>
+                      <Popconfirm title={`Delete ${tag.name}?`} disabled={editingKey !== undefined} onConfirm={() => remove(tag)}>
+                          <Button variant={editingKey !== undefined ? 'outlined' : 'solid'} size='small' color='danger'>
                               Delete
                           </Button>
                       </Popconfirm>
