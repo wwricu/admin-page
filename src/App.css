@@ -22,3 +22,21 @@ body {
   width: 300px !important;
   height: 200px !important;
 }
+
+@media (max-width: 640px) {
+  .max-sm-flex-wrap {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 1024px) {
+  .max-lg-hidden {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg-hidden {
+    display: none;
+  }
+}

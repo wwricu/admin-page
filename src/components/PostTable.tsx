@@ -55,7 +55,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     key='title'
                     render={(_, { title }: PostDetailVO) =>
                         <Tooltip title={title}>
-                            <div className='w-80 whitespace-nowrap overflow-hidden text-ellipsis'>
+                            <div style={{width: 320, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                                 {title}
                             </div>
                         </Tooltip>
@@ -69,7 +69,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     ellipsis={true}
                     width={100}
                     render={(_, {create_time}: PostDetailVO) =>
-                        <div className={'whitespace-nowrap'}>{create_time.slice(0, 10)}</div>
+                        <div style={{whiteSpace: 'nowrap'}}>{create_time.slice(0, 10)}</div>
                     }
                 />
                 <Column
@@ -80,7 +80,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     width={150}
                     render={(_, { category }: PostDetailVO) =>
                         category ? (
-                            <Tag className='max-w-37.5 overflow-hidden' color={'blue'}>
+                            <Tag style={{maxWidth: 150, overflow: 'hidden'}} color={'blue'}>
                                 {category.name.toUpperCase()}
                             </Tag>
                         ) : <></>
@@ -95,7 +95,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                         <>
                             {tag_list.map((tag: TagVO) => {
                                 return (
-                                    <Tag className={'mw-50 overflow-hidden'} color={'blue'} key={tag.id}>
+                                    <Tag style={{overflow: 'hidden'}} color={'blue'} key={tag.id}>
                                         {tag.name.toUpperCase()}
                                     </Tag>
                                 )

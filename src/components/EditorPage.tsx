@@ -3,7 +3,7 @@ import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
 import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
-import {Button, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
+import {Button, Flex, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
 import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
 import {baseUrl, uploadFileAPI} from "../api/common.ts"
@@ -102,9 +102,9 @@ export default function EditorPage() {
     })
 
     const uploadButton = (
-        <button className={'border-none bg-none'} type='button'>
+        <button style={{borderStyle: 'none'}} type='button'>
             {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div className='mt-2'>Upload</div>
+            <div style={{marginTop: 8}}>Upload</div>
         </button>
     )
     useEffect(() => {
@@ -171,7 +171,7 @@ export default function EditorPage() {
     }
 
     const moreOptionPanel = () => (
-        <div className={`flex flex-col gap-1 max-md:p-4 md:p-8 ${hidePublishOption && 'hidden'}`}>
+        <Flex vertical gap='small' style={{ padding: 16, ...(hidePublishOption && {display: 'none'}) }}>
             <Select<TagItem>
                 showSearch
                 allowClear
@@ -193,8 +193,8 @@ export default function EditorPage() {
                 onChange={(values) => {setTags(values)}}
                 options={allTags}
             />
-            <div className='flex justify-start gap-1 max-sm:flex-wrap'>
-                <div className='flex flex-col items-center gap-1'>
+            <Flex justify='start' gap='small' className='max-sm-flex-wrap'>
+                <Flex vertical align='center' gap='small'>
                     <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={300 / 180}>
                         <Upload
                             name='file'
@@ -210,16 +210,15 @@ export default function EditorPage() {
                             {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
                         </Upload>
                     </ImgCrop>
-                    <Popconfirm className='w-full' title="Sure to reset cover?" onConfirm={() => {
+                    <Popconfirm title="Sure to reset cover?" onConfirm={() => {
                         setCoverId(undefined)
                         setImageUrl(undefined)
                     }}>
-                        <Button>Reset cover</Button>
+                        <Button style={{width: '100%'}}>Reset cover</Button>
                     </Popconfirm>
-                </div>
+                </Flex>
                 <TextArea
-                    style={{ resize: 'none' }}
-                    className='max-sm:h-30'
+                    style={{ resize: 'none', minHeight: 140 }}
                     showCount
                     maxLength={200}
                     onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -228,30 +227,31 @@ export default function EditorPage() {
                     value={preview}
                     placeholder="Preview"
                 />
-            </div>
-        </div>
+            </Flex>
+        </Flex>
     )
 
     return (
         <>
             {contextHolder}
-            <div className='flex flex-col gap-2 w-full h-full p-1 pb-0'>
+            <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100%'}}>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
-                <div className='flex justify-start items-center gap-2'>
+                <Flex justify='start' align='center' gap='small'>
                     <Button
-                        className='flex-1'
+                        style={{ flex: '1 1 0' }}
                         icon={hidePublishOption ? <DownOutlined /> : <UpOutlined />}
-                        onClick={() => setHidePublishOption(!hidePublishOption)}>
+                        onClick={() => setHidePublishOption(!hidePublishOption)}
+                    >
                         More Options
                     </Button>
-                    <Popconfirm className='flex-1' title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
-                        <Button variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
+                    <Popconfirm title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
+                        <Button style={{ flex: '1 1 0' }} variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
                             Save {postStatus} post
                         </Button>
                     </Popconfirm>
-                </div>
+                </Flex>
                 {moreOptionPanel()}
-                <div className='h-screen'>
+                <div style={{height: '100vh'}}>
                 <TinyMCE
                     id='tinyMCE'
                     onInit={(_, editor) => {
@@ -280,7 +280,7 @@ export default function EditorPage() {
                     }}
                 />
                 </div>
-            </div>
+            </Flex>
         </>
     )
 }

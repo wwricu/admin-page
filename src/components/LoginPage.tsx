@@ -1,7 +1,7 @@
 import {infoAPI, loginAPI} from "../api/common.ts"
 import {useLocation, useNavigate} from "react-router-dom"
 import {useEffect, useState} from "react"
-import {Form, Button, Input, message} from "antd"
+import {Form, Button, Input, message, Flex} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons"
 import {AxiosError} from "axios"
 import {LoginRO} from "../model/request.ts"
@@ -22,9 +22,9 @@ export default function LoginPage() {
     }, [location.pathname])
 
     return (
-        <div className='flex justify-center h-screen p-6'>
+        <Flex justify='center' style={{height: '100vh', padding: 24}}>
             <Form
-                className='w-82'
+                style={{ width: 328 }}
                 form={loginForm}
                 onValuesChange={(changedValues, allValues) => {
                     if (changedValues.totp !== undefined && allValues.totp?.length === 6) {
@@ -44,16 +44,16 @@ export default function LoginPage() {
                         })
                 }
             >
-                <div className='flex justify-center items-start gap-4 w-full h-20'>
+                <Flex justify='center' align='start' gap='middle' style={{ height: 80, width: '100%' }}>
                     <img
                         alt='icon'
                         src={icon}
                         width={44}
                         height={44}
                     />
-                    <p className='text-4xl font-semibold'>wwr.icu</p>
-                </div>
-                <div className={loginPhase === 'account' ? '' : 'hidden'}>
+                    <p style={{fontSize: 36, fontWeight: 500}}>wwr.icu</p>
+                </Flex>
+                <div style={loginPhase === 'account' ? {} : {display: 'none'}}>
                     <Form.Item<LoginRO>
                         name="username"
                         rules={[{ required: true, message: 'Please input your username!' }]}
@@ -71,13 +71,13 @@ export default function LoginPage() {
                         <Button block size='large' type="primary" htmlType="submit">Login</Button>
                     </Form.Item>
                 </div>
-                <div className='flex justify-center'>
+                <Flex justify='center'>
                     {/* Flex to work around with mobile safari; TODO: Fix OTP width on safari */}
-                    <Form.Item<LoginRO> name="totp" className={loginPhase === 'totp' ? '' : 'hidden'}>
+                    <Form.Item<LoginRO> name="totp" style={loginPhase === 'totp' ? {} : {display: 'none'}}>
                         <Input.OTP size='large'/>
                     </Form.Item>
-                </div>
+                </Flex>
             </Form>
-        </div>
+        </Flex>
     )
 }
