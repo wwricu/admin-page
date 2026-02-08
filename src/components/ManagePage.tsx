@@ -28,7 +28,7 @@ export default function ManagePage() {
 
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
     const [aboutContent, setAboutContent] = useState<string>('')
-    const [isTinyMCE, setTinyMCE] = useState<boolean>(true)
+    const [isTinyMCE, setTinyMCE] = useState<boolean>(false)
 
     const inputRef = useRef<InputRef>(null)
     const navigate = useNavigate()

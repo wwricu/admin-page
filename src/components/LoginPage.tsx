@@ -44,7 +44,7 @@ export default function LoginPage() {
                         })
                 }
             >
-                <Flex justify='center' align='start' gap='middle' style={{ height: 80, width: '100%' }}>
+                <Flex justify='center' align='center' gap='middle' style={{ height: 80, width: '100%' }}>
                     <img
                         alt='icon'
                         src={icon}

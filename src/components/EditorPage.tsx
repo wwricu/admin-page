@@ -40,7 +40,7 @@ const beforeUpload = (file: FileType) => {
 }
 
 export default function EditorPage() {
-    const [isTinyMCE, setTinyMCE] = useState<boolean>(true)
+    const [isTinyMCE, setTinyMCE] = useState<boolean>(false)
 
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
@@ -210,7 +210,7 @@ export default function EditorPage() {
             {contextHolder}
             <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100vh'}}>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
-                <Flex justify='start' align='center' gap='small'>
+                <Flex wrap justify='start' align='center' gap='small'>
                     <Button
                         style={{ flex: '1 1 0' }}
                         onClick={() => setTinyMCE(!isTinyMCE)}
