@@ -1,6 +1,5 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 // import {Editor} from '@tinymce/tinymce-react'
-import {Editor as TinyMCEEditor} from 'tinymce'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
 import {Button, Flex, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
@@ -51,19 +50,21 @@ const beforeUpload = (file: FileType) => {
 }
 
 export default function EditorPage() {
-    const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
     const [tags, setTags] = useState<TagItem[]>([])
     const [preview, setPreview] = useState<string>('')
+    const [content, setContent] = useState<string>('')
+    const [coverId, setCoverId] = useState<number>()
+    const [imageUrl, setImageUrl] = useState<string>()
+
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
+
     const [hidePublishOption, setHidePublishOption] = useState<boolean>(true)
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
-    const [imageUrl, setImageUrl] = useState<string>()
-    const [coverId, setCoverId] = useState<number>()
     const { id } = useParams()
     const postId = parseInt(id!)
 
@@ -113,7 +114,7 @@ export default function EditorPage() {
             id: postId,
             title: title,
             cover_id: coverId,
-            content: editorRef.current?.getContent() ?? '',
+            content: content,
             preview: preview,
             category_id: category?.value,
             tag_id_list: tags.map((tagItem) => tagItem.value),
@@ -121,31 +122,6 @@ export default function EditorPage() {
         }
         updatePostDetailAPI(postUpdateRO).then(() => {
             messageApi.info('success').then()
-        })
-    }
-
-    const loadPostContent = () => {
-        const editor = editorRef.current
-        if (!editor) {
-            return
-        }
-        getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
-            editor.setContent(postDetailVO.content)
-            setTitle(postDetailVO.title)
-            setPostStatus(postDetailVO.status as PostStatusEnum)
-            if (postDetailVO.category) {
-                setCategory({ label: postDetailVO.category.name, value: postDetailVO.category.id })
-            }
-            setImageUrl(postDetailVO.cover?.url)
-            setPreview(postDetailVO.preview)
-            if (postDetailVO.tag_list?.length > 0) {
-                setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
-                    return {
-                        label: tagVO.name,
-                        value: tagVO.id
-                    }
-                }))
-            }
         })
     }
 
@@ -168,8 +144,29 @@ export default function EditorPage() {
             })
             setAllCategories(tagItems)
         })
-        loadPostContent()
-    }, [id, loadPostContent])
+
+        getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
+            setTitle(postDetailVO.title)
+            setPostStatus(postDetailVO.status as PostStatusEnum)
+            setContent(postDetailVO.content)
+            setCoverId(postDetailVO.cover?.id)
+            setImageUrl(postDetailVO.cover?.url)
+            setPreview(postDetailVO.preview)
+
+            if (postDetailVO.category) {
+                setCategory({ label: postDetailVO.category.name, value: postDetailVO.category.id })
+            }
+
+            if (postDetailVO.tag_list?.length > 0) {
+                setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
+                    return {
+                        label: tagVO.name,
+                        value: tagVO.id
+                    }
+                }))
+            }
+        })
+    }, [id])
 
     const moreOptionPanel = () => (
         <Flex vertical gap='small' style={{ ...(hidePublishOption && {display: 'none'}) }} className='max-md-p-4 max-md-p-6'>
@@ -255,10 +252,8 @@ export default function EditorPage() {
                 <div style={{height: '100vh'}}>
                 <TinyMCE
                     id='tinyMCE'
-                    onInit={(_, editor) => {
-                        editorRef.current = editor
-                        loadPostContent()
-                    }}
+                    value={content}
+                    onEditorChange={(editorContent) => setContent(editorContent)}
                     init={{
                         height: '100%',
                         menubar: false,
