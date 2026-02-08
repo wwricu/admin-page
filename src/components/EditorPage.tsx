@@ -132,7 +132,7 @@ export default function EditorPage() {
     }, [id])
 
     const moreOptionPanel = (
-        <Flex vertical gap='small' style={{ ...(hidePublishOption && {display: 'none'}) }} className='max-md-p-4 max-md-p-6'>
+        <Flex vertical gap='small' style={{ paddingBottom: 16, ...(hidePublishOption ? {display: 'none'} : {}) }}>
             <Select<TagItem>
                 showSearch
                 allowClear

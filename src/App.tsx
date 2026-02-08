@@ -48,7 +48,7 @@ const AppLayout: React.FC = () => {
     return (
         <>
             <Layout style={{height: '100vh'}}>
-                <Header className='lg-hidden'>
+                <Header className='lg:hidden'>
                     <Flex align='center' gap='small'>
                         <Button color="default" variant="text" onClick={() => setOpen(true)}>
                             <MenuOutlined/>
@@ -59,7 +59,7 @@ const AppLayout: React.FC = () => {
                     </Flex>
                 </Header>
                 <Layout>
-                    <Sider className='max-lg-hidden' theme='light'>
+                    <Sider className='max-lg:hidden' theme='light'>
                         <Suspense fallback={<Loading/>}>
                             <LazyMenu/>
                         </Suspense>
