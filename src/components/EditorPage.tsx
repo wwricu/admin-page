@@ -9,7 +9,8 @@ import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.t
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"
-import {PostEditor} from './TinyMCE.tsx'
+import {PostEditor as TinyMCE} from './TinyMCE'
+import {PostEditor as CKEditor} from './CKEditor'
 
 const { TextArea } = Input
 
@@ -39,6 +40,8 @@ const beforeUpload = (file: FileType) => {
 }
 
 export default function EditorPage() {
+    const [isTinyMCE, setTinyMCE] = useState<boolean>(true)
+
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
@@ -132,7 +135,7 @@ export default function EditorPage() {
     }, [id])
 
     const moreOptionPanel = (
-        <Flex vertical gap='small' style={{ paddingBottom: 16, ...(hidePublishOption ? {display: 'none'} : {}) }}>
+        <Flex vertical gap='small' style={{ paddingTop: 16, paddingBottom: 16, ...(hidePublishOption ? {display: 'none'} : {}) }}>
             <Select<TagItem>
                 showSearch
                 allowClear
@@ -205,9 +208,15 @@ export default function EditorPage() {
     return (
         <>
             {contextHolder}
-            <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100%'}}>
+            <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100vh'}}>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                 <Flex justify='start' align='center' gap='small'>
+                    <Button
+                        style={{ flex: '1 1 0' }}
+                        onClick={() => setTinyMCE(!isTinyMCE)}
+                    >
+                        { isTinyMCE ? 'Switch to CKEditor' : 'Switch to TinyMCE' }
+                    </Button>
                     <Button
                         style={{ flex: '1 1 0' }}
                         icon={hidePublishOption ? <DownOutlined /> : <UpOutlined />}
@@ -222,8 +231,12 @@ export default function EditorPage() {
                     </Popconfirm>
                 </Flex>
                 {moreOptionPanel}
-                <div style={{height: '100vh'}}>
-                    <PostEditor content={content} setContent={(editorContent) => setContent(editorContent)} postId={postId}/>
+                <div style={{ flex: 1,  minHeight: 0}}>
+                    {
+                        isTinyMCE ?
+                        <TinyMCE content={content} setContent={(editorContent) => setContent(editorContent)} postId={postId}/> :
+                        <CKEditor content={content} setContent={(editorContent) => setContent(editorContent)} postId={postId}/>
+                    }
                 </div>
             </Flex>
         </>

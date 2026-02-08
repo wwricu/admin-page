@@ -6,7 +6,8 @@ import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI,
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
 import {baseUrl} from "../api/common.ts"
 import {useNavigate} from "react-router-dom"
-import {AboutEditor} from './TinyMCE.tsx'
+import {AboutEditor as TinyMCE} from './TinyMCE'
+import {AboutEditor as CKEditor} from './CKEditor'
 
 const {Column} = Table
 
@@ -24,8 +25,10 @@ type ActionRow = {
 
 export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
+
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
     const [aboutContent, setAboutContent] = useState<string>('')
+    const [isTinyMCE, setTinyMCE] = useState<boolean>(true)
 
     const inputRef = useRef<InputRef>(null)
     const navigate = useNavigate()
@@ -259,8 +262,37 @@ export default function ManagePage() {
                         setIsAboutModalOpen(false)
                     })
                 }}
+                footer={[
+                    <Flex key='footer' justify='space-between'>
+                        <Button onClick={() => setTinyMCE(!isTinyMCE)}>
+                            {isTinyMCE ? 'Switch to CKEditor' : 'Switch to TinyMCE'}
+                        </Button>
+                        <span>
+                            <Button onClick={() => setIsAboutModalOpen(false)}>Cancel</Button>
+                            <Button
+                                type="primary"
+                                style={{marginLeft: 8}}
+                                onClick={
+                                    () => {
+                                        setConfigAPI({
+                                            key: ConfigKeyEnum.ABOUT_CONTENT,
+                                            value: aboutContent
+                                        }).then(() => {
+                                            messageApi.success('success').then()
+                                            setIsAboutModalOpen(false)
+                                        })
+                                    }
+                                }
+                            >OK</Button>
+                        </span>
+                    </Flex>
+                ]}
             >
-                <AboutEditor content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/>
+                {
+                    isTinyMCE ?
+                    <TinyMCE content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/> :
+                    <CKEditor content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/>
+                }
             </Modal>
             <Table
                 <ActionRow>
