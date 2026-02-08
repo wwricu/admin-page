@@ -24,7 +24,6 @@ const TrashBinPage: React.FC = () => {
             {messageContextHolder}
             <Table
                 <TrashBinVO>
-                className='m-1'
                 scroll={{ x: true }}
                 dataSource={trashBinVOList}
                 rowKey={(trashBinVO: TrashBinVO) => `${trashBinVO.id}:${trashBinVO.type}`}
@@ -50,7 +49,7 @@ const TrashBinPage: React.FC = () => {
                     key='delete_time'
                     width={100}
                     render={(_, {delete_time}: TrashBinVO) =>
-                        <div className={'whitespace-nowrap'}>{delete_time.slice(0, 10)}</div>
+                        <div style={{whiteSpace: 'nowrap'}}>{delete_time.slice(0, 10)}</div>
                     }
                 />
                 <Column
