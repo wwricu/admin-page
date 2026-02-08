@@ -8,9 +8,9 @@ import 'tinymce/icons/default'
 import 'tinymce/skins/content/default/content'
 import 'tinymce/skins/content/dark/content'
 import 'tinymce/skins/ui/oxide/skin'
-// import 'tinymce/skins/ui/oxide/content'
+import 'tinymce/skins/ui/oxide/content'
 import 'tinymce/skins/ui/oxide-dark/skin'
-// import 'tinymce/skins/ui/oxide-dark/content'
+import 'tinymce/skins/ui/oxide-dark/content'
 
 // More on https://www.tiny.cloud/docs/tinymce/latest/plugins/
 import 'tinymce/plugins/advlist'
@@ -57,6 +57,7 @@ export const AboutEditor = ({ content, setContent }: EditorProps) => {
             init={{
                 menubar: false,
                 branding: false,
+                resize: false,
                 content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
                 skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
                 width: '100%',
