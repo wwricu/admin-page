@@ -2,11 +2,11 @@
 
 import React, {useEffect, useRef, useState} from 'react'
 import {Button, Flex, Input, InputRef, message, Modal, Popconfirm, Table} from 'antd'
-import {databaseAPI, getConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts"
+import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
-import AboutEditor from "./AboutEditor.tsx"
 import {baseUrl} from "../api/common.ts"
 import {useNavigate} from "react-router-dom"
+import {AboutEditor} from './TinyMCE.tsx'
 
 const {Column} = Table
 
@@ -25,6 +25,8 @@ type ActionRow = {
 export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
+    const [aboutContent, setAboutContent] = useState<string>('')
+
     const inputRef = useRef<InputRef>(null)
     const navigate = useNavigate()
 
@@ -45,11 +47,14 @@ export default function ManagePage() {
     }
 
     useEffect(() => {
+        getConfigAPI(ConfigKeyEnum.ABOUT_CONTENT).then((res: string | null) => {
+            setAboutContent(res ?? '')
+        })
         getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
             setUsername(res ?? '')
         })
         getTotpEnforce()
-    })
+    }, [])
 
     const actionTableData: ActionRow[] = [
         {
@@ -240,11 +245,23 @@ export default function ManagePage() {
                     </Modal>
                 )
             }
-            <AboutEditor
+            <Modal
+                width={800}
+                closable={false}
                 open={isAboutModalOpen}
                 onCancel={() => setIsAboutModalOpen(false)}
-                onOk={() => setIsAboutModalOpen(false)}
-            />
+                onOk={() => {
+                    setConfigAPI({
+                        key: ConfigKeyEnum.ABOUT_CONTENT,
+                        value: aboutContent
+                    }).then(() => {
+                        messageApi.success('success').then()
+                        setIsAboutModalOpen(false)
+                    })
+                }}
+            >
+                <AboutEditor content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/>
+            </Modal>
             <Table
                 <ActionRow>
                 scroll={{ x: true }}
