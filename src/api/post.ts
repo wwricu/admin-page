@@ -32,5 +32,5 @@ export const updatePostStatusDetailAPI = async (postId: number, postStatusEnum: 
 }
 
 export const deletePostAPI = async (postId: string | number) => {
-    return await myAxios.get(`/post/delete/${postId}`).then((_: AxiosResponse<void>) => {})
+    return await myAxios.get(`/post/delete/${postId}`).then(() => {})
 }

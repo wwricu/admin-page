@@ -2,11 +2,12 @@
 
 import React, {useEffect, useRef, useState} from 'react'
 import {Button, Flex, Input, InputRef, message, Modal, Popconfirm, Table} from 'antd'
-import {databaseAPI, getConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts"
+import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
-import AboutEditor from "./AboutEditor.tsx"
 import {baseUrl} from "../api/common.ts"
 import {useNavigate} from "react-router-dom"
+import {AboutEditor as TinyMCE} from './TinyMCE'
+import {AboutEditor as CKEditor} from './CKEditor'
 
 const {Column} = Table
 
@@ -24,7 +25,11 @@ type ActionRow = {
 
 export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
+
     const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
+    const [aboutContent, setAboutContent] = useState<string>('')
+    const [isTinyMCE, setTinyMCE] = useState<boolean>(false)
+
     const inputRef = useRef<InputRef>(null)
     const navigate = useNavigate()
 
@@ -45,11 +50,14 @@ export default function ManagePage() {
     }
 
     useEffect(() => {
+        getConfigAPI(ConfigKeyEnum.ABOUT_CONTENT).then((res: string | null) => {
+            setAboutContent(res ?? '')
+        })
         getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
             setUsername(res ?? '')
         })
         getTotpEnforce()
-    })
+    }, [])
 
     const actionTableData: ActionRow[] = [
         {
@@ -240,11 +248,52 @@ export default function ManagePage() {
                     </Modal>
                 )
             }
-            <AboutEditor
+            <Modal
+                width={800}
+                closable={false}
                 open={isAboutModalOpen}
                 onCancel={() => setIsAboutModalOpen(false)}
-                onOk={() => setIsAboutModalOpen(false)}
-            />
+                onOk={() => {
+                    setConfigAPI({
+                        key: ConfigKeyEnum.ABOUT_CONTENT,
+                        value: aboutContent
+                    }).then(() => {
+                        messageApi.success('success').then()
+                        setIsAboutModalOpen(false)
+                    })
+                }}
+                footer={[
+                    <Flex key='footer' justify='space-between'>
+                        <Button onClick={() => setTinyMCE(!isTinyMCE)}>
+                            {isTinyMCE ? 'Switch to CKEditor' : 'Switch to TinyMCE'}
+                        </Button>
+                        <span>
+                            <Button onClick={() => setIsAboutModalOpen(false)}>Cancel</Button>
+                            <Button
+                                type="primary"
+                                style={{marginLeft: 8}}
+                                onClick={
+                                    () => {
+                                        setConfigAPI({
+                                            key: ConfigKeyEnum.ABOUT_CONTENT,
+                                            value: aboutContent
+                                        }).then(() => {
+                                            messageApi.success('success').then()
+                                            setIsAboutModalOpen(false)
+                                        })
+                                    }
+                                }
+                            >OK</Button>
+                        </span>
+                    </Flex>
+                ]}
+            >
+                {
+                    isTinyMCE ?
+                    <TinyMCE content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/> :
+                    <CKEditor content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/>
+                }
+            </Modal>
             <Table
                 <ActionRow>
                 scroll={{ x: true }}

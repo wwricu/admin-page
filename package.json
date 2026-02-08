@@ -10,17 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-react": "^11.0.1",
     "@tinymce/tinymce-react": "^5.1.1",
     "antd": "^5.22.7",
     "antd-img-crop": "^4.24.0",
     "axios": "^1.12.0",
+    "ckeditor5": "^47.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.12.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
-    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
@@ -28,7 +29,6 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
-    "tailwindcss": "^4.1.18",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.4.1"

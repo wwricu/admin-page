@@ -1,4 +1,4 @@
-import {Button, ConfigProvider, Drawer, Layout, Spin} from "antd"
+import {Button, ConfigProvider, Drawer, Flex, Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
@@ -19,7 +19,7 @@ const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"))
 
 const Loading: React.FC = () => {
-    return <Spin className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" size="large"/>
+    return <Spin style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}} size="large"/>
 }
 
 const AppLayout: React.FC = () => {
@@ -35,7 +35,7 @@ const AppLayout: React.FC = () => {
         }).catch(() => {
             navigate('/login')
         })
-    }, [location.pathname])
+    }, [location.pathname, navigate])
 
     const getPosition = () => {
         const url = location.pathname.split('/').filter(Boolean)[0] || null
@@ -47,14 +47,16 @@ const AppLayout: React.FC = () => {
 
     return (
         <>
-            <Layout className='h-screen'>
-                <Header className='flex items-center gap-1 lg:hidden'>
-                    <Button color="default" variant="text" onClick={() => setOpen(true)}>
-                        <MenuOutlined/>
-                    </Button>
-                    <span className='align-middle'>
-                        {getPosition()}
-                    </span>
+            <Layout style={{height: '100vh'}}>
+                <Header className='lg:hidden'>
+                    <Flex align='center' gap='small'>
+                        <Button color="default" variant="text" onClick={() => setOpen(true)}>
+                            <MenuOutlined/>
+                        </Button>
+                        <span style={{verticalAlign: 'middle'}}>
+                            {getPosition()}
+                        </span>
+                    </Flex>
                 </Header>
                 <Layout>
                     <Sider className='max-lg:hidden' theme='light'>

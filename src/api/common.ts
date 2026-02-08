@@ -41,11 +41,11 @@ export const uploadFileAPI = async (formData: FormData) => {
 }
 
 export const loginAPI = async (loginRO: LoginRO) => {
-    return await myAxios.post('/login', loginRO).then((_: AxiosResponse<void>) => {})
+    return await myAxios.post('/login', loginRO).then(() => {})
 }
 
 export const logoutAPI = async () => {
-    return await myAxios.get('/logout').then((_: AxiosResponse<void>) => {})
+    return await myAxios.get('/logout').then(() => {})
 }
 
 export const infoAPI = async () => {
