@@ -72,7 +72,7 @@ export default function EditorPage() {
         formData.append('post_id', postId.toString())
         formData.append('file_type', PostResourceTypeEnum.IMAGE)
         formData.append('file', blobInfo.blob(), blobInfo.filename())
-        formData.append('file', blobInfo.blob(), blobInfo.filename())
+
         uploadFileAPI(formData).then((fileUploadVO) => {
             progress(100)
             resolve(fileUploadVO.location)
