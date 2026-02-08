@@ -33,7 +33,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
             {
                 editing ? (
                     <Form.Item
-                        className='m-0!'
+                        style={{margin: 0}}
                         name={dataIndex}
                         rules={[{ required: true, message: `Please Input ${title}!` }]}
                     >
@@ -163,7 +163,6 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
             {contextHolder}
             <Form form={form} component={false}>
                 <Table<TagVO>
-                    className='m-1'
                     size={'small'}
                     scroll={{ x: true }}
                     rowKey={(tagVO: TagVO) => tagVO.id}

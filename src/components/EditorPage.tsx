@@ -1,33 +1,22 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react'
-// import {Editor} from '@tinymce/tinymce-react'
-import {Editor as TinyMCEEditor} from 'tinymce'
+import React, {useEffect, useState} from 'react'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
-import {Button, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
+import {Button, Flex, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
 import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
-import {baseUrl, uploadFileAPI} from "../api/common.ts"
+import {baseUrl} from "../api/common.ts"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"
-import TinyMCE from "./Editor.tsx"
+import {PostEditor as TinyMCE} from './TinyMCE'
+import {PostEditor as CKEditor} from './CKEditor'
 
 const { TextArea } = Input
 
 type TagItem = {
     value: number
     label: string
-}
-
-type BlobInfo = {
-    id: () => string
-    name: () => string
-    filename: () => string
-    blob: () => Blob
-    base64: () => string
-    blobUri: () => string
-    uri: () => string | undefined
 }
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
@@ -51,35 +40,25 @@ const beforeUpload = (file: FileType) => {
 }
 
 export default function EditorPage() {
-    const editorRef: MutableRefObject<TinyMCEEditor | undefined> = useRef()
+    const [isTinyMCE, setTinyMCE] = useState<boolean>(false)
+
     const [title, setTitle] = useState('')
     const [postStatus, setPostStatus] = useState<PostStatusEnum>()
     const [category, setCategory] = useState<TagItem>()
     const [tags, setTags] = useState<TagItem[]>([])
     const [preview, setPreview] = useState<string>('')
+    const [content, setContent] = useState<string>('')
+    const [coverId, setCoverId] = useState<number>()
+    const [imageUrl, setImageUrl] = useState<string>()
+
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
+
     const [hidePublishOption, setHidePublishOption] = useState<boolean>(true)
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
-    const [imageUrl, setImageUrl] = useState<string>()
-    const [coverId, setCoverId] = useState<number>()
     const { id } = useParams()
     const postId = parseInt(id!)
-
-    const tinyMCEImageUploadHandler = (blobInfo: BlobInfo, progress: (percent: number) => void) => new Promise((resolve: (value: string) => void, reject: (reason?: string) => void) => {
-        const formData = new FormData()
-        formData.append('post_id', postId.toString())
-        formData.append('file_type', PostResourceTypeEnum.IMAGE)
-        formData.append('file', blobInfo.blob(), blobInfo.filename())
-        formData.append('file', blobInfo.blob(), blobInfo.filename())
-        uploadFileAPI(formData).then((fileUploadVO) => {
-            progress(100)
-            resolve(fileUploadVO.location)
-        }).catch(() => {
-            reject('failed')
-        })
-    })
 
     const onChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
@@ -96,17 +75,22 @@ export default function EditorPage() {
         }
     }
 
-    const getExtraData: UploadProps['data'] = () => ({
-        post_id: postId,
-        file_type: PostResourceTypeEnum.COVER_IMAGE
-    })
+    const updatePost = (status: PostStatusEnum) => {
+        const postUpdateRO: PostUpdateRO = {
+            id: postId,
+            title: title,
+            cover_id: coverId,
+            content: content,
+            preview: preview,
+            category_id: category?.value,
+            tag_id_list: tags.map((tagItem) => tagItem.value),
+            status: status?.toString()
+        }
+        updatePostDetailAPI(postUpdateRO).then(() => {
+            messageApi.info('success').then()
+        })
+    }
 
-    const uploadButton = (
-        <button className={'border-none bg-none'} type='button'>
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div className='mt-2'>Upload</div>
-        </button>
-    )
     useEffect(() => {
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
             const tagItems = tagList.map((tag) => {
@@ -126,39 +110,19 @@ export default function EditorPage() {
             })
             setAllCategories(tagItems)
         })
-        loadPostContent()
-    }, [id])
 
-    const updatePost = (status: PostStatusEnum) => {
-        const postUpdateRO: PostUpdateRO = {
-            id: postId,
-            title: title,
-            cover_id: coverId,
-            content: editorRef.current?.getContent() ?? '',
-            preview: preview,
-            category_id: category?.value,
-            tag_id_list: tags.map((tagItem) => tagItem.value),
-            status: status?.toString()
-        }
-        updatePostDetailAPI(postUpdateRO).then(() => {
-            messageApi.info('success').then()
-        })
-    }
-
-    const loadPostContent = () => {
-        const editor = editorRef.current
-        if (!editor) {
-            return
-        }
         getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
-            editor.setContent(postDetailVO.content)
             setTitle(postDetailVO.title)
             setPostStatus(postDetailVO.status as PostStatusEnum)
+            setContent(postDetailVO.content)
+            setCoverId(postDetailVO.cover?.id)
+            setImageUrl(postDetailVO.cover?.url)
+            setPreview(postDetailVO.preview)
+
             if (postDetailVO.category) {
                 setCategory({ label: postDetailVO.category.name, value: postDetailVO.category.id })
             }
-            setImageUrl(postDetailVO.cover?.url)
-            setPreview(postDetailVO.preview)
+
             if (postDetailVO.tag_list?.length > 0) {
                 setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
                     return {
@@ -168,10 +132,10 @@ export default function EditorPage() {
                 }))
             }
         })
-    }
+    }, [id])
 
-    const moreOptionPanel = () => (
-        <div className={`flex flex-col gap-1 max-md:p-4 md:p-8 ${hidePublishOption && 'hidden'}`}>
+    const moreOptionPanel = (
+        <Flex vertical gap='small' style={{ paddingTop: 16, paddingBottom: 16, ...(hidePublishOption ? {display: 'none'} : {}) }}>
             <Select<TagItem>
                 showSearch
                 allowClear
@@ -193,8 +157,8 @@ export default function EditorPage() {
                 onChange={(values) => {setTags(values)}}
                 options={allTags}
             />
-            <div className='flex justify-start gap-1 max-sm:flex-wrap'>
-                <div className='flex flex-col items-center gap-1'>
+            <Flex justify='start' gap='small' className='max-sm-flex-wrap'>
+                <Flex vertical align='center' gap='small'>
                     <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={300 / 180}>
                         <Upload
                             name='file'
@@ -204,22 +168,31 @@ export default function EditorPage() {
                             maxCount={1}
                             beforeUpload={beforeUpload}
                             onChange={onChange}
-                            data={getExtraData}
+                            data={() => ({
+                                post_id: postId,
+                                file_type: PostResourceTypeEnum.COVER_IMAGE
+                            })}
                             openFileDialogOnClick={coverId === undefined || imageUrl === undefined}
                         >
-                            {imageUrl ? <Image src={imageUrl} alt='cover'/> : uploadButton}
+                            {
+                                imageUrl ?
+                                <Image src={imageUrl} alt='cover'/> :
+                                <button style={{borderStyle: 'none'}} type='button'>
+                                    {loading ? <LoadingOutlined /> : <PlusOutlined />}
+                                    <div style={{marginTop: 8}}>Upload</div>
+                                </button>
+                            }
                         </Upload>
                     </ImgCrop>
-                    <Popconfirm className='w-full' title="Sure to reset cover?" onConfirm={() => {
+                    <Popconfirm title="Sure to reset cover?" onConfirm={() => {
                         setCoverId(undefined)
                         setImageUrl(undefined)
                     }}>
-                        <Button>Reset cover</Button>
+                        <Button style={{width: '100%'}}>Reset cover</Button>
                     </Popconfirm>
-                </div>
+                </Flex>
                 <TextArea
-                    style={{ resize: 'none' }}
-                    className='max-sm:h-30'
+                    style={{ resize: 'none', minHeight: 140 }}
                     showCount
                     maxLength={200}
                     onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -228,59 +201,44 @@ export default function EditorPage() {
                     value={preview}
                     placeholder="Preview"
                 />
-            </div>
-        </div>
+            </Flex>
+        </Flex>
     )
 
     return (
         <>
             {contextHolder}
-            <div className='flex flex-col gap-2 w-full h-full p-1 pb-0'>
+            <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100vh'}}>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
-                <div className='flex justify-start items-center gap-2'>
+                <Flex wrap justify='start' align='center' gap='small'>
                     <Button
-                        className='flex-1'
+                        style={{ flex: '1 1 0' }}
+                        onClick={() => setTinyMCE(!isTinyMCE)}
+                    >
+                        { isTinyMCE ? 'Switch to CKEditor' : 'Switch to TinyMCE' }
+                    </Button>
+                    <Button
+                        style={{ flex: '1 1 0' }}
                         icon={hidePublishOption ? <DownOutlined /> : <UpOutlined />}
-                        onClick={() => setHidePublishOption(!hidePublishOption)}>
+                        onClick={() => setHidePublishOption(!hidePublishOption)}
+                    >
                         More Options
                     </Button>
-                    <Popconfirm className='flex-1' title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
-                        <Button variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
+                    <Popconfirm title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
+                        <Button style={{ flex: '1 1 0' }} variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
                             Save {postStatus} post
                         </Button>
                     </Popconfirm>
+                </Flex>
+                {moreOptionPanel}
+                <div style={{ flex: 1,  minHeight: 0}}>
+                    {
+                        isTinyMCE ?
+                        <TinyMCE content={content} setContent={(editorContent) => setContent(editorContent)} postId={postId}/> :
+                        <CKEditor content={content} setContent={(editorContent) => setContent(editorContent)} postId={postId}/>
+                    }
                 </div>
-                {moreOptionPanel()}
-                <div className='h-screen'>
-                <TinyMCE
-                    id='tinyMCE'
-                    onInit={(_, editor) => {
-                        editorRef.current = editor
-                        loadPostContent()
-                    }}
-                    init={{
-                        height: '100%',
-                        menubar: false,
-                        resize: false,
-                        statusbar: false,
-                        content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default'),
-                        skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
-                        images_upload_handler: tinyMCEImageUploadHandler,
-                        automatic_uploads: true,
-                        toolbar: `blocks fontfamily fontsize |
-                                  bold italic underline strikethrough  |
-                                  subscript superscript charmap codesample |
-                                  table image link emoticons |
-                                  alignleft aligncenter alignright alignjustify bullist numlist lineheight |
-                                  searchreplace fullscreen`,
-                        plugins: [
-                            'autolink', 'charmap', 'codesample', 'fullscreen', 'image', 'lineheight', 'link',
-                            'emoticons', 'lists', 'advlist', 'media', 'searchreplace', 'table', 'importcss'
-                        ]
-                    }}
-                />
-                </div>
-            </div>
+            </Flex>
         </>
     )
 }

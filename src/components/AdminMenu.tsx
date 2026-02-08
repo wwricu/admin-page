@@ -34,7 +34,7 @@ const AdminMenu: React.FC = () => {
     }, [location])
 
     return (
-        <Flex className={'min-h-screen sticky top-0'} vertical justify='space-between'>
+        <Flex style={{minHeight: '100vh', position: 'sticky', top: 0}} vertical justify='space-between'>
             <Menu
                 mode="inline"
                 selectedKeys={[activeKey]}
@@ -54,14 +54,14 @@ const AdminMenu: React.FC = () => {
                                         onOpenChange={setPopoverOpen}
                                         content={
                                             <div>
-                                                <div className='mb-2 h-5.5'>
-                                                    <ExclamationCircleFilled className='w-5.5 h-5.5' style={{fontSize: 14, color: '#faad14'}}/>
+                                                <div style={{marginBottom: 8, height: 22}}>
+                                                    <ExclamationCircleFilled style={{height: 22, width: 22, fontSize: 14, color: '#faad14'}}/>
                                                     Create new post?
                                                 </div>
-                                                <div className='text-end'>
+                                                <div style={{ textAlign: 'end' }}>
                                                     <Button size='small' onClick={() => setPopoverOpen(false)}>Cancel</Button>
                                                     <Button
-                                                        className='ml-2'
+                                                        style={{marginLeft: 8}}
                                                         size='small'
                                                         type='primary'
                                                         onClick={() => {
@@ -141,8 +141,8 @@ const AdminMenu: React.FC = () => {
                 ]}
             />
             <Flex vertical justify='flex-end'>
-                <Divider className='mb-0'/>
-                <Button className='mx-4 mb-5' onClick={() => logoutAPI().then(() => navigate('/login'))}>Logout</Button>
+                <Divider/>
+                <Button style={{marginLeft: 16, marginRight: 16, marginBottom: 20}} onClick={() => logoutAPI().then(() => navigate('/login'))}>Logout</Button>
             </Flex>
             <Modal
                 title={modalTitle}
