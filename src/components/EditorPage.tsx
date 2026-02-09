@@ -159,7 +159,7 @@ export default function EditorPage() {
             />
             <Flex justify='start' gap='small' className='max-sm-flex-wrap'>
                 <Flex vertical align='center' gap='small'>
-                    <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={300 / 180}>
+                    <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={4 / 3}>
                         <Upload
                             name='file'
                             listType='picture-card'
