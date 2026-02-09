@@ -57,6 +57,7 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
         getAllTag(tagType).then((tagList: TagVO[]) => {
             setData(tagList)
         })
+        setEditingKey(undefined)
     }, [tagType, refresh])
 
     const edit = (tag: Partial<TagVO> & { id: React.Key }) => {
