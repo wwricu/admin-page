@@ -131,6 +131,8 @@ export default function EditorPage() {
                     }
                 }))
             }
+
+            document.title = `Edit ${postDetailVO.title} | wwr.icu`
         })
     }, [id])
 
