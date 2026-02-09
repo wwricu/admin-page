@@ -50,6 +50,7 @@ export default function ManagePage() {
     }
 
     useEffect(() => {
+        document.title = 'Management | wwr.icu'
         getConfigAPI(ConfigKeyEnum.ABOUT_CONTENT).then((res: string | null) => {
             setAboutContent(res ?? '')
         })
