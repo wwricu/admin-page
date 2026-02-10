@@ -33,6 +33,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
     }
 
     useEffect(() => {
+        document.title = `${postStatus === PostStatusEnum.PUBLISHED ? 'Published Posts' : 'Draft Posts'} | wwr.icu`
         getAllPost(1, pageSize, postStatus).then((res: PostDetailPageVO) => {
             setList(res?.data)
             setCount(res?.count)

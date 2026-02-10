@@ -54,9 +54,11 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
     const refresh = useRefresh()
 
     useEffect(() => {
+        document.title = `${tagType === TagTypeEnum.POST_CAT ? 'Post Categories' : 'Post Tags'} | wwr.icu`
         getAllTag(tagType).then((tagList: TagVO[]) => {
             setData(tagList)
         })
+        setEditingKey(undefined)
     }, [tagType, refresh])
 
     const edit = (tag: Partial<TagVO> & { id: React.Key }) => {
