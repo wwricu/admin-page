@@ -1,7 +1,18 @@
 import React, {useEffect, useState} from 'react'
 import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
 import {PostDetailVO, TagVO} from '../model/response.ts'
-import {Button, Flex, type GetProp, Image, Input, message, Popconfirm, Select, Upload, type UploadProps} from 'antd'
+import {
+    Button,
+    Flex,
+    type GetProp,
+    Image,
+    Input,
+    message,
+    Popconfirm,
+    Select,
+    Upload,
+    type UploadProps
+} from 'antd'
 import {getAllTag} from '../api/tag.ts'
 import {PostUpdateRO} from '../model/request.ts'
 import {baseUrl} from "../api/common.ts"
@@ -132,7 +143,7 @@ export default function EditorPage() {
                 }))
             }
 
-            document.title = `Edit ${postDetailVO.title} | wwr.icu`
+            document.title = `${postDetailVO.title} - wwr.icu`
         })
     }, [id])
 
@@ -179,10 +190,7 @@ export default function EditorPage() {
                             {
                                 imageUrl ?
                                 <Image src={imageUrl} alt='cover'/> :
-                                <button style={{borderStyle: 'none'}} type='button'>
-                                    {loading ? <LoadingOutlined /> : <PlusOutlined />}
-                                    <div style={{marginTop: 8}}>Upload</div>
-                                </button>
+                                (loading ? <LoadingOutlined style={{ fontSize: '24px' }}/> : <PlusOutlined style={{ fontSize: '24px' }}/>)
                             }
                         </Upload>
                     </ImgCrop>

@@ -15,7 +15,9 @@ import {
 
     ClassicEditor, Essentials, GeneralHtmlSupport, Paragraph,
 } from 'ckeditor5';
+
 import 'ckeditor5/ckeditor5.css';
+import '../ckeditor.css'
 
 import {PostResourceTypeEnum} from "../model/enum.ts";
 import {uploadFileAPI} from "../api/common.ts";
@@ -30,6 +32,12 @@ declare module '@ckeditor/ckeditor5-core' {
 interface CKEditorUploaderConfig {
     postId: string
     fileType: PostResourceTypeEnum
+}
+
+type EditorProps = {
+    content: string,
+    setContent: (content: string) => void,
+    postId?: number
 }
 
 class CKEditorUploader extends Plugin {
@@ -86,12 +94,6 @@ class CKEditorUploadAdaptor implements UploadAdapter {
             )
         )
     }
-}
-
-type EditorProps = {
-    content: string,
-    setContent: (content: string) => void,
-    postId?: number
 }
 
 export const AboutEditor = ({ content, setContent }: EditorProps) => {
