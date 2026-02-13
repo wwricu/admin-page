@@ -15,11 +15,9 @@ export default function LoginPage() {
 
     useEffect(() => {
         document.title = 'Login - wwr.icu'
-        infoAPI().then((res: boolean) => {
-            if (res) {
-                message.success('Logging in...', 1).then(() => navigate('/'))
-            }
-        })
+        infoAPI().then(
+            () => message.success('Logging in...', 1).then(
+            () => navigate('/'))).catch()
     }, [location.pathname, navigate])
 
     return (
