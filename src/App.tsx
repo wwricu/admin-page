@@ -28,13 +28,7 @@ const AppLayout: React.FC = () => {
     const [open, setOpen] = useState(false)
 
     useEffect(() => {
-        infoAPI().then((res: boolean) => {
-            if (!res) {
-                navigate('/login')
-            }
-        }).catch(() => {
-            navigate('/login')
-        })
+        infoAPI().catch(() => navigate('/login'))
     }, [location.pathname, navigate])
 
     const getPosition = () => {

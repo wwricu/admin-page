@@ -34,9 +34,7 @@ myAxios.interceptors.response.use(
 
 export const uploadFileAPI = async (formData: FormData) => {
     return await myAxios.post('/post/upload', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
+        headers: { 'Content-Type': 'multipart/form-data' }
     }).then((res: AxiosResponse<FileUploadVO>) => res.data)
 }
 
@@ -49,5 +47,5 @@ export const logoutAPI = async () => {
 }
 
 export const infoAPI = async () => {
-    return await myAxios.get('/info').then((res: AxiosResponse<boolean>) => res.data)
+    return await myAxios.get('/info')
 }
