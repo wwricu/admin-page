@@ -98,7 +98,7 @@ class CKEditorUploadAdaptor implements UploadAdapter {
 
 export const AboutEditor = ({ content, setContent }: EditorProps) => {
     return (
-        <div style={{ height: 500 }}>
+        <div style={{ flex: 1,  minHeight: 0 }}>
             <CKEditor
                 editor={ClassicEditor}
                 data={content}
@@ -176,7 +176,7 @@ export const PostEditor = ({content, setContent, postId}: EditorProps) => {
                     ],
                 },
                 uploader: {
-                    postId: postId!!.toString(),
+                    postId: postId!.toString(),
                     fileType: PostResourceTypeEnum.IMAGE
                 }
             }}
