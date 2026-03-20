@@ -16,7 +16,7 @@ import {PostDetailVO} from "../model/response.ts"
 import {createPostAPI} from "../api/post.ts"
 import {newTag} from "../api/tag.ts"
 import {TagTypeEnum} from "../model/enum.ts"
-import {useRefresh} from "./Common.tsx";
+import {useRefresh} from "../common.ts"
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()

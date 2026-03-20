@@ -6,7 +6,7 @@ import { Form, Input, InputNumber, Popconfirm, Table} from 'antd'
 import {TagVO} from "../model/response"
 import {TagTypeEnum} from "../model/enum"
 import {deleteTag, getAllTag, updateTag} from "../api/tag"
-import {useRefresh} from "./Common.tsx";
+import {useRefresh} from "../common.ts"
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean

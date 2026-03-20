@@ -1,8 +1,8 @@
 import {AxiosResponse} from "axios"
 import {ConfigRO, TrashBinRO, UserRO} from "../model/request.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
-import {myAxios} from "./common.ts";
-import {TrashBinVO} from "../model/response.ts";
+import {myAxios} from "../common.ts"
+import {TrashBinVO} from "../model/response.ts"
 
 export const databaseAPI = async (action: DatabaseActionEnum) => {
     return await myAxios.get(`/manage/database?action=${action}`).then(() => {})
