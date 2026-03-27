@@ -23,11 +23,11 @@ export enum ConfigKeyEnum {
     ABOUT_CONTENT = 'about_content',
     TOTP_ENFORCE = 'totp_enforce',
     USERNAME = 'username',
-    PASSWORD = 'password'
+    // PASSWORD = 'password'
 }
 
 export enum EntityTypeEnum {
-    BLOG_POST = 'blog_post',
-    POST_TAG = 'post_tag',
-    POST_CAT = 'post_category'
+    // BLOG_POST = 'blog_post',
+    // POST_TAG = 'post_tag',
+    // POST_CAT = 'post_category'
 }

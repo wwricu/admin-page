@@ -3,10 +3,10 @@
 import React, {useEffect, useState} from 'react'
 import {Button, message, Space, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table} from 'antd'
-import {TagVO} from "../model/response"
-import {TagTypeEnum} from "../model/enum"
-import {deleteTag, getAllTag, updateTag} from "../api/tag"
-import {useRefresh} from "./Common.tsx";
+import {TagVO} from "@/model/response"
+import {TagTypeEnum} from "@/model/enum"
+import {deleteTag, getAllTag, updateTag} from "@/api/tag"
+import {useRefresh} from "@/common.ts"
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean

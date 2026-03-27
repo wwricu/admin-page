@@ -2,9 +2,9 @@
 
 import {useEffect, useState} from 'react'
 import {Button, Flex, message, Popconfirm, Table, Tag, Tooltip, Typography} from 'antd'
-import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '../api/post'
-import {PostDetailPageVO, PostDetailVO, TagVO} from '../model/response'
-import {PostStatusEnum} from '../model/enum'
+import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '@/api/post'
+import {PostDetailPageVO, PostDetailVO, TagVO} from '@/model/response'
+import {PostStatusEnum} from '@/model/enum'
 
 const {Column} = Table
 

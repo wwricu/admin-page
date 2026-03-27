@@ -1,4 +1,4 @@
-import {EntityTypeEnum, PostStatusEnum} from "./enum.ts";
+import {EntityTypeEnum, PostStatusEnum} from "@/model/enum.ts"
 
 export interface TagVO {
     id: number
