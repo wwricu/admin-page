@@ -1,8 +1,8 @@
 import {AxiosResponse} from "axios"
-import {TagVO} from "../model/response"
-import {GetTagRO, TagRO} from "../model/request"
-import {TagTypeEnum} from "../model/enum"
-import {myAxios} from "../common.ts"
+import {TagVO} from "@/model/response"
+import {GetTagRO, TagRO} from "@/model/request"
+import {TagTypeEnum} from "@/model/enum"
+import {myAxios} from "@/common.ts"
 
 
 export const newTag = async (tag: TagRO) => {

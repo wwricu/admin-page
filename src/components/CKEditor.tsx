@@ -14,13 +14,13 @@ import {
     FindAndReplace, Fullscreen,
 
     ClassicEditor, Essentials, GeneralHtmlSupport, Paragraph,
-} from 'ckeditor5';
+} from 'ckeditor5'
 
-import 'ckeditor5/ckeditor5.css';
-import '../ckeditor.css'
+import 'ckeditor5/ckeditor5.css'
+import '@/ckeditor.css'
 
-import {PostResourceTypeEnum} from "../model/enum.ts";
-import {uploadFileAPI} from "../api/common.ts";
+import {PostResourceTypeEnum} from "@/model/enum.ts"
+import {uploadFileAPI} from "@/api/common.ts"
 
 
 declare module '@ckeditor/ckeditor5-core' {
@@ -42,21 +42,21 @@ type EditorProps = {
 
 class CKEditorUploader extends Plugin {
     public static override get isOfficialPlugin(): false {
-        return false;
+        return false
     }
 
     public static override get isPremiumPlugin(): false {
-        return false;
+        return false
     }
 
     public init(): void {
-        const options = this.editor.config.get( 'uploader' );
+        const options = this.editor.config.get( 'uploader' )
         if (!options) {
             return
         }
 
         this.editor.plugins.get( FileRepository ).createUploadAdapter = loader => {
-            return new CKEditorUploadAdaptor( loader, options );
+            return new CKEditorUploadAdaptor( loader, options )
         }
     }
 }
@@ -69,7 +69,7 @@ class CKEditorUploadAdaptor implements UploadAdapter {
     constructor(loader: FileLoader, options : CKEditorUploaderConfig) {
         this.fileType = options.fileType
         this.postId = options.postId
-        this.loader = loader;
+        this.loader = loader
     }
 
     public async upload(): Promise<UploadResponse> {

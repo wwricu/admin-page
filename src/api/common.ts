@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios"
-import {FileUploadVO} from "../model/response"
-import {LoginRO} from "../model/request.ts"
-import {myAxios} from "../common.ts"
+import {FileUploadVO} from "@/model/response"
+import {LoginRO} from "@/model/request.ts"
+import {myAxios} from "@/common.ts"
 
 
 export const uploadFileAPI = async (formData: FormData) => {

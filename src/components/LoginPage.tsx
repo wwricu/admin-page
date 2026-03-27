@@ -1,10 +1,10 @@
-import {infoAPI, loginAPI} from "../api/common.ts"
+import {infoAPI, loginAPI} from "@/api/common.ts"
 import {useLocation, useNavigate} from "react-router-dom"
 import {useEffect, useState} from "react"
 import {Form, Button, Input, message, Flex} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons"
 import {AxiosError} from "axios"
-import {LoginRO} from "../model/request.ts"
+import {LoginRO} from "@/model/request.ts"
 import icon from '/doge.png'
 
 export default function LoginPage() {

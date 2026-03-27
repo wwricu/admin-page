@@ -11,12 +11,12 @@ import {
 } from '@ant-design/icons'
 import {Button, Divider, Flex, Input, Menu, message, Modal, Popover} from 'antd'
 import {Link, useLocation, useNavigate} from "react-router-dom"
-import {logoutAPI} from "../api/common.ts"
-import {PostDetailVO} from "../model/response.ts"
-import {createPostAPI} from "../api/post.ts"
-import {newTag} from "../api/tag.ts"
-import {TagTypeEnum} from "../model/enum.ts"
-import {useRefresh} from "../common.ts"
+import {logoutAPI} from "@/api/common.ts"
+import {PostDetailVO} from "@/model/response.ts"
+import {createPostAPI} from "@/api/post.ts"
+import {newTag} from "@/api/tag.ts"
+import {TagTypeEnum} from "@/model/enum.ts"
+import {useRefresh} from "@/common.ts"
 
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()

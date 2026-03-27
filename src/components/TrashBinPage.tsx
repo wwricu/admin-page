@@ -2,8 +2,8 @@
 
 import React, {useEffect, useState} from 'react'
 import {Button, message, Popconfirm, Space, Table} from 'antd'
-import {TrashBinVO} from "../model/response.ts";
-import {trashEditAPI, trashGetAllAPI} from "../api/manage.ts";
+import {TrashBinVO} from "@/model/response.ts"
+import {trashEditAPI, trashGetAllAPI} from "@/api/manage.ts"
 
 const {Column} = Table
 
