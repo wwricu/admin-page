@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
-import {getPostDetailAPI, updatePostDetailAPI} from '../api/post.ts'
-import {PostDetailVO, TagVO} from '../model/response.ts'
+import {getPostDetailAPI, updatePostDetailAPI} from '@/api/post.ts'
+import {PostDetailVO, TagVO} from '@/model/response.ts'
 import {
     Button,
     Flex,
@@ -13,10 +13,10 @@ import {
     Upload,
     type UploadProps
 } from 'antd'
-import {getAllTag} from '../api/tag.ts'
-import {PostUpdateRO} from '../model/request.ts'
-import {baseUrl} from "../api/common.ts"
-import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "../model/enum.ts"
+import {getAllTag} from '@/api/tag.ts'
+import {PostUpdateRO} from '@/model/request.ts'
+import {baseUrl} from "@/common.ts"
+import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
 import {useParams} from "react-router-dom"

@@ -3,12 +3,12 @@ import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
-import './App.css'
-import React, {Suspense, useEffect, useState} from "react"
-import {infoAPI} from "./api/common.ts"
+import '@/App.css'
+import React, {ReactNode, Suspense, useEffect, useState} from "react"
+import {infoAPI} from "@/api/common.ts"
 import {MenuOutlined} from "@ant-design/icons"
-import useAutoTheme from "./theme.ts"
-import {RefreshProvider} from "./components/Common.tsx";
+import useAutoTheme from "@/theme.ts"
+import {RefreshContext} from "@/common.ts"
 
 const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
@@ -17,6 +17,20 @@ const LazyLoginPage = React.lazy(() => import("./components/LoginPage.tsx"))
 const LazyManagement = React.lazy(() => import("./components/ManagePage.tsx"))
 const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"))
+
+const RefreshProvider = ({ children }: { children: ReactNode }) => {
+    const [key, setKey] = useState(false)
+
+    const triggerRefresh = () => {
+        setKey(prev => !prev)
+    }
+
+    return (
+        <RefreshContext.Provider value={{ key, triggerRefresh }}>
+            {children}
+        </RefreshContext.Provider>
+    )
+}
 
 const Loading: React.FC = () => {
     return <Spin style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}} size="large"/>
@@ -130,6 +144,8 @@ const AppRouter = () => {
         </Router>
     )
 }
+
+
 
 export default function App() {
     const theme = useAutoTheme()

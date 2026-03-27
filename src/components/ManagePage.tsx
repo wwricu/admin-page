@@ -2,9 +2,9 @@
 
 import React, {useEffect, useRef, useState} from 'react'
 import {Button, Flex, Input, InputRef, message, Modal, Popconfirm, Table} from 'antd'
-import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "../api/manage.ts"
-import {ConfigKeyEnum, DatabaseActionEnum} from "../model/enum.ts"
-import {baseUrl} from "../api/common.ts"
+import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "@/api/manage.ts"
+import {ConfigKeyEnum, DatabaseActionEnum} from "@/model/enum.ts"
+import {baseUrl} from "@/common.ts"
 import {useNavigate} from "react-router-dom"
 import {AboutEditor} from './CKEditor'
 
