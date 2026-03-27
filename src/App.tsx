@@ -3,12 +3,12 @@ import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
-import './App.css'
+import '@/App.css'
 import React, {ReactNode, Suspense, useEffect, useState} from "react"
-import {infoAPI} from "./api/common.ts"
+import {infoAPI} from "@/api/common.ts"
 import {MenuOutlined} from "@ant-design/icons"
-import useAutoTheme from "./theme.ts"
-import {RefreshContext} from "./common.ts"
+import useAutoTheme from "@/theme.ts"
+import {RefreshContext} from "@/common.ts"
 
 const LazyPostTable = React.lazy(() => import("./components/PostTable"))
 const LazyTagTable = React.lazy(() => import("./components/TagTable"))
@@ -19,10 +19,10 @@ const LazyMenu = React.lazy(() => import("./components/AdminMenu.tsx"))
 const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"))
 
 const RefreshProvider = ({ children }: { children: ReactNode }) => {
-    const [key, setKey] = useState(false);
+    const [key, setKey] = useState(false)
 
     const triggerRefresh = () => {
-        setKey(prev => !prev);
+        setKey(prev => !prev)
     }
 
     return (

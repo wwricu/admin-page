@@ -1,4 +1,4 @@
-import {ConfigKeyEnum, EntityTypeEnum, TagTypeEnum} from "./enum.ts";
+import {ConfigKeyEnum, EntityTypeEnum, TagTypeEnum} from "@/model/enum.ts"
 
 export interface PostRequestRO {
     page_index: number
