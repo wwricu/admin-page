@@ -23,7 +23,7 @@ export const getAllTag = async (
         page_index: pageIndex,
         page_size: pageSize
     }
-    return await myAxios.post('/open/tags', request).then((res: AxiosResponse<TagVO[]>) => res.data)
+    return await myAxios.post('/tag/all', request).then((res: AxiosResponse<TagVO[]>) => res.data)
 }
 
 export const deleteTag = async (tagId: number) => {
