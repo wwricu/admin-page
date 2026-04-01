@@ -33,6 +33,12 @@ myAxios.interceptors.response.use(
     },
     (error) => {
         const { response } = error
+
+        if (response?.status === 401 && !window.location.pathname.startsWith('/login')) {
+            window.location.href = '/login'
+            return Promise.reject(error)
+        }
+
         if (response && response.status !== 200 && response.data?.detail) {
             message.error(response.data?.detail).then()
         } else {
