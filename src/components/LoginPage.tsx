@@ -14,7 +14,7 @@ export default function LoginPage() {
     const [loginPhase, setLoginPhase] = useState<'account' | 'totp'>('account')
 
     useEffect(() => {
-        document.title = 'Login - wwr.icu'
+        document.title = 'Admin - Login - wwr.icu'
         infoAPI().then(
             () => message.success('Logging in...', 1).then(
             () => navigate('/'))).catch()

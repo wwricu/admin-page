@@ -140,7 +140,7 @@ export default function EditorPage() {
                 }))
             }
 
-            document.title = `${postDetailVO.title} - wwr.icu`
+            document.title = `Admin - ${postDetailVO.title} - wwr.icu`
         })
     }, [postId])
 

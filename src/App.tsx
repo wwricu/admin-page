@@ -1,11 +1,10 @@
 import {Button, ConfigProvider, Drawer, Flex, Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
-import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation, useNavigate} from "react-router-dom"
+import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import '@/App.css'
-import React, {ReactNode, Suspense, useEffect, useState} from "react"
-import {infoAPI} from "@/api/common.ts"
+import React, {ReactNode, Suspense, useState} from "react"
 import {MenuOutlined} from "@ant-design/icons"
 import useAutoTheme from "@/theme.ts"
 import {RefreshContext} from "@/common.ts"
@@ -37,13 +36,8 @@ const Loading: React.FC = () => {
 }
 
 const AppLayout: React.FC = () => {
-    const navigate = useNavigate()
     const location = useLocation()
     const [open, setOpen] = useState(false)
-
-    useEffect(() => {
-        infoAPI().catch(() => navigate('/login'))
-    }, [location.pathname, navigate])
 
     const getPosition = () => {
         const url = location.pathname.split('/').filter(Boolean)[0] || null
