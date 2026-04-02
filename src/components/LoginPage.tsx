@@ -3,8 +3,8 @@ import {useLocation, useNavigate} from "react-router-dom"
 import {useEffect, useState} from "react"
 import {Form, Button, Input, message, Flex} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons"
-import {AxiosError} from "axios"
 import {LoginRO} from "@/model/request.ts"
+import {HttpError} from "@/common.ts"
 import icon from '/doge.png'
 
 export default function LoginPage() {
@@ -33,7 +33,7 @@ export default function LoginPage() {
                 onFinish={(record: Record<string, string>) =>
                     loginAPI({username: record.username, password: record.password, totp: record.totp}).then(
                         () => navigate('/')).catch(
-                        (err: AxiosError) => {
+                        (err: HttpError) => {
                             loginForm.setFieldsValue({ totp: '' })
                             if (err.status === 422) {
                                 setLoginPhase('totp')
