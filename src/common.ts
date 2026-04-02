@@ -18,17 +18,27 @@ type RequestOptions = {
     headers?: Record<string, string>
 }
 
+export class HttpError extends Error {
+    status: number
+    constructor(message: string, status: number) {
+        super(message)
+        this.status = status
+    }
+}
+
 const handleResponse = async <T>(response: Response): Promise<T> => {
     if (response.status === 401 && !window.location.pathname.startsWith('/login')) {
         window.location.href = '/login'
-        throw new Error('Unauthorized')
+        throw new HttpError('Unauthorized', 401)
     }
 
     if (!response.ok) {
         const data = await response.json().catch(() => null)
         const errorMsg = data?.detail || response.statusText
-        message.error(errorMsg).then()
-        throw new Error(errorMsg)
+        if (response.status !== 422) {
+            message.error(errorMsg).then()
+        }
+        throw new HttpError(errorMsg, response.status)
     }
 
     const text = await response.text()
