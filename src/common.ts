@@ -14,10 +14,6 @@ export const useRefresh = () => {
 
 export const baseUrl = import.meta.env.VITE_BASE_URL ?? '/api'
 
-type RequestOptions = {
-    headers?: Record<string, string>
-}
-
 export class HttpError extends Error {
     status: number
     constructor(message: string, status: number) {
@@ -27,22 +23,24 @@ export class HttpError extends Error {
 }
 
 const handleResponse = async <T>(response: Response): Promise<T> => {
+    const data = await response.json().catch(() => null)
+
+    if (response.ok) {
+        return data
+    }
+
     if (response.status === 401 && !window.location.pathname.startsWith('/login')) {
         window.location.href = '/login'
-        throw new HttpError('Unauthorized', 401)
+        return new Promise<T>(() => {})
     }
 
-    if (!response.ok) {
-        const data = await response.json().catch(() => null)
-        const errorMsg = data?.detail || response.statusText
-        if (response.status !== 422) {
-            message.error(errorMsg).then()
-        }
+    const errorMsg = data?.detail || response.statusText
+    message.error(errorMsg).then()
+
+    if (response.status === 422) {
         throw new HttpError(errorMsg, response.status)
     }
-
-    const text = await response.text()
-    return text ? JSON.parse(text) : null
+    return new Promise<T>(() => {})
 }
 
 export const http = {
