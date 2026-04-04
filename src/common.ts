@@ -46,27 +46,25 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 }
 
 export const http = {
-    async get<T>(url: string, options?: RequestOptions): Promise<T> {
+    async get<T>(url: string, headers?: Record<string, string>): Promise<T> {
         const response = await fetch(`${baseUrl}${url}`, {
             method: 'GET',
-            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
-                ...options?.headers
+                ...headers
             }
         })
         return handleResponse<T>(response)
     },
 
-    async post<T>(url: string, data?: unknown, options?: RequestOptions): Promise<T> {
+    async post<T>(url: string, data?: unknown, headers?: Record<string, string>): Promise<T> {
         const isFormData = data instanceof FormData
         const response = await fetch(`${baseUrl}${url}`, {
             method: 'POST',
-            credentials: 'include',
-            headers: isFormData ? options?.headers : {
+            headers: isFormData ? headers : {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                ...options?.headers
+                ...headers
             },
             body: isFormData ? data : JSON.stringify(data)
         })
