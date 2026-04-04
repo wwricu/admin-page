@@ -15,15 +15,17 @@ export default function LoginPage() {
 
     useEffect(() => {
         document.title = 'Admin - Login - wwr.icu'
-        infoAPI().then(
+        if (import.meta.env.PROD) {
+            infoAPI().then(
             () => message.success('Logging in...', 1).then(
             () => navigate('/'))).catch()
+        }
     }, [location.pathname, navigate])
 
     return (
-        <Flex justify='center' style={{height: '100vh', padding: 24}}>
+        <Flex justify='center' style={{height: '100vh'}}>
             <Form
-                style={{ width: 328 }}
+                style={{ width: 328, marginTop: 24 }}
                 form={loginForm}
                 onValuesChange={(changedValues, allValues) => {
                     if (changedValues.totp !== undefined && allValues.totp?.length === 6) {
