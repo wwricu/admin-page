@@ -15,9 +15,11 @@ export default function LoginPage() {
 
     useEffect(() => {
         document.title = 'Admin - Login - wwr.icu'
-        infoAPI().then(
+        if (import.meta.env.PROD) {
+            infoAPI().then(
             () => message.success('Logging in...', 1).then(
             () => navigate('/'))).catch()
+        }
     }, [location.pathname, navigate])
 
     return (
