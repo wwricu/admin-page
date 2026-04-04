@@ -23,9 +23,9 @@ export default function LoginPage() {
     }, [location.pathname, navigate])
 
     return (
-        <Flex justify='center' style={{height: '100vh', padding: 24}}>
+        <Flex justify='center' style={{height: '100vh'}}>
             <Form
-                style={{ width: 328 }}
+                style={{ width: 328, marginTop: 24 }}
                 form={loginForm}
                 onValuesChange={(changedValues, allValues) => {
                     if (changedValues.totp !== undefined && allValues.totp?.length === 6) {
