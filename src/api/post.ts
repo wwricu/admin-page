@@ -1,8 +1,7 @@
-import {AxiosResponse} from "axios"
 import {PostRequestRO, PostUpdateRO} from "@/model/request"
 import {PostDetailPageVO, PostDetailVO} from "@/model/response"
 import {PostStatusEnum} from "@/model/enum"
-import {myAxios} from "@/common.ts"
+import {http} from "@/common.ts"
 
 
 export const getAllPost = async (pageIndex: number, pageSize: number, status: PostStatusEnum) => {
@@ -11,26 +10,25 @@ export const getAllPost = async (pageIndex: number, pageSize: number, status: Po
         page_size: pageSize,
         status: status
     }
-    return await myAxios.post('/post/all', postRequest).then((res: AxiosResponse<PostDetailPageVO>) => res.data)
+    return await http.post<PostDetailPageVO>('/post/all', postRequest)
 }
 
 export const createPostAPI = async () => {
-    return await myAxios.get('/post/create').then((res: AxiosResponse<PostDetailVO>) => res.data)
+    return await http.get<PostDetailVO>('/post/create')
 }
 
 export const getPostDetailAPI = async (postId: string | number) => {
-    return await myAxios.get(`/post/detail/${postId}`).then((res: AxiosResponse<PostDetailVO>) => res.data)
+    return await http.get<PostDetailVO>(`/post/detail/${postId}`)
 }
 
 export const updatePostDetailAPI = async (postUpdateRO: PostUpdateRO) => {
-    return await myAxios.post('/post/update', postUpdateRO)
-        .then((res: AxiosResponse<PostDetailVO>) => res.data)
+    return await http.post<PostDetailVO>('/post/update', postUpdateRO)
 }
 
 export const updatePostStatusDetailAPI = async (postId: number, postStatusEnum: PostStatusEnum) => {
-    return await myAxios.get(`/post/status/${postId}?status=${postStatusEnum}`).then((res: AxiosResponse<PostDetailVO>) => res.data)
+    return await http.get<PostDetailVO>(`/post/status/${postId}?status=${postStatusEnum}`)
 }
 
 export const deletePostAPI = async (postId: string | number) => {
-    return await myAxios.get(`/post/delete/${postId}`).then(() => {})
+    return await http.get(`/post/delete/${postId}`).then(() => {})
 }

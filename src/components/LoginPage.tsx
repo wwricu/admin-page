@@ -3,8 +3,8 @@ import {useLocation, useNavigate} from "react-router-dom"
 import {useEffect, useState} from "react"
 import {Form, Button, Input, message, Flex} from "antd"
 import {LockOutlined, UserOutlined} from "@ant-design/icons"
-import {AxiosError} from "axios"
 import {LoginRO} from "@/model/request.ts"
+import {HttpError} from "@/common.ts"
 import icon from '/doge.png'
 
 export default function LoginPage() {
@@ -15,15 +15,17 @@ export default function LoginPage() {
 
     useEffect(() => {
         document.title = 'Admin - Login - wwr.icu'
-        infoAPI().then(
+        if (import.meta.env.PROD) {
+            infoAPI().then(
             () => message.success('Logging in...', 1).then(
             () => navigate('/'))).catch()
+        }
     }, [location.pathname, navigate])
 
     return (
-        <Flex justify='center' style={{height: '100vh', padding: 24}}>
+        <Flex justify='center' style={{height: '100vh'}}>
             <Form
-                style={{ width: 328 }}
+                style={{ width: 328, marginTop: 24 }}
                 form={loginForm}
                 onValuesChange={(changedValues, allValues) => {
                     if (changedValues.totp !== undefined && allValues.totp?.length === 6) {
@@ -33,7 +35,7 @@ export default function LoginPage() {
                 onFinish={(record: Record<string, string>) =>
                     loginAPI({username: record.username, password: record.password, totp: record.totp}).then(
                         () => navigate('/')).catch(
-                        (err: AxiosError) => {
+                        (err: HttpError) => {
                             loginForm.setFieldsValue({ totp: '' })
                             if (err.status === 422) {
                                 setLoginPhase('totp')

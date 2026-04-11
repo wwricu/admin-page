@@ -1,3 +1,7 @@
+{
+    cache
+}
+
 {$HOSTNAME} {
     tls me@wwr.icu
     encode gzip
@@ -11,6 +15,7 @@
     }
 
     handle_path /* {
+        cache
         reverse_proxy {
             to http://blog-page:3000
             header_up Host {host}
