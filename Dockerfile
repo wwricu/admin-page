@@ -1,8 +1,12 @@
+FROM caddy:builder AS builder
+RUN xcaddy build --with github.com/caddyserver/cache-handler
+
 FROM caddy:alpine
 
 WORKDIR /root
 
 ADD https://github.com/wwricu/admin-page/releases/latest/download/dist.tar.gz .
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 COPY Caddyfile /etc/caddy/Caddyfile
 
 RUN tar xzf dist.tar.gz && rm dist.tar.gz && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' > /etc/timezone
