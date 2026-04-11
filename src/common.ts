@@ -1,5 +1,4 @@
 import {createContext, useContext} from "react"
-import axios from "axios"
 import {message} from "antd"
 
 export const RefreshContext = createContext<{ key: boolean, triggerRefresh: () => void } | null>(null)
@@ -15,35 +14,58 @@ export const useRefresh = () => {
 
 export const baseUrl = import.meta.env.VITE_BASE_URL ?? '/api'
 
-export const myAxios = axios.create({
-    baseURL: baseUrl,
-    timeout: 5000,
-    withCredentials: true,
-    headers: {
-        post: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
+export class HttpError extends Error {
+    status: number
+    constructor(message: string, status: number) {
+        super(message)
+        this.status = status
     }
-})
+}
 
-myAxios.interceptors.response.use(
-    (response) => {
-        return response
+const handleResponse = async <T>(response: Response): Promise<T> => {
+    const data = await response.json().catch(() => null)
+
+    if (response.ok) {
+        return data
+    }
+
+    if (response.status === 401 && !window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login'
+        return new Promise<T>(() => {})
+    }
+
+    const errorMsg = data?.detail || response.statusText
+    message.error(errorMsg).then()
+
+    if (response.status === 422) {
+        throw new HttpError(errorMsg, response.status)
+    }
+    return new Promise<T>(() => {})
+}
+
+export const http = {
+    async get<T>(url: string, headers?: Record<string, string>): Promise<T> {
+        const response = await fetch(`${baseUrl}${url}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                ...headers
+            }
+        })
+        return handleResponse<T>(response)
     },
-    (error) => {
-        const { response } = error
 
-        if (response?.status === 401 && !window.location.pathname.startsWith('/login')) {
-            window.location.href = '/login'
-            return Promise.reject(error)
-        }
-
-        if (response && response.status !== 200 && response.data?.detail) {
-            message.error(response.data?.detail).then()
-        } else {
-            message.error(error.message).then()
-        }
-        return Promise.reject(error)
+    async post<T>(url: string, data?: unknown, headers?: Record<string, string>): Promise<T> {
+        const isFormData = data instanceof FormData
+        const response = await fetch(`${baseUrl}${url}`, {
+            method: 'POST',
+            headers: isFormData ? headers : {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                ...headers
+            },
+            body: isFormData ? data : JSON.stringify(data)
+        })
+        return handleResponse<T>(response)
     }
-)
+}
