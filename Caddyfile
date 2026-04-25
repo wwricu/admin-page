@@ -10,7 +10,9 @@
         reverse_proxy {
             to http://basic-service:8000
             header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -19,7 +21,9 @@
         reverse_proxy {
             to http://blog-page:3000
             header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -37,7 +41,9 @@
         reverse_proxy {
             to http://basic-service:8000
             header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -45,7 +51,9 @@
         reverse_proxy {
             to http://v2ray:8443
             header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -53,7 +61,9 @@
         reverse_proxy {
             to http://bad_proxy:8443
             header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -61,7 +71,9 @@
         reverse_proxy {
             to http://bad_proxy:8444
             header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
         }
     }
 
