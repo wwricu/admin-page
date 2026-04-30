@@ -12,7 +12,7 @@ export const useRefresh = () => {
     return context
 }
 
-export const baseUrl = import.meta.env.VITE_BASE_URL ?? '/api'
+export const baseUrl = '/api'
 
 export class HttpError extends Error {
     status: number
