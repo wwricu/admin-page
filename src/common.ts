@@ -12,8 +12,6 @@ export const useRefresh = () => {
     return context
 }
 
-export const baseUrl = '/api'
-
 export class HttpError extends Error {
     status: number
     constructor(message: string, status: number) {
@@ -45,7 +43,7 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 
 export const http = {
     async get<T>(url: string, headers?: Record<string, string>): Promise<T> {
-        const response = await fetch(`${baseUrl}${url}`, {
+        const response = await fetch(`/api${url}`, {
             method: 'GET',
             // credentials: 'include',
             headers: {
@@ -58,7 +56,7 @@ export const http = {
 
     async post<T>(url: string, data?: unknown, headers?: Record<string, string>): Promise<T> {
         const isFormData = data instanceof FormData
-        const response = await fetch(`${baseUrl}${url}`, {
+        const response = await fetch(`/api${url}`, {
             method: 'POST',
             headers: isFormData ? headers : {
                 'Content-Type': 'application/json',

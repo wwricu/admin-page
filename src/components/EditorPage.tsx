@@ -15,7 +15,6 @@ import {
 } from 'antd'
 import {getAllTag} from '@/api/tag.ts'
 import {PostUpdateRO} from '@/model/request.ts'
-import {baseUrl} from "@/common.ts"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
@@ -174,7 +173,7 @@ export default function EditorPage() {
                             name='file'
                             listType='picture-card'
                             showUploadList={false}
-                            action={`${baseUrl}/post/upload`}
+                            action='/api/post/upload'
                             maxCount={1}
                             beforeUpload={beforeUpload}
                             onChange={onChange}
