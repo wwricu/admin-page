@@ -261,7 +261,7 @@ export default function ManagePage() {
                     })
                 }}
                 footer={[
-                    <span>
+                    <span key={ConfigKeyEnum.ABOUT_CONTENT}>
                         <Button onClick={() => setIsAboutModalOpen(false)}>Cancel</Button>
                         <Button
                             type="primary"
