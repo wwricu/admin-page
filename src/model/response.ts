@@ -1,4 +1,4 @@
-import {EntityTypeEnum, PostStatusEnum} from "@/model/enum.ts"
+import {EntityTypeEnum} from "@/model/enum.ts"
 
 export interface TagVO {
     id: number
@@ -48,7 +48,7 @@ export interface FileUploadVO {
 export interface TrashBinVO {
     id: number
     name: string
+    info?: string
     type: EntityTypeEnum
-    status?: PostStatusEnum
     delete_time: string
 }

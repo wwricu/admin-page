@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import {Button, message, Popconfirm, Space, Table} from 'antd'
+import {Button, message, Popconfirm, Space, Table, Tooltip} from 'antd'
 import {TrashBinVO} from "@/model/response.ts"
 import {trashEditAPI, trashGetAllAPI} from "@/api/manage.ts"
 
@@ -33,6 +33,13 @@ const TrashBinPage: React.FC = () => {
                     title='Name'
                     dataIndex='name'
                     key='name'
+                    render={(_, { name }: TrashBinVO) =>
+                        <Tooltip title={name}>
+                            <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                {name}
+                            </div>
+                        </Tooltip>
+                    }
                 />
                 <Column
                     <TrashBinVO>
@@ -40,6 +47,19 @@ const TrashBinPage: React.FC = () => {
                     dataIndex='type'
                     key='type'
                     width={100}
+                />
+                <Column
+                    <TrashBinVO>
+                    title='Info'
+                    dataIndex='info'
+                    key='info'
+                    render={(_, { info }: TrashBinVO) =>
+                        <Tooltip title={info}>
+                            <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                {info}
+                            </div>
+                        </Tooltip>
+                    }
                 />
                 <Column
                     <TrashBinVO>
