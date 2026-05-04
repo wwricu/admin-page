@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react'
 import {Button, message, Popconfirm, Space, Table, Tooltip} from 'antd'
 import {TrashBinVO} from "@/model/response.ts"
 import {trashEditAPI, trashGetAllAPI} from "@/api/manage.ts"
+import {EntityTypeEnum} from "@/model/enum.ts"
 
 const {Column} = Table
 
@@ -92,7 +93,11 @@ const TrashBinPage: React.FC = () => {
                                     })
                                 }}
                             >
-                                <Button variant='outlined' size='small' color='primary'>
+                                <Button
+                                    variant='outlined'
+                                    size='small'
+                                    color='primary'
+                                    disabled={trashBinVO.type === EntityTypeEnum.POST_COVER || trashBinVO.type === EntityTypeEnum.POST_IMAGE}>
                                     Recover
                                 </Button>
                             </Popconfirm>
