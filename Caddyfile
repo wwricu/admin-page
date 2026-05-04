@@ -87,7 +87,34 @@
     }
 
     log {
-        format console
-        output file /var/log/proxy.log
+        format json
+        output file /var/log/caddy.log {
+            roll_size 1MiB
+            roll_keep 10
+        }
+    }
+}
+
+{RESOURCE_HOSTNAME} {
+    tls me@wwr.icu
+    encode gzip
+
+    handle_path /* {
+        rewrite * /open{uri}
+        reverse_proxy {
+            to http://basic-service:8000
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    log {
+        format json
+        output file /var/log/caddy.log {
+            roll_size 1MiB
+            roll_keep 10
+        }
     }
 }
