@@ -9,10 +9,7 @@
     handle_path /api/* {
         reverse_proxy {
             to http://basic-service:8000
-            header_up Host {host}
             header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -20,10 +17,7 @@
         cache
         reverse_proxy {
             to http://blog-page:3000
-            header_up Host {host}
             header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -43,40 +37,28 @@
     handle_path /api/* {
         reverse_proxy {
             to http://basic-service:8000
-            header_up Host {host}
             header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 
     handle /gp {
         reverse_proxy {
             to http://v2ray:8443
-            header_up Host {host}
             header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 
     handle /bp {
         reverse_proxy {
             to http://bad_proxy:8443
-            header_up Host {host}
             header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 
     handle /btp {
         reverse_proxy {
             to http://bad_proxy:8444
-            header_up Host {host}
             header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 
@@ -95,18 +77,15 @@
     }
 }
 
-{RESOURCE_HOSTNAME} {
+{$RESOURCE_HOSTNAME} {
     tls me@wwr.icu
     encode gzip
 
-    handle_path /* {
+    handle {
         rewrite * /open{uri}
         reverse_proxy {
             to http://basic-service:8000
-            header_up Host {host}
             header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 
