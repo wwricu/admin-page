@@ -37,7 +37,7 @@ export default function LoginPage() {
                         () => navigate('/')).catch(
                         (err: HttpError) => {
                             loginForm.setFieldsValue({ totp: '' })
-                            if (err.status === 422) {
+                            if (err.status === 401 && err.message === 'Please input TOTP') {
                                 setLoginPhase('totp')
                                 return
                             }

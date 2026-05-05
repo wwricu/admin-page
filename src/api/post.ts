@@ -26,7 +26,7 @@ export const updatePostDetailAPI = async (postUpdateRO: PostUpdateRO) => {
 }
 
 export const updatePostStatusDetailAPI = async (postId: number, postStatusEnum: PostStatusEnum) => {
-    return await http.get<PostDetailVO>(`/post/status/${postId}?status=${postStatusEnum}`)
+    return await http.get<void>(`/post/status/${postId}?status=${postStatusEnum}`)
 }
 
 export const deletePostAPI = async (postId: string | number) => {

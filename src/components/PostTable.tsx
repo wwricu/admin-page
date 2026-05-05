@@ -56,7 +56,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     key='title'
                     render={(_, { title }: PostDetailVO) =>
                         <Tooltip title={title}>
-                            <div style={{width: 320, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                            <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                                 {title}
                             </div>
                         </Tooltip>
@@ -132,17 +132,20 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                                     {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
                                 </Button>
                             </Popconfirm>
-                            <Popconfirm
-                                title={`Delete ${postDetailVO.status} "${postDetailVO.title}"?`}
-                                okButtonProps={{variant: 'solid', color: postDetailVO.status === 'published' ? 'danger' : 'primary'}}
-                                onConfirm={() =>
-                                    deletePostAPI(postDetailVO.id).then(() => {
-                                        message.success('success').then()
-                                        updatePostPage(pageIndex, pageSize)
-                                    })
-                            }>
-                                <Button variant='solid' color='danger' size='small'>Delete</Button>
-                            </Popconfirm>
+                            {
+                                postDetailVO.status === 'published' ? null :
+                                <Popconfirm
+                                    title={`Delete ${postDetailVO.status} "${postDetailVO.title}"?`}
+                                    okButtonProps={{variant: 'solid', color: postDetailVO.status === 'published' ? 'danger' : 'primary'}}
+                                    onConfirm={() =>
+                                        deletePostAPI(postDetailVO.id).then(() => {
+                                            message.success('success').then()
+                                            updatePostPage(pageIndex, pageSize)
+                                        })
+                                }>
+                                    <Button variant='solid' color='danger' size='small'>Delete</Button>
+                                </Popconfirm>
+                            }
                         </Flex>
                     )}
                 />

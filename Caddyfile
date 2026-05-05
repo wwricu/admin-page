@@ -9,8 +9,7 @@
     handle_path /api/* {
         reverse_proxy {
             to http://basic-service:8000
-            header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
         }
     }
 
@@ -18,14 +17,16 @@
         cache
         reverse_proxy {
             to http://blog-page:3000
-            header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
         }
     }
 
     log {
-        format console
-        output file /var/log/caddy.log
+        format json
+        output file /var/log/caddy.log {
+            roll_size 10MiB
+            roll_keep 10
+        }
     }
 }
 
@@ -36,32 +37,28 @@
     handle_path /api/* {
         reverse_proxy {
             to http://basic-service:8000
-            header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
         }
     }
 
     handle /gp {
         reverse_proxy {
             to http://v2ray:8443
-            header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
         }
     }
 
     handle /bp {
         reverse_proxy {
             to http://bad_proxy:8443
-            header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
         }
     }
 
     handle /btp {
         reverse_proxy {
             to http://bad_proxy:8444
-            header_up Host {host}
-            header_up X-Real-IP {remote}
+            header_up X-Real-IP {remote_host}
         }
     }
 
@@ -72,7 +69,31 @@
     }
 
     log {
-        format console
-        output file /var/log/proxy.log
+        format json
+        output file /var/log/caddy.log {
+            roll_size 1MiB
+            roll_keep 10
+        }
+    }
+}
+
+{$RESOURCE_HOSTNAME} {
+    tls me@wwr.icu
+    encode gzip
+
+    handle {
+        rewrite * /open{uri}
+        reverse_proxy {
+            to http://basic-service:8000
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    log {
+        format json
+        output file /var/log/caddy.log {
+            roll_size 1MiB
+            roll_keep 10
+        }
     }
 }

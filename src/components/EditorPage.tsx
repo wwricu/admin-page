@@ -15,7 +15,6 @@ import {
 } from 'antd'
 import {getAllTag} from '@/api/tag.ts'
 import {PostUpdateRO} from '@/model/request.ts'
-import {baseUrl} from "@/common.ts"
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
@@ -169,12 +168,12 @@ export default function EditorPage() {
             />
             <Flex justify='start' gap='small' className='max-sm-flex-wrap'>
                 <Flex vertical align='center' gap='small'>
-                    <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={4 / 3}>
+                    <ImgCrop showReset rotationSlider zoomSlider minZoom={0.5} aspect={2}>
                         <Upload
                             name='file'
                             listType='picture-card'
                             showUploadList={false}
-                            action={`${baseUrl}/post/upload`}
+                            action='/api/post/upload'
                             maxCount={1}
                             beforeUpload={beforeUpload}
                             onChange={onChange}

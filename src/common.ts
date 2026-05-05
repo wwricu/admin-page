@@ -12,8 +12,6 @@ export const useRefresh = () => {
     return context
 }
 
-export const baseUrl = import.meta.env.VITE_BASE_URL ?? '/api'
-
 export class HttpError extends Error {
     status: number
     constructor(message: string, status: number) {
@@ -29,24 +27,25 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
         return data
     }
 
-    if (response.status === 401 && !window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login'
-        return new Promise<T>(() => {})
-    }
-
     const errorMsg = data?.detail || response.statusText
+
     message.error(errorMsg).then()
 
-    if (response.status === 422) {
-        throw new HttpError(errorMsg, response.status)
+    if (response.status === 401) {
+        if (window.location.pathname.startsWith('/login')) {
+            throw new HttpError(errorMsg, response.status)
+        }
+        window.location.href = '/login'
     }
+
     return new Promise<T>(() => {})
 }
 
 export const http = {
     async get<T>(url: string, headers?: Record<string, string>): Promise<T> {
-        const response = await fetch(`${baseUrl}${url}`, {
+        const response = await fetch(`/api${url}`, {
             method: 'GET',
+            // credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 ...headers
@@ -57,7 +56,7 @@ export const http = {
 
     async post<T>(url: string, data?: unknown, headers?: Record<string, string>): Promise<T> {
         const isFormData = data instanceof FormData
-        const response = await fetch(`${baseUrl}${url}`, {
+        const response = await fetch(`/api${url}`, {
             method: 'POST',
             headers: isFormData ? headers : {
                 'Content-Type': 'application/json',
