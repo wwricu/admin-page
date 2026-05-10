@@ -6,13 +6,6 @@
     tls me@wwr.icu
     encode gzip
 
-    handle_path /api/* {
-        reverse_proxy {
-            to http://basic-service:8000
-            header_up X-Real-IP {remote_host}
-        }
-    }
-
     handle_path /* {
         cache
         reverse_proxy {
