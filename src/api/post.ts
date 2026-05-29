@@ -1,5 +1,5 @@
 import {PostRequestRO, PostUpdateRO} from "@/model/request"
-import {PostDetailPageVO, PostDetailVO} from "@/model/response"
+import {PostPreviewPageVO, PostDetailVO} from "@/model/response"
 import {PostStatusEnum} from "@/model/enum"
 import {http} from "@/common.ts"
 
@@ -10,7 +10,7 @@ export const getAllPost = async (pageIndex: number, pageSize: number, status: Po
         page_size: pageSize,
         status: status
     }
-    return await http.post<PostDetailPageVO>('/post/all', postRequest)
+    return await http.post<PostPreviewPageVO>('/post/all', postRequest)
 }
 
 export const createPostAPI = async () => {
