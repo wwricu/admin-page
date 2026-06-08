@@ -5,9 +5,9 @@ export const RefreshContext = createContext<{ key: boolean, triggerRefresh: () =
 
 export const useRefresh = () => {
     // Get context in element wrapped by RefreshProvider who give context
-    const context = useContext(RefreshContext);
+    const context = useContext(RefreshContext)
     if (!context) {
-        throw new Error('useRefresh must be used within RefreshProvider');
+        throw new Error('useRefresh must be used within RefreshProvider')
     }
     return context
 }
