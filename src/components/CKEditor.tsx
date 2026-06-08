@@ -21,7 +21,7 @@ import '@/ckeditor.css'
 
 import {PostResourceTypeEnum} from "@/model/enum.ts"
 import {uploadFileAPI} from "@/api/common.ts"
-import {useEffect} from "react";
+import {useEffect} from "react"
 
 
 declare module '@ckeditor/ckeditor5-core' {

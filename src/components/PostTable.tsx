@@ -3,13 +3,13 @@
 import {useEffect, useState} from 'react'
 import {Button, Flex, message, Popconfirm, Table, Tag, Tooltip, Typography} from 'antd'
 import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '@/api/post'
-import {PostDetailPageVO, PostDetailVO, TagVO} from '@/model/response'
+import {PostPreviewPageVO, PostPreviewVO, TagVO} from '@/model/response'
 import {PostStatusEnum} from '@/model/enum'
 
 const {Column} = Table
 
 export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum }) {
-    const [list, setList] = useState<PostDetailVO[]>([])
+    const [list, setList] = useState<PostPreviewVO[]>([])
     const [count, setCount] = useState<number>()
     const [pageIndex, setPageIndex] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(10)
@@ -17,7 +17,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
     const updatePostPage = (pageIndex: number = 1, pageSize: number = 10) => {
         setPageIndex(pageIndex)
         setPageSize(pageSize)
-        getAllPost(pageIndex, pageSize, postStatus).then((res: PostDetailPageVO) => {
+        getAllPost(pageIndex, pageSize, postStatus).then((res: PostPreviewPageVO) => {
             setList(res?.data)
             setCount(res?.count)
         })
@@ -34,7 +34,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
 
     useEffect(() => {
         document.title = `Admin - ${postStatus === PostStatusEnum.PUBLISHED ? 'Published Posts' : 'Draft Posts'} - wwr.icu`
-        getAllPost(1, pageSize, postStatus).then((res: PostDetailPageVO) => {
+        getAllPost(1, pageSize, postStatus).then((res: PostPreviewPageVO) => {
             setList(res?.data)
             setCount(res?.count)
         })
@@ -42,19 +42,19 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
 
     return (
         <div>
-            <Table<PostDetailVO>
+            <Table<PostPreviewVO>
                 size={'small'}
                 scroll={{ x: true }}
                 dataSource={list}
-                rowKey={(postDetailVO: PostDetailVO) => postDetailVO.id}
+                rowKey={(postDetailVO: PostPreviewVO) => postDetailVO.id}
                 pagination={paginationProps}
             >
                 <Column
-                    <PostDetailVO>
+                    <PostPreviewVO>
                     title='Title'
                     dataIndex='title'
                     key='title'
-                    render={(_, { title }: PostDetailVO) =>
+                    render={(_, { title }: PostPreviewVO) =>
                         <Tooltip title={title}>
                             <div style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                                 {title}
@@ -63,23 +63,23 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     }
                 />
                 <Column
-                    <PostDetailVO>
+                    <PostPreviewVO>
                     title='Created time'
                     dataIndex='create_time'
                     key='create_time'
                     ellipsis={true}
                     width={100}
-                    render={(_, {create_time}: PostDetailVO) =>
+                    render={(_, {create_time}: PostPreviewVO) =>
                         <div style={{whiteSpace: 'nowrap'}}>{create_time.slice(0, 10)}</div>
                     }
                 />
                 <Column
-                    <PostDetailVO>
+                    <PostPreviewVO>
                     title='Category'
                     dataIndex='category'
                     key='category'
                     width={150}
-                    render={(_, { category }: PostDetailVO) =>
+                    render={(_, { category }: PostPreviewVO) =>
                         category ? (
                             <Tag style={{maxWidth: 150, overflow: 'hidden'}} color={'blue'}>
                                 {category.name.toUpperCase()}
@@ -88,11 +88,11 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     }
                 />
                 <Column
-                    <PostDetailVO>
+                    <PostPreviewVO>
                     title='Tags'
                     dataIndex='tag_list'
                     key='tag_list'
-                    render={(_, {tag_list}: PostDetailVO) => (
+                    render={(_, {tag_list}: PostPreviewVO) => (
                         <>
                             {tag_list.map((tag: TagVO) => {
                                 return (
@@ -105,11 +105,11 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     )}
                 />
                 <Column
-                    <PostDetailVO>
+                    <PostPreviewVO>
                     title='Action'
                     key='action'
                     width={180}
-                    render={(_, postDetailVO: PostDetailVO) => (
+                    render={(_, postDetailVO: PostPreviewVO) => (
                         <Flex justify='space-evenly' gap={'small'}>
                             <Typography.Link href={`/edit/${postDetailVO.id}`}>
                                 <Button size={'small'}>

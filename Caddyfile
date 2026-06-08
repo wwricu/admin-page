@@ -10,7 +10,6 @@
         cache
         reverse_proxy {
             to http://blog-page:3000
-            header_up X-Real-IP {remote_host}
         }
     }
 
@@ -30,7 +29,6 @@
     handle_path /api/* {
         reverse_proxy {
             to http://basic-service:8000
-            header_up X-Real-IP {remote_host}
         }
     }
 
@@ -44,14 +42,12 @@
     handle /bp {
         reverse_proxy {
             to http://bad_proxy:8443
-            header_up X-Real-IP {remote_host}
         }
     }
 
     handle /btp {
         reverse_proxy {
             to http://bad_proxy:8444
-            header_up X-Real-IP {remote_host}
         }
     }
 
@@ -77,7 +73,6 @@
     handle /image/* {
         reverse_proxy {
             to http://basic-service:8000
-            header_up X-Real-IP {remote_host}
         }
     }
 
