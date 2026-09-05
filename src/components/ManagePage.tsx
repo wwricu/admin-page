@@ -168,7 +168,7 @@ export default function ManagePage() {
                     handle: () => {databaseAPI(DatabaseActionEnum.RESTORE).then(() => {
                         messageApi.success('Database restore successfully.').then()
                     })},
-                    confirmMessage: 'Sure to backup database? This will override local database'
+                    confirmMessage: 'Sure to restore database? This will override local database'
                 },
                 {
                     name: 'Download to local',

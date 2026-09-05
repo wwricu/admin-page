@@ -37,12 +37,6 @@ export interface PostPreviewPageVO {
     data: PostPreviewVO[]
 }
 
-export interface TagVO {
-    id: number
-    name: string
-    type: string
-}
-
 export interface FileUploadVO {
     name: string
     location: string
