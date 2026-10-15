@@ -39,10 +39,25 @@
         }
     }
 
-    # /bp and /btp removed: the old trojan/btp-over-websocket bad_proxy
-    # endpoints are retired (websocket transport dropped in v2). Replacements
-    # (vless+xhttp on :8447, btp on :8448) use BPC's own TLS and connect
-    # directly, since Caddy cannot carry BPC's single duplex POST.
+    # bad_proxy: vless+xhttp on /bp, btp+xhttp on /btp. BPC listens plain HTTP
+    # inside the compose network; Caddy terminates TLS and streams BPC's single
+    # duplex POST with flush_interval -1. The matcher also covers the sub-path so
+    # Xray's /bp/<session-id> requests route here too (BPC matches the prefix).
+    @bp path /bp /bp/*
+    handle @bp {
+        reverse_proxy {
+            to http://bad_proxy:8443
+            flush_interval -1
+        }
+    }
+
+    @btp path /btp /btp/*
+    handle @btp {
+        reverse_proxy {
+            to http://bad_proxy:8444
+            flush_interval -1
+        }
+    }
 
     handle_path /* {
         root * /root
