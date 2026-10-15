@@ -39,10 +39,10 @@
         }
     }
 
-    // /bp and /btp removed: the old trojan/btp-over-websocket bad_proxy
-    // endpoints are retired (websocket transport dropped in v2). Replacements
-    // (vless+xhttp on :8447, btp on :8448) use BPC's own TLS and connect
-    // directly, since Caddy cannot carry BPC's single duplex POST.
+    # /bp and /btp removed: the old trojan/btp-over-websocket bad_proxy
+    # endpoints are retired (websocket transport dropped in v2). Replacements
+    # (vless+xhttp on :8447, btp on :8448) use BPC's own TLS and connect
+    # directly, since Caddy cannot carry BPC's single duplex POST.
 
     handle_path /* {
         root * /root
