@@ -1,6 +1,4 @@
-'use client'
-
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {Button, Flex, message, Popconfirm, Table, Tag, Tooltip, Typography} from 'antd'
 import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '@/api/post'
 import {PostPreviewPageVO, PostPreviewVO, TagVO} from '@/model/response'
@@ -11,16 +9,20 @@ const {Column} = Table
 export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum }) {
     const [list, setList] = useState<PostPreviewVO[]>([])
     const [count, setCount] = useState<number>()
+    const [loading, setLoading] = useState(false)
     const [pageIndex, setPageIndex] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(10)
 
     const updatePostPage = (pageIndex: number = 1, pageSize: number = 10) => {
         setPageIndex(pageIndex)
         setPageSize(pageSize)
+        setLoading(true)
         getAllPost(pageIndex, pageSize, postStatus).then((res: PostPreviewPageVO) => {
             setList(res?.data)
             setCount(res?.count)
-        }).catch(() => {})
+        }).catch(() => {
+            // Error toast is raised centrally in http layer
+        }).finally(() => setLoading(false))
     }
 
     const paginationProps = {
@@ -32,19 +34,21 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
         onChange: updatePostPage,
     }
 
+    // Only refetch on status tab switch; page/pageSize changes go through pagination.onChange
+    const pageSizeRef = useRef(pageSize)
+    pageSizeRef.current = pageSize
     useEffect(() => {
         document.title = `Admin - ${postStatus === PostStatusEnum.PUBLISHED ? 'Published Posts' : 'Draft Posts'} - wwr.icu`
-        getAllPost(1, pageSize, postStatus).then((res: PostPreviewPageVO) => {
-            setList(res?.data)
-            setCount(res?.count)
-        }).catch(() => {})
-    }, [pageSize, postStatus])
+        updatePostPage(1, pageSizeRef.current)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [postStatus])
 
     return (
         <div>
             <Table<PostPreviewVO>
                 size={'small'}
                 scroll={{ x: true }}
+                loading={loading}
                 dataSource={list}
                 rowKey={(postDetailVO: PostPreviewVO) => postDetailVO.id}
                 pagination={paginationProps}
