@@ -18,7 +18,7 @@ import {PostUpdateRO} from '@/model/request.ts'
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
-import {useParams} from "react-router-dom"
+import {useNavigate, useParams} from "react-router-dom"
 import {PostEditor as CKEditor} from './CKEditor'
 
 const { TextArea } = Input
@@ -65,7 +65,8 @@ export default function EditorPage() {
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
     const { id } = useParams()
-    const postId = parseInt(id!)
+    const navigate = useNavigate()
+    const postId = Number(id)
 
     const onChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
@@ -99,6 +100,10 @@ export default function EditorPage() {
     }
 
     useEffect(() => {
+        if (!Number.isSafeInteger(postId) || postId <= 0) {
+            messageApi.error(`Invalid post id '${id}'`).then(() => navigate('/post'))
+            return
+        }
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
             const tagItems = tagList.map((tag) => {
                 return {
@@ -141,6 +146,8 @@ export default function EditorPage() {
 
             document.title = `Admin - ${postDetailVO.title} - wwr.icu`
         }).catch(() => {})
+        // id/messageApi/navigate are stable per mounted editor; refetch only when postId changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId])
 
     const moreOptionPanel = (
