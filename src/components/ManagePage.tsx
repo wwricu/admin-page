@@ -1,5 +1,3 @@
-'use client'
-
 import React, {useEffect, useRef, useState} from 'react'
 import {Button, Flex, Input, InputRef, message, Modal, Popconfirm, Table} from 'antd'
 import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "@/api/manage.ts"
@@ -159,14 +157,14 @@ export default function ManagePage() {
                 {
                     name: 'Backup to cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.BACKUP).then(() => {
-                        messageApi.success('Database backup successfully.').then()
+                        messageApi.success('Database backup successfully').then()
                     }).catch(() => {})},
                     confirmMessage: 'Sure to backup database? This will override cloud database'
                 },
                 {
                     name: 'Restore from cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.RESTORE).then(() => {
-                        messageApi.success('Database restore successfully.').then()
+                        messageApi.success('Database restore successfully').then()
                     }).catch(() => {})},
                     confirmMessage: 'Sure to restore database? This will override local database'
                 },
@@ -185,7 +183,7 @@ export default function ManagePage() {
             actions: [
                 {
                     name: totpEnforce ? 'Disable TOTP' : 'Enforce TOTP',
-                    confirmMessage: totpEnforce ? 'Download database to local?' : undefined,
+                    confirmMessage: totpEnforce ? 'Sure to disable TOTP protection?' : undefined,
                     handle: () => {
                         if (totpEnforce) {
                             totpEnforceAPI(false).then(
@@ -196,7 +194,7 @@ export default function ManagePage() {
                         }
                         totpEnforceAPI(true).then(secret => {
                             if (!secret) {
-                                messageApi.error('Failed to enforce totp').then(console.error)
+                                messageApi.error('Failed to enforce totp').then()
                                 return
                             }
                             setDynamicModal({
@@ -208,7 +206,6 @@ export default function ManagePage() {
                                     style={{ marginTop: 12, marginBottom: 12 }}
                                 />,
                                 onOk: () => {
-                                    // const promise: Promise<T> = new Promise((resolve: (value: T) => void, reject: () => void) => {})
                                     return new Promise((resolve: (value: void) => void, reject: () => void) => {
                                         totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
                                             getTotpEnforce).then(
@@ -251,35 +248,13 @@ export default function ManagePage() {
                 closable={false}
                 open={isAboutModalOpen}
                 onCancel={() => setIsAboutModalOpen(false)}
-                onOk={() => {
-                    setConfigAPI({
-                        key: ConfigKeyEnum.ABOUT_CONTENT,
-                        value: aboutContent
-                    }).then(() => {
-                        messageApi.success('success').then()
-                        setIsAboutModalOpen(false)
-                    }).catch(() => {})
-                }}
-                footer={[
-                    <span key={ConfigKeyEnum.ABOUT_CONTENT}>
-                        <Button onClick={() => setIsAboutModalOpen(false)}>Cancel</Button>
-                        <Button
-                            type="primary"
-                            style={{ marginLeft: 8 }}
-                            onClick={
-                                () => {
-                                    setConfigAPI({
-                                        key: ConfigKeyEnum.ABOUT_CONTENT,
-                                        value: aboutContent
-                                    }).then(() => {
-                                        messageApi.success('success').then()
-                                        setIsAboutModalOpen(false)
-                                    }).catch(() => {})
-                                }
-                            }
-                        >OK</Button>
-                    </span>
-                ]}
+                onOk={() => setConfigAPI({
+                    key: ConfigKeyEnum.ABOUT_CONTENT,
+                    value: aboutContent
+                }).then(() => {
+                    messageApi.success('success').then()
+                    setIsAboutModalOpen(false)
+                }).catch(() => {})}
             >
                 <AboutEditor content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/>
             </Modal>
@@ -305,7 +280,7 @@ export default function ManagePage() {
                                 action.confirmMessage ? (
                                     <Popconfirm
                                         key={action.name}
-                                        title={`Sure to ${action.name}?`}
+                                        title={action.confirmMessage ?? `Sure to ${action.name}?`}
                                         onConfirm={action.handle}
                                         okButtonProps={{variant: 'solid', color: 'danger'}}
                                     >

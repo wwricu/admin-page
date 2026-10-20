@@ -1,5 +1,3 @@
-'use client'
-
 import React, {useEffect, useState} from 'react'
 import {Button, message, Popconfirm, Space, Table, Tooltip} from 'antd'
 import {TrashBinVO} from "@/model/response.ts"
