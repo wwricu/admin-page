@@ -15,7 +15,7 @@ const lightTheme = {
         },
         Layout: {
             headerBg: '#ffffff',
-            headerHeight: '3',
+            headerHeight: 48,
             headerPadding: '0 5px'
         },
     },
@@ -25,7 +25,7 @@ const darkTheme = {
     algorithm: darkAlgorithm,
     components: {
         Layout: {
-            headerHeight: '3',
+            headerHeight: 48,
             headerPadding: '0 5px'
         },
     },
