@@ -43,17 +43,17 @@ export default function ManagePage() {
     const getTotpEnforce = () => {
         getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE).then((res: string | null) => {
             setTotpEnforce(!!res)
-        })
+        }).catch(() => {})
     }
 
     useEffect(() => {
         document.title = 'Admin - Management - wwr.icu'
         getConfigAPI(ConfigKeyEnum.ABOUT_CONTENT).then((res: string | null) => {
             setAboutContent(res ?? '')
-        })
+        }).catch(() => {})
         getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
             setUsername(res ?? '')
-        })
+        }).catch(() => {})
         getTotpEnforce()
     }, [])
 
@@ -99,7 +99,7 @@ export default function ManagePage() {
                                                 resolve()
                                                 navigate('/login')
                                             }
-                                        )
+                                        ).catch(() => reject())
                                     }
                                 })
                             }
@@ -146,7 +146,7 @@ export default function ManagePage() {
                                 messageApi.success('success').then()
                                 navigate('/login')
                             }
-                        )
+                        ).catch(() => {})
                     },
                     confirmMessage: 'Sure to reset username and password to default?',
                 }
@@ -160,14 +160,14 @@ export default function ManagePage() {
                     name: 'Backup to cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.BACKUP).then(() => {
                         messageApi.success('Database backup successfully.').then()
-                    })},
+                    }).catch(() => {})},
                     confirmMessage: 'Sure to backup database? This will override cloud database'
                 },
                 {
                     name: 'Restore from cloud',
                     handle: () => {databaseAPI(DatabaseActionEnum.RESTORE).then(() => {
                         messageApi.success('Database restore successfully.').then()
-                    })},
+                    }).catch(() => {})},
                     confirmMessage: 'Sure to restore database? This will override local database'
                 },
                 {
@@ -191,7 +191,7 @@ export default function ManagePage() {
                             totpEnforceAPI(false).then(
                                 getTotpEnforce).then(
                                 () => messageApi.success('success').then()
-                            )
+                            ).catch(() => {})
                             return
                         }
                         totpEnforceAPI(true).then(secret => {
@@ -221,7 +221,7 @@ export default function ManagePage() {
                                     })
                                 }
                             })
-                        })
+                        }).catch(() => {})
                     }
                 }
             ]
@@ -258,7 +258,7 @@ export default function ManagePage() {
                     }).then(() => {
                         messageApi.success('success').then()
                         setIsAboutModalOpen(false)
-                    })
+                    }).catch(() => {})
                 }}
                 footer={[
                     <span key={ConfigKeyEnum.ABOUT_CONTENT}>
@@ -274,7 +274,7 @@ export default function ManagePage() {
                                     }).then(() => {
                                         messageApi.success('success').then()
                                         setIsAboutModalOpen(false)
-                                    })
+                                    }).catch(() => {})
                                 }
                             }
                         >OK</Button>

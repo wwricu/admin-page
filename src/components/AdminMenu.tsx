@@ -69,7 +69,7 @@ const AdminMenu: React.FC = () => {
                                                                 navigate(`/edit/${postDetailVO.id}`)
                                                                 setPopoverOpen(false)
                                                                 message.success('New post created').then()
-                                                            })
+                                                            }).catch(() => {})
                                                         }}
                                                     >
                                                         OK
@@ -142,7 +142,7 @@ const AdminMenu: React.FC = () => {
             />
             <Flex vertical justify='flex-end'>
                 <Divider/>
-                <Button style={{marginLeft: 16, marginRight: 16, marginBottom: 20}} onClick={() => logoutAPI().then(() => navigate('/login'))}>Logout</Button>
+                <Button style={{marginLeft: 16, marginRight: 16, marginBottom: 20}} onClick={() => logoutAPI().catch(() => {}).then(() => navigate('/login'))}>Logout</Button>
             </Flex>
             <Modal
                 title={modalTitle}
@@ -167,7 +167,7 @@ const AdminMenu: React.FC = () => {
                             refresh.triggerRefresh()
                         }
                         setModalTitle('')
-                    })
+                    }).catch(() => {})
                 }}
             >
                 <Input

@@ -15,7 +15,7 @@ const TrashBinPage: React.FC = () => {
     const getAllTrashBinVO = () => {
         trashGetAllAPI().then((data: TrashBinVO[]) => {
             setTrashBinVOList(data)
-        })
+        }).catch(() => {})
     }
 
     useEffect(getAllTrashBinVO, [])
@@ -90,7 +90,7 @@ const TrashBinPage: React.FC = () => {
                                     }).then(() => {
                                         messageApi.success(`${trashBinVO.type} ${trashBinVO.name} recovered`).then()
                                         getAllTrashBinVO()
-                                    })
+                                    }).catch(() => {})
                                 }}
                             >
                                 <Button
@@ -112,7 +112,7 @@ const TrashBinPage: React.FC = () => {
                                     }).then(() => {
                                         messageApi.success(`${trashBinVO.type} ${trashBinVO.name} deleted`).then()
                                         getAllTrashBinVO()
-                                    })
+                                    }).catch(() => {})
                                 }
                             >
                                 <Button variant='solid' size='small' color='danger'>

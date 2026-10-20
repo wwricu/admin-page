@@ -20,7 +20,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
         getAllPost(pageIndex, pageSize, postStatus).then((res: PostPreviewPageVO) => {
             setList(res?.data)
             setCount(res?.count)
-        })
+        }).catch(() => {})
     }
 
     const paginationProps = {
@@ -37,7 +37,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
         getAllPost(1, pageSize, postStatus).then((res: PostPreviewPageVO) => {
             setList(res?.data)
             setCount(res?.count)
-        })
+        }).catch(() => {})
     }, [pageSize, postStatus])
 
     return (
@@ -125,7 +125,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                                     ).then(() => {
                                         message.success('success').then()
                                         updatePostPage(pageIndex, pageSize)
-                                    })
+                                    }).catch(() => {})
                                 }}
                             >
                                 <Button size={'small'}>
@@ -141,7 +141,7 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                                         deletePostAPI(postDetailVO.id).then(() => {
                                             message.success('success').then()
                                             updatePostPage(pageIndex, pageSize)
-                                        })
+                                        }).catch(() => {})
                                 }>
                                     <Button variant='solid' color='danger' size='small'>Delete</Button>
                                 </Popconfirm>

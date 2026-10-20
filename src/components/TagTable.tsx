@@ -1,5 +1,3 @@
-'use client'
-
 import React, {useEffect, useState} from 'react'
 import {Button, message, Space, TableProps} from 'antd'
 import { Form, Input, InputNumber, Popconfirm, Table} from 'antd'
@@ -57,7 +55,7 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
         document.title = `Admin - ${tagType === TagTypeEnum.POST_CAT ? 'Post Categories' : 'Post Tags'} - wwr.icu`
         getAllTag(tagType).then((tagList: TagVO[]) => {
             setData(tagList)
-        })
+        }).catch(() => {})
         setEditingKey(undefined)
     }, [tagType, refresh])
 
@@ -77,7 +75,7 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
             newData.splice(index, 1)
             setData(newData)
             messageApi.success("success").then()
-        })
+        }).catch(() => {})
     }
 
     const save = async (tagId: number) => {
@@ -90,14 +88,14 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
                 return
             }
             const tag = newData[index]
-            updateTag({...tag, ...row,}).then((tagVO) => {
-                newData.splice(index, 1, tagVO)
-                setData(newData)
-                messageApi.success("success").then()
-            })
+            const tagVO = await updateTag({...tag, ...row,})
+            newData.splice(index, 1, tagVO)
+            setData(newData)
+            messageApi.success("success").then()
             setEditingKey(undefined)
         } catch (errInfo) {
-            console.log('Validate Failed:', errInfo)
+            // Field validation failures and API failures (already toasted in http layer) both keep the row in edit mode
+            console.log('Edit failed:', errInfo)
         }
     }
 

@@ -95,7 +95,7 @@ export default function EditorPage() {
         }
         updatePostDetailAPI(postUpdateRO).then(() => {
             messageApi.info('success').then()
-        })
+        }).catch(() => {})
     }
 
     useEffect(() => {
@@ -107,7 +107,7 @@ export default function EditorPage() {
                 }
             })
             setAllTags(tagItems)
-        })
+        }).catch(() => {})
         getAllTag(TagTypeEnum.POST_CAT).then((tagList: TagVO[]) => {
             const tagItems = tagList.map((tag) => {
                 return {
@@ -116,7 +116,7 @@ export default function EditorPage() {
                 }
             })
             setAllCategories(tagItems)
-        })
+        }).catch(() => {})
 
         getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
             setTitle(postDetailVO.title)
@@ -140,7 +140,7 @@ export default function EditorPage() {
             }
 
             document.title = `Admin - ${postDetailVO.title} - wwr.icu`
-        })
+        }).catch(() => {})
     }, [postId])
 
     const moreOptionPanel = (
