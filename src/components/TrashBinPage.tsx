@@ -16,7 +16,9 @@ const TrashBinPage: React.FC = () => {
         }).catch(() => {})
     }
 
-    useEffect(getAllTrashBinVO, [])
+    useEffect(() => {
+        getAllTrashBinVO()
+    }, [])
 
     return (
         <>
