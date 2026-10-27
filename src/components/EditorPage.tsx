@@ -81,9 +81,13 @@ export default function EditorPage() {
             })
             setCoverId(info.file.response.id)
         }
+        if (info.file.status === 'error') {
+            setLoading(false)
+            messageApi.error('Cover upload failed').then()
+        }
     }
 
-    const updatePost = (status: PostStatusEnum) => {
+    const updatePost = () => {
         const postUpdateRO: PostUpdateRO = {
             id: postId,
             title: title,
@@ -91,8 +95,7 @@ export default function EditorPage() {
             content: content,
             preview: preview,
             category_id: category?.value,
-            tag_id_list: tags.map((tagItem) => tagItem.value),
-            status: status?.toString()
+            tag_id_list: tags.map((tagItem) => tagItem.value)
         }
         updatePostDetailAPI(postUpdateRO).then(() => {
             messageApi.info('success').then()
@@ -231,7 +234,7 @@ export default function EditorPage() {
                     >
                         More Options
                     </Button>
-                    <Popconfirm title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
+                    <Popconfirm title="Sure to save change?" onConfirm={() => updatePost()}>
                         <Button style={{ flex: '1 1 0' }} variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
                             Save {postStatus} post
                         </Button>
