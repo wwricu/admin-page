@@ -171,7 +171,7 @@ export default function ManagePage() {
                 {
                     name: 'Download to local',
                     handle: () => {
-                        window.open(`/api/manage/database?action=${DatabaseActionEnum.DOWNLOAD}`)
+                        window.open('/api/manage/database')
                     },
                     confirmMessage: 'Download database to local?'
                 }

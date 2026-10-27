@@ -64,5 +64,16 @@ export const http = {
             body: isFormData ? data : JSON.stringify(data)
         })
         return handleResponse<T>(response)
+    },
+
+    async delete<T>(url: string, headers?: Record<string, string>): Promise<T> {
+        const response = await fetch(`/api${url}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                ...headers
+            }
+        })
+        return handleResponse<T>(response)
     }
 }

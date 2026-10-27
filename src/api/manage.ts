@@ -4,7 +4,7 @@ import {http} from "@/common.ts"
 import {TrashBinVO} from "@/model/response.ts"
 
 export const databaseAPI = async (action: DatabaseActionEnum) => {
-    return await http.get(`/manage/database?action=${action}`).then(() => {})
+    return await http.post('/manage/database', {action}).then(() => {})
 }
 
 export const setConfigAPI = async (config: ConfigRO) => {
@@ -28,9 +28,9 @@ export const trashEditAPI = async (trashBinRO: TrashBinRO) => {
 }
 
 export const totpEnforceAPI = async (enforce: boolean) => {
-    return await http.get<string | null>(`/manage/totp/enforce?enforce=${enforce}`)
+    return await http.post<string | null>('/manage/totp/enforce', {enforce})
 }
 
 export const totpConfirmAPI = async (totp: string) => {
-    return await http.get(`/manage/totp/confirm?totp=${totp}`).then(() => {})
+    return await http.post('/manage/totp/confirm', {totp}).then(() => {})
 }
