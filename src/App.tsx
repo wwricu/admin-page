@@ -4,7 +4,7 @@ import {Content, Header} from "antd/es/layout/layout"
 import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import '@/App.css'
-import React, {ReactNode, Suspense, useState} from "react"
+import React, {ReactNode, Suspense, useMemo, useState} from "react"
 import {MenuOutlined} from "@ant-design/icons"
 import useAutoTheme from "@/theme.ts"
 import {RefreshContext} from "@/common.ts"
@@ -20,12 +20,14 @@ const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"
 const RefreshProvider = ({ children }: { children: ReactNode }) => {
     const [key, setKey] = useState(false)
 
-    const triggerRefresh = () => {
-        setKey(prev => !prev)
-    }
+    // Memoized so consumers' useEffect deps only fire on an actual refresh trigger
+    const value = useMemo(() => ({
+        key,
+        triggerRefresh: () => setKey(prev => !prev),
+    }), [key])
 
     return (
-        <RefreshContext.Provider value={{ key, triggerRefresh }}>
+        <RefreshContext.Provider value={value}>
             {children}
         </RefreshContext.Provider>
     )
@@ -97,7 +99,7 @@ const AppRouter = () => {
                     </Suspense>
                 )}/>
                 <Route path='/' element={<AppLayout/>}>
-                    <Route index path="/post" element={(
+                    <Route path="/post" element={(
                         <Suspense fallback={<Loading/>}>
                             <LazyPostTable postStatus={PostStatusEnum.PUBLISHED}/>
                         </Suspense>

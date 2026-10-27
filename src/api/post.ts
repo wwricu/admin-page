@@ -14,7 +14,7 @@ export const getAllPost = async (pageIndex: number, pageSize: number, status: Po
 }
 
 export const createPostAPI = async () => {
-    return await http.get<PostDetailVO>('/post/create')
+    return await http.post<PostDetailVO>('/post/create')
 }
 
 export const getPostDetailAPI = async (postId: string | number) => {
@@ -26,9 +26,9 @@ export const updatePostDetailAPI = async (postUpdateRO: PostUpdateRO) => {
 }
 
 export const updatePostStatusDetailAPI = async (postId: number, postStatusEnum: PostStatusEnum) => {
-    return await http.get<void>(`/post/status/${postId}?status=${postStatusEnum}`)
+    return await http.post<void>(`/post/status/${postId}`, {status: postStatusEnum})
 }
 
 export const deletePostAPI = async (postId: string | number) => {
-    return await http.get(`/post/delete/${postId}`).then(() => {})
+    return await http.delete(`/post/delete/${postId}`).then(() => {})
 }

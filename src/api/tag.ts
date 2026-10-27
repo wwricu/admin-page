@@ -26,5 +26,5 @@ export const getAllTag = async (
 }
 
 export const deleteTag = async (tagId: number) => {
-    return await http.get(`/tag/delete/${tagId}`).then(() => {})
+    return await http.delete(`/tag/delete/${tagId}`).then(() => {})
 }

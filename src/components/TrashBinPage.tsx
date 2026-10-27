@@ -1,5 +1,3 @@
-'use client'
-
 import React, {useEffect, useState} from 'react'
 import {Button, message, Popconfirm, Space, Table, Tooltip} from 'antd'
 import {TrashBinVO} from "@/model/response.ts"
@@ -15,10 +13,12 @@ const TrashBinPage: React.FC = () => {
     const getAllTrashBinVO = () => {
         trashGetAllAPI().then((data: TrashBinVO[]) => {
             setTrashBinVOList(data)
-        })
+        }).catch(() => {})
     }
 
-    useEffect(getAllTrashBinVO, [])
+    useEffect(() => {
+        getAllTrashBinVO()
+    }, [])
 
     return (
         <>
@@ -90,7 +90,7 @@ const TrashBinPage: React.FC = () => {
                                     }).then(() => {
                                         messageApi.success(`${trashBinVO.type} ${trashBinVO.name} recovered`).then()
                                         getAllTrashBinVO()
-                                    })
+                                    }).catch(() => {})
                                 }}
                             >
                                 <Button
@@ -112,7 +112,7 @@ const TrashBinPage: React.FC = () => {
                                     }).then(() => {
                                         messageApi.success(`${trashBinVO.type} ${trashBinVO.name} deleted`).then()
                                         getAllTrashBinVO()
-                                    })
+                                    }).catch(() => {})
                                 }
                             >
                                 <Button variant='solid' size='small' color='danger'>
