@@ -18,7 +18,7 @@ import {PostUpdateRO} from '@/model/request.ts'
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
-import {useParams} from "react-router-dom"
+import {useNavigate, useParams} from "react-router-dom"
 import {PostEditor as CKEditor} from './CKEditor'
 
 const { TextArea } = Input
@@ -65,7 +65,8 @@ export default function EditorPage() {
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
     const { id } = useParams()
-    const postId = parseInt(id!)
+    const navigate = useNavigate()
+    const postId = Number(id)
 
     const onChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
@@ -80,9 +81,13 @@ export default function EditorPage() {
             })
             setCoverId(info.file.response.id)
         }
+        if (info.file.status === 'error') {
+            setLoading(false)
+            messageApi.error('Cover upload failed').then()
+        }
     }
 
-    const updatePost = (status: PostStatusEnum) => {
+    const updatePost = () => {
         const postUpdateRO: PostUpdateRO = {
             id: postId,
             title: title,
@@ -90,15 +95,18 @@ export default function EditorPage() {
             content: content,
             preview: preview,
             category_id: category?.value,
-            tag_id_list: tags.map((tagItem) => tagItem.value),
-            status: status?.toString()
+            tag_id_list: tags.map((tagItem) => tagItem.value)
         }
         updatePostDetailAPI(postUpdateRO).then(() => {
             messageApi.info('success').then()
-        })
+        }).catch(() => {})
     }
 
     useEffect(() => {
+        if (!Number.isSafeInteger(postId) || postId <= 0) {
+            messageApi.error(`Invalid post id '${id}'`).then(() => navigate('/post'))
+            return
+        }
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
             const tagItems = tagList.map((tag) => {
                 return {
@@ -107,7 +115,7 @@ export default function EditorPage() {
                 }
             })
             setAllTags(tagItems)
-        })
+        }).catch(() => {})
         getAllTag(TagTypeEnum.POST_CAT).then((tagList: TagVO[]) => {
             const tagItems = tagList.map((tag) => {
                 return {
@@ -116,7 +124,7 @@ export default function EditorPage() {
                 }
             })
             setAllCategories(tagItems)
-        })
+        }).catch(() => {})
 
         getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
             setTitle(postDetailVO.title)
@@ -140,7 +148,9 @@ export default function EditorPage() {
             }
 
             document.title = `Admin - ${postDetailVO.title} - wwr.icu`
-        })
+        }).catch(() => {})
+        // id/messageApi/navigate are stable per mounted editor; refetch only when postId changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId])
 
     const moreOptionPanel = (
@@ -224,7 +234,7 @@ export default function EditorPage() {
                     >
                         More Options
                     </Button>
-                    <Popconfirm title="Sure to save change?" onConfirm={() => updatePost(postStatus!)}>
+                    <Popconfirm title="Sure to save change?" onConfirm={() => updatePost()}>
                         <Button style={{ flex: '1 1 0' }} variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
                             Save {postStatus} post
                         </Button>

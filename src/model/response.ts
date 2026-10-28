@@ -38,7 +38,9 @@ export interface PostPreviewPageVO {
 }
 
 export interface FileUploadVO {
+    id: number
     name: string
+    key: string
     location: string
 }
 

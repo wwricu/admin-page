@@ -31,14 +31,12 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 
     message.error(errorMsg).then()
 
-    if (response.status === 401) {
-        if (window.location.pathname.startsWith('/login')) {
-            throw new HttpError(errorMsg, response.status)
-        }
+    if (response.status === 401 && !window.location.pathname.startsWith('/login')) {
         window.location.href = '/login'
     }
 
-    return new Promise<T>(() => {})
+    // Always reject so callers can settle loading state in their catch/finally branches
+    throw new HttpError(errorMsg, response.status)
 }
 
 export const http = {
@@ -64,6 +62,17 @@ export const http = {
                 ...headers
             },
             body: isFormData ? data : JSON.stringify(data)
+        })
+        return handleResponse<T>(response)
+    },
+
+    async delete<T>(url: string, headers?: Record<string, string>): Promise<T> {
+        const response = await fetch(`/api${url}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                ...headers
+            }
         })
         return handleResponse<T>(response)
     }

@@ -14,10 +14,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // mirrors the Vercel rewrite: /api/<x> -> edge /api/admin/<x> -> service /admin/<x>
       '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (path) => path.replace(/^\/api/, '/admin')
       }
     }
   }

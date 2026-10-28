@@ -36,12 +36,11 @@ export default function LoginPage() {
                     loginAPI({username: record.username, password: record.password, totp: record.totp}).then(
                         () => navigate('/')).catch(
                         (err: HttpError) => {
+                            // Error toast is raised centrally in http layer; here only the TOTP step matters
                             loginForm.setFieldsValue({ totp: '' })
                             if (err.status === 401 && err.message === 'Please input TOTP') {
                                 setLoginPhase('totp')
-                                return
                             }
-                            throw err
                         })
                 }
             >

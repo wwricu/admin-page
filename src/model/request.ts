@@ -17,7 +17,6 @@ export interface PostUpdateRO {
     preview?: string
     tag_id_list: number[]
     category_id?: number
-    status: string
 }
 
 export interface TagRO {
