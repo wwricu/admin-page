@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/api/post.ts'
 import {PostDetailVO, TagVO} from '@/model/response.ts'
 import {
+    Alert,
     Button,
     Flex,
     type GetProp,
@@ -64,6 +65,8 @@ export default function EditorPage() {
     const [hidePublishOption, setHidePublishOption] = useState<boolean>(true)
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
+    const [loaded, setLoaded] = useState(false)
+    const [loadFailed, setLoadFailed] = useState(false)
     const { id } = useParams()
     const navigate = useNavigate()
     const postId = Number(id)
@@ -102,11 +105,13 @@ export default function EditorPage() {
         }).catch(() => {})
     }
 
-    useEffect(() => {
+    const loadPost = () => {
         if (!Number.isSafeInteger(postId) || postId <= 0) {
             messageApi.error(`Invalid post id '${id}'`).then(() => navigate('/post'))
             return
         }
+        setLoaded(false)
+        setLoadFailed(false)
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
             const tagItems = tagList.map((tag) => {
                 return {
@@ -127,6 +132,14 @@ export default function EditorPage() {
         }).catch(() => {})
 
         getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
+            // An unreadable id returns 200 with no body; treating that as a loaded post
+            // would let an empty editor save over the real content
+            if (!postDetailVO) {
+                messageApi.error('Failed to load this post').then()
+                setLoadFailed(true)
+                return
+            }
+
             setTitle(postDetailVO.title)
             setPostStatus(postDetailVO.status as PostStatusEnum)
             setContent(postDetailVO.content)
@@ -147,8 +160,13 @@ export default function EditorPage() {
                 }))
             }
 
+            setLoaded(true)
             document.title = `Admin - ${postDetailVO.title} - wwr.icu`
-        }).catch(() => {})
+        }).catch(() => setLoadFailed(true))
+    }
+
+    useEffect(() => {
+        loadPost()
         // id/messageApi/navigate are stable per mounted editor; refetch only when postId changes
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId])
@@ -225,6 +243,16 @@ export default function EditorPage() {
         <>
             {contextHolder}
             <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100vh'}}>
+                {
+                    loadFailed &&
+                    <Alert
+                        type='error'
+                        showIcon
+                        message='Failed to load this post'
+                        description='Save is disabled until the post loads.'
+                        action={<Button size='small' onClick={loadPost}>Retry</Button>}
+                    />
+                }
                 <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
                 <Flex wrap justify='start' align='center' gap='small'>
                     <Button
@@ -235,7 +263,12 @@ export default function EditorPage() {
                         More Options
                     </Button>
                     <Popconfirm title="Sure to save change?" onConfirm={() => updatePost()}>
-                        <Button style={{ flex: '1 1 0' }} variant='solid' color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}>
+                        <Button
+                            style={{ flex: '1 1 0' }}
+                            variant='solid'
+                            color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}
+                            disabled={!loaded}
+                        >
                             Save {postStatus} post
                         </Button>
                     </Popconfirm>
