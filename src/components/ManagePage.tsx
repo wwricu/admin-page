@@ -1,301 +1,275 @@
-import React, {useEffect, useRef, useState} from 'react'
-import {Button, Flex, Input, InputRef, message, Modal, Popconfirm, Table} from 'antd'
+import React, {useEffect, useState} from 'react'
+import {Button, Input, List, message, Modal, Popconfirm} from 'antd'
 import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "@/api/manage.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "@/model/enum.ts"
 import {useNavigate} from "react-router-dom"
 import {AboutEditor} from './CKEditor'
 
-const {Column} = Table
-
 type Action = {
-    name: string,
-    handle: () => void,
-    confirmMessage?: string
+    label: string
+    // Present when the action must be confirmed first
+    confirm?: string
+    // Shown once the call succeeds; actions that open a dialog have nothing to announce
+    success?: string
+    run: () => Promise<void> | void
 }
 
-type ActionRow = {
-    key: string,
-    title: string | React.ReactNode,
+type Section = {
+    key: string
+    title: string
     actions: Action[]
+}
+
+// The page has exactly one dialog at a time. Both a plain input and a custom body (the About
+// editor) edit the same `value`, so the pending edit cannot get lost between two Modal states.
+type Dialog = {
+    title: string
+    width?: number
+    input?: { placeholder: string; secret?: boolean }
+    body?: (value: string, onChange: (value: string) => void) => React.ReactNode
+    value: string
+    onSubmit: (value: string) => Promise<void>
 }
 
 export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
-
-    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
-    const [aboutContent, setAboutContent] = useState<string>('')
-
-    const inputRef = useRef<InputRef>(null)
+    const [dialog, setDialog] = useState<Dialog | null>(null)
+    const [username, setUsername] = useState('')
+    const [aboutContent, setAboutContent] = useState('')
+    const [totpEnforce, setTotpEnforce] = useState<boolean>(false)
     const navigate = useNavigate()
 
-    const [username, setUsername] = useState<string>()
-    const [totpEnforce, setTotpEnforce] = useState<boolean>(false)
+    const notify = (content: string) => messageApi.success(content).then()
 
-    const [dynamicModal, setDynamicModal] = useState<{
-        open: boolean
-        title: string
-        content: React.ReactNode
-        onOk: () => Promise<void>
-    } | null>(null)
+    const execute = async (action: Action) => {
+        try {
+            await action.run()
+        } catch {
+            return // already toasted in the http layer
+        }
+        if (action.success) {
+            notify(action.success)
+        }
+    }
 
-    const getTotpEnforce = () => {
-        getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE).then((res: string | null) => {
-            setTotpEnforce(!!res)
-        }).catch(() => {})
+    const loadTotpEnforce = async () => {
+        const enforce = await getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE)
+        setTotpEnforce(!!enforce)
     }
 
     useEffect(() => {
         document.title = 'Admin - Management - wwr.icu'
-        getConfigAPI(ConfigKeyEnum.ABOUT_CONTENT).then((res: string | null) => {
-            setAboutContent(res ?? '')
+        Promise.all([
+            getConfigAPI(ConfigKeyEnum.ABOUT_CONTENT),
+            getConfigAPI(ConfigKeyEnum.USERNAME),
+            getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE),
+        ]).then(([about, name, enforce]) => {
+            setAboutContent(about ?? '')
+            setUsername(name ?? '')
+            setTotpEnforce(!!enforce)
         }).catch(() => {})
-        getConfigAPI(ConfigKeyEnum.USERNAME).then((res: string | null) => {
-            setUsername(res ?? '')
-        }).catch(() => {})
-        getTotpEnforce()
     }, [])
 
-    const actionTableData: ActionRow[] = [
+    const openInputDialog = (options: {
+        title: string
+        placeholder: string
+        secret?: boolean
+        defaultValue?: string
+        onSubmit: (value: string) => Promise<void>
+    }) => {
+        setDialog({
+            title: options.title,
+            input: {placeholder: options.placeholder, secret: options.secret},
+            value: options.defaultValue ?? '',
+            onSubmit: options.onSubmit,
+        })
+    }
+
+    const openAboutDialog = () => {
+        setDialog({
+            title: 'About Page',
+            width: 800,
+            body: (value, onChange) => <AboutEditor content={value} setContent={onChange}/>,
+            value: aboutContent,
+            onSubmit: (value) => setConfigAPI({key: ConfigKeyEnum.ABOUT_CONTENT, value}),
+        })
+    }
+
+    const submitDialog = async (current: Dialog) => {
+        const value = current.input ? current.value.trim() : current.value
+        if (current.input && !value) {
+            messageApi.error('Please input a valid value').then()
+            return
+        }
+        try {
+            await current.onSubmit(value)
+        } catch {
+            return // dialog stays open, the http layer already toasted
+        }
+        setDialog(null)
+        notify('success')
+    }
+
+    const resetLogin = async () => {
+        await userAPI({reset: true})
+        navigate('/login')
+    }
+
+    const enforceTotp = async () => {
+        const secret = await totpEnforceAPI(true)
+        if (!secret) {
+            messageApi.error('Failed to enforce totp').then()
+            return
+        }
+        openInputDialog({
+            title: secret,
+            placeholder: '6-pin code from authenticator',
+            onSubmit: async (totp) => {
+                await totpConfirmAPI(totp)
+                await loadTotpEnforce()
+            },
+        })
+    }
+
+    const sections: Section[] = [
         {
             key: 'about',
             title: 'About Page',
             actions: [
-                {
-                    name: 'Edit',
-                    handle: () => {
-                        setIsAboutModalOpen(true)
-                    }
-                }
-            ]
+                {label: 'Edit', run: openAboutDialog},
+            ],
         },
         {
             key: 'login',
             title: 'Login',
             actions: [
                 {
-                    name: 'Set username',
-                    handle: () => {
-                        setDynamicModal({
-                            open: true,
-                            title: 'Set username',
-                            content: <Input
-                                ref={inputRef}
-                                defaultValue={username}
-                                style={{ marginTop: 12, marginBottom: 12 }}
-                            />,
-                            onOk: () => {
-                                const username = inputRef?.current?.input?.value
-                                return new Promise((resolve: (value: void) => void, reject: () => void) => {
-                                    if (!username) {
-                                        messageApi.error('Please input valid username').then()
-                                        reject()
-                                    } else {
-                                        userAPI({username: username}).then(
-                                            () => {
-                                                messageApi.success('success').then()
-                                                setDynamicModal(null)
-                                                resolve()
-                                                navigate('/login')
-                                            }
-                                        ).catch(() => reject())
-                                    }
-                                })
-                            }
-                        })
-                    },
+                    label: 'Set username',
+                    run: () => openInputDialog({
+                        title: 'Set username',
+                        placeholder: 'Username',
+                        defaultValue: username,
+                        onSubmit: async (value) => {
+                            await userAPI({username: value})
+                            navigate('/login')
+                        },
+                    }),
                 },
                 {
-                    name: 'Set password',
-                    handle: () => {
-                        setDynamicModal({
-                            open: true,
-                            title: 'Input new Password',
-                            content: <Input.Password
-                                ref={inputRef}
-                                placeholder='New password'
-                                style={{ marginTop: 12, marginBottom: 12 }}
-                            />,
-                            onOk: () => {
-                                const password = inputRef?.current?.input?.value
-                                return new Promise((resolve: (value: void) => void, reject: () => void) => {
-                                    if (!password) {
-                                        messageApi.error('Please input valid password').then()
-                                        reject()
-                                    } else {
-                                        userAPI({password: password}).then(
-                                            () => {
-                                                messageApi.success('success').then()
-                                                setDynamicModal(null)
-                                                resolve()
-                                                navigate('/login')
-                                            },
-                                        ).catch(() => reject())
-                                    }
-                                })
-                            }
-                        })
-                    },
+                    label: 'Set password',
+                    run: () => openInputDialog({
+                        title: 'Input new Password',
+                        placeholder: 'New password',
+                        secret: true,
+                        onSubmit: async (value) => {
+                            await userAPI({password: value})
+                            navigate('/login')
+                        },
+                    }),
                 },
                 {
-                    name: 'Reset all to default',
-                    handle: () => {
-                        userAPI({reset: true}).then(
-                            () => {
-                                messageApi.success('success').then()
-                                navigate('/login')
-                            }
-                        ).catch(() => {})
-                    },
-                    confirmMessage: 'Sure to reset username and password to default?',
-                }
-            ]
+                    label: 'Reset all to default',
+                    confirm: 'Sure to reset username and password to default?',
+                    success: 'success',
+                    run: resetLogin,
+                },
+            ],
         },
         {
             key: 'database',
             title: 'Database',
             actions: [
                 {
-                    name: 'Backup to cloud',
-                    handle: () => {databaseAPI(DatabaseActionEnum.BACKUP).then(() => {
-                        messageApi.success('Database backup successfully').then()
-                    }).catch(() => {})},
-                    confirmMessage: 'Sure to backup database? This will override cloud database'
+                    label: 'Backup to cloud',
+                    confirm: 'Sure to backup database? This will override cloud database',
+                    success: 'Database backup successfully',
+                    run: () => databaseAPI(DatabaseActionEnum.BACKUP),
                 },
                 {
-                    name: 'Restore from cloud',
-                    handle: () => {databaseAPI(DatabaseActionEnum.RESTORE).then(() => {
-                        messageApi.success('Database restore successfully').then()
-                    }).catch(() => {})},
-                    confirmMessage: 'Sure to restore database? This will override local database'
+                    label: 'Restore from cloud',
+                    confirm: 'Sure to restore database? This will override local database',
+                    success: 'Database restore successfully',
+                    run: () => databaseAPI(DatabaseActionEnum.RESTORE),
                 },
                 {
-                    name: 'Download to local',
-                    handle: () => {
-                        window.open('/api/manage/database')
-                    },
-                    confirmMessage: 'Download database to local?'
-                }
-            ]
+                    label: 'Download to local',
+                    confirm: 'Download database to local?',
+                    run: () => { window.open('/api/manage/database') },
+                },
+            ],
         },
         {
             key: 'totp',
             title: 'TOTP',
             actions: [
-                {
-                    name: totpEnforce ? 'Disable TOTP' : 'Enforce TOTP',
-                    confirmMessage: totpEnforce ? 'Sure to disable TOTP protection?' : undefined,
-                    handle: () => {
-                        if (totpEnforce) {
-                            totpEnforceAPI(false).then(
-                                getTotpEnforce).then(
-                                () => messageApi.success('success').then()
-                            ).catch(() => {})
-                            return
-                        }
-                        totpEnforceAPI(true).then(secret => {
-                            if (!secret) {
-                                messageApi.error('Failed to enforce totp').then()
-                                return
-                            }
-                            setDynamicModal({
-                                open: true,
-                                title: secret,
-                                content: <Input
-                                    ref={inputRef}
-                                    placeholder='6-pin code from authenticator'
-                                    style={{ marginTop: 12, marginBottom: 12 }}
-                                />,
-                                onOk: () => {
-                                    return new Promise((resolve: (value: void) => void, reject: () => void) => {
-                                        totpConfirmAPI(inputRef?.current?.input?.value ?? '').then(
-                                            getTotpEnforce).then(
-                                            () => {
-                                                messageApi.success('success').then()
-                                                setDynamicModal(null)
-                                                resolve()
-                                            }
-                                        ).catch(() => reject())
-                                    })
-                                }
-                            })
-                        }).catch(() => {})
-                    }
-                }
-            ]
+                totpEnforce ? {
+                    label: 'Disable TOTP',
+                    confirm: 'Sure to disable TOTP protection?',
+                    success: 'success',
+                    run: async () => {
+                        await totpEnforceAPI(false)
+                        await loadTotpEnforce()
+                    },
+                } : {
+                    label: 'Enforce TOTP',
+                    run: enforceTotp,
+                },
+            ],
         },
     ]
+
+    const renderAction = (action: Action) => {
+        if (action.confirm) {
+            return (
+                <Popconfirm
+                    key={action.label}
+                    title={action.confirm}
+                    okButtonProps={{variant: 'solid', color: 'danger'}}
+                    onConfirm={() => execute(action)}
+                >
+                    <Button size='small'>{action.label}</Button>
+                </Popconfirm>
+            )
+        }
+        return (
+            <Button key={action.label} size='small' onClick={() => execute(action)}>
+                {action.label}
+            </Button>
+        )
+    }
+
+    const changeDialogValue = (value: string) => setDialog((prev) => prev && {...prev, value})
 
     return (
         <>
             {messageContextHolder}
-            {
-                dynamicModal &&
-                (
-                    <Modal
-                        closable={false}
-                        open={dynamicModal.open}
-                        title={dynamicModal.title}
-                        onOk={dynamicModal.onOk}
-                        onCancel={() => setDynamicModal(null)}
-                        centered
-                    >
-                        {dynamicModal.content}
-                    </Modal>
-                )
-            }
-            <Modal
-                width={800}
-                closable={false}
-                open={isAboutModalOpen}
-                onCancel={() => setIsAboutModalOpen(false)}
-                onOk={() => setConfigAPI({
-                    key: ConfigKeyEnum.ABOUT_CONTENT,
-                    value: aboutContent
-                }).then(() => {
-                    messageApi.success('success').then()
-                    setIsAboutModalOpen(false)
-                }).catch(() => {})}
-            >
-                <AboutEditor content={aboutContent} setContent={(editorContent: string) => setAboutContent(editorContent)}/>
-            </Modal>
-            <Table
-                <ActionRow>
-                scroll={{ x: true }}
+            <List
                 size='small'
-                dataSource={actionTableData}
-                pagination={false}
+                bordered
+                dataSource={sections}
+                renderItem={(section: Section) => (
+                    <List.Item actions={section.actions.map(renderAction)}>
+                        {section.title}
+                    </List.Item>
+                )}
+            />
+            <Modal
+                open={dialog !== null}
+                title={dialog?.title}
+                width={dialog?.width}
+                closable={false}
+                destroyOnHidden
+                onCancel={() => setDialog(null)}
+                onOk={() => dialog && submitDialog(dialog)}
             >
-                <Column
-                    title='Name'
-                    dataIndex='title'
-                    key='title'
-                    ellipsis={true}
-                />
-                <Column
-                    title='Actions'
-                    key='actions'
-                    render={(_, row: ActionRow) => (
-                        <Flex key={row.key} justify='flex-start' gap='middle'>
-                            {row?.actions.map((action: Action) =>
-                                action.confirmMessage ? (
-                                    <Popconfirm
-                                        key={action.name}
-                                        title={action.confirmMessage ?? `Sure to ${action.name}?`}
-                                        onConfirm={action.handle}
-                                        okButtonProps={{variant: 'solid', color: 'danger'}}
-                                    >
-                                        <Button size='small'>{action.name}</Button>
-                                    </Popconfirm>
-                                ) : (
-                                    <Button key={action.name} size='small' onClick={action.handle}>
-                                        {action.name}
-                                    </Button>
-                                )
-                            )}
-                        </Flex>
-                    )}
-                />
-            </Table>
+                {
+                    dialog?.input
+                        ? (dialog.input.secret
+                            ? <Input.Password value={dialog.value} placeholder={dialog.input.placeholder} onChange={(e) => changeDialogValue(e.target.value)}/>
+                            : <Input value={dialog.value} placeholder={dialog.input.placeholder} onChange={(e) => changeDialogValue(e.target.value)}/>)
+                        : dialog?.body?.(dialog.value, changeDialogValue)
+                }
+            </Modal>
         </>
     )
 }

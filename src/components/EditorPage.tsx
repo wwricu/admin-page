@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {getPostDetailAPI, updatePostDetailAPI} from '@/api/post.ts'
 import {PostDetailVO, TagVO} from '@/model/response.ts'
 import {
     Alert,
+    App as AntdApp,
     Button,
     Flex,
     type GetProp,
@@ -11,6 +12,7 @@ import {
     message,
     Popconfirm,
     Select,
+    Spin,
     Upload,
     type UploadProps
 } from 'antd'
@@ -19,7 +21,7 @@ import {PostUpdateRO} from '@/model/request.ts'
 import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/model/enum.ts"
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
-import {useNavigate, useParams} from "react-router-dom"
+import {useBlocker, useNavigate, useParams} from "react-router-dom"
 import {PostEditor as CKEditor} from './CKEditor'
 
 const { TextArea } = Input
@@ -29,7 +31,46 @@ type TagItem = {
     label: string
 }
 
+// Everything the save call sends. Keeping it in one object is what lets a load replace the whole
+// editor state at once and lets unsaved changes be detected by comparing against the loaded copy.
+type Draft = {
+    title: string
+    preview: string
+    content: string
+    status?: PostStatusEnum
+    category?: TagItem
+    tags: TagItem[]
+    coverId?: number
+    coverUrl?: string
+}
+
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
+
+const emptyDraft: Draft = {title: '', preview: '', content: '', tags: []}
+
+const toTagItems = (tagList: TagVO[]): TagItem[] =>
+    tagList.map(({id, name}) => ({value: id, label: name}))
+
+const draftFrom = (post: PostDetailVO): Draft => ({
+    title: post.title ?? '',
+    preview: post.preview,
+    content: post.content,
+    status: post.status ?? PostStatusEnum.DRAFT,
+    category: post.category ? {value: post.category.id, label: post.category.name} : undefined,
+    tags: toTagItems(post.tag_list),
+    coverId: post.cover?.id,
+    coverUrl: post.cover?.url,
+})
+
+// category and tags are replaced, never mutated, so identity comparison is exact here
+const sameDraft = (a: Draft, b: Draft) =>
+    a.title === b.title &&
+    a.preview === b.preview &&
+    a.content === b.content &&
+    a.status === b.status &&
+    a.category === b.category &&
+    a.tags === b.tags &&
+    a.coverId === b.coverId
 
 const getBase64 = (img: FileType, callback: (url: string) => void) => {
     const reader = new FileReader()
@@ -50,26 +91,24 @@ const beforeUpload = (file: FileType) => {
 }
 
 export default function EditorPage() {
-    const [title, setTitle] = useState('')
-    const [postStatus, setPostStatus] = useState<PostStatusEnum>()
-    const [category, setCategory] = useState<TagItem>()
-    const [tags, setTags] = useState<TagItem[]>([])
-    const [preview, setPreview] = useState<string>('')
-    const [content, setContent] = useState<string>('')
-    const [coverId, setCoverId] = useState<number>()
-    const [imageUrl, setImageUrl] = useState<string>()
-
+    const [draft, setDraft] = useState<Draft>(emptyDraft)
     const [allTags, setAllTags] = useState<TagItem[]>([])
     const [allCategories, setAllCategories] = useState<TagItem[]>([])
-
     const [hidePublishOption, setHidePublishOption] = useState<boolean>(true)
     const [messageApi, contextHolder] = message.useMessage()
     const [loading, setLoading] = useState(false)
     const [loaded, setLoaded] = useState(false)
     const [loadFailed, setLoadFailed] = useState(false)
+    // What the loaded post looked like; null until a load succeeds
+    const loadedDraft = useRef<Draft | null>(null)
+    const { modal } = AntdApp.useApp()
     const { id } = useParams()
     const navigate = useNavigate()
     const postId = Number(id)
+
+    const update = (patch: Partial<Draft>) => setDraft((prev) => ({...prev, ...patch}))
+
+    const isDirty = loaded && loadedDraft.current !== null && !sameDraft(loadedDraft.current, draft)
 
     const onChange: UploadProps['onChange'] = (info) => {
         if (info.file.status === 'uploading') {
@@ -80,9 +119,8 @@ export default function EditorPage() {
             // Get this url from response in real world.
             getBase64(info.file.originFileObj as FileType, (url) => {
                 setLoading(false)
-                setImageUrl(url)
+                update({coverUrl: url, coverId: info.file.response.id})
             })
-            setCoverId(info.file.response.id)
         }
         if (info.file.status === 'error') {
             setLoading(false)
@@ -90,22 +128,26 @@ export default function EditorPage() {
         }
     }
 
-    const updatePost = () => {
+    const save = async () => {
         const postUpdateRO: PostUpdateRO = {
             id: postId,
-            title: title,
-            cover_id: coverId,
-            content: content,
-            preview: preview,
-            category_id: category?.value,
-            tag_id_list: tags.map((tagItem) => tagItem.value)
+            title: draft.title,
+            cover_id: draft.coverId,
+            content: draft.content,
+            preview: draft.preview,
+            category_id: draft.category?.value,
+            tag_id_list: draft.tags.map((tagItem) => tagItem.value)
         }
-        updatePostDetailAPI(postUpdateRO).then(() => {
-            messageApi.info('success').then()
-        }).catch(() => {})
+        try {
+            await updatePostDetailAPI(postUpdateRO)
+        } catch {
+            return // already toasted in the http layer
+        }
+        loadedDraft.current = draft
+        messageApi.info('success').then()
     }
 
-    const loadPost = () => {
+    const load = async () => {
         if (!Number.isSafeInteger(postId) || postId <= 0) {
             messageApi.error(`Invalid post id '${id}'`).then(() => navigate('/post'))
             return
@@ -113,63 +155,61 @@ export default function EditorPage() {
         setLoaded(false)
         setLoadFailed(false)
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
-            const tagItems = tagList.map((tag) => {
-                return {
-                    value: tag.id,
-                    label: tag.name
-                }
-            })
-            setAllTags(tagItems)
+            setAllTags(toTagItems(tagList))
         }).catch(() => {})
         getAllTag(TagTypeEnum.POST_CAT).then((tagList: TagVO[]) => {
-            const tagItems = tagList.map((tag) => {
-                return {
-                    value: tag.id,
-                    label: tag.name
-                }
-            })
-            setAllCategories(tagItems)
+            setAllCategories(toTagItems(tagList))
         }).catch(() => {})
 
-        getPostDetailAPI(postId).then((postDetailVO: PostDetailVO) => {
-            // An unreadable id returns 200 with no body; treating that as a loaded post
-            // would let an empty editor save over the real content
-            if (!postDetailVO) {
-                messageApi.error('Failed to load this post').then()
-                setLoadFailed(true)
-                return
-            }
+        // A missing post comes back as null (or as nothing at all); the http layer reports the
+        // latter as an error. Either way there is nothing to edit, so the form stays unmounted.
+        const postDetailVO = await getPostDetailAPI(postId).catch(() => null)
+        if (!postDetailVO) {
+            setLoadFailed(true)
+            return
+        }
 
-            setTitle(postDetailVO.title)
-            setPostStatus(postDetailVO.status as PostStatusEnum)
-            setContent(postDetailVO.content)
-            setCoverId(postDetailVO.cover?.id)
-            setImageUrl(postDetailVO.cover?.url)
-            setPreview(postDetailVO.preview)
-
-            if (postDetailVO.category) {
-                setCategory({ label: postDetailVO.category.name, value: postDetailVO.category.id })
-            }
-
-            if (postDetailVO.tag_list?.length > 0) {
-                setTags(postDetailVO.tag_list.map((tagVO: TagVO) => {
-                    return {
-                        label: tagVO.name,
-                        value: tagVO.id
-                    }
-                }))
-            }
-
-            setLoaded(true)
-            document.title = `Admin - ${postDetailVO.title} - wwr.icu`
-        }).catch(() => setLoadFailed(true))
+        const next = draftFrom(postDetailVO)
+        loadedDraft.current = next
+        setDraft(next)
+        setLoaded(true)
+        document.title = `Admin - ${next.title} - wwr.icu`
     }
 
     useEffect(() => {
-        loadPost()
-        // id/messageApi/navigate are stable per mounted editor; refetch only when postId changes
+        load()
+        // Only the id can change under a mounted editor; every other input is per-render state
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId])
+
+    // In-app navigation (menu links, post table) is intercepted so a dirty editor can ask first
+    const blocker = useBlocker(({currentLocation, nextLocation}) =>
+        isDirty && currentLocation.pathname !== nextLocation.pathname)
+
+    useEffect(() => {
+        if (blocker.state !== 'blocked') {
+            return
+        }
+        modal.confirm({
+            title: 'Discard unsaved changes?',
+            content: 'This post has edits that have not been saved.',
+            okText: 'Discard',
+            okButtonProps: {danger: true},
+            cancelText: 'Keep editing',
+            onOk: () => blocker.proceed(),
+            onCancel: () => blocker.reset(),
+        })
+    }, [blocker, modal])
+
+    // Reloads and tab closes cannot be blocked by the router; the browser shows its own prompt
+    useEffect(() => {
+        if (!isDirty) {
+            return
+        }
+        const warn = (event: BeforeUnloadEvent) => event.preventDefault()
+        window.addEventListener('beforeunload', warn)
+        return () => window.removeEventListener('beforeunload', warn)
+    }, [isDirty])
 
     const moreOptionPanel = (
         <Flex vertical gap='small' style={{ paddingTop: 16, paddingBottom: 16, ...(hidePublishOption ? {display: 'none'} : {}) }}>
@@ -179,9 +219,9 @@ export default function EditorPage() {
                 labelInValue
                 placeholder='No Category'
                 optionFilterProp='label'
-                value={category}
+                value={draft.category}
                 options={allCategories}
-                onChange={(value) => {setCategory(value)}}
+                onChange={(value) => {update({category: value})}}
             />
             <Select<TagItem[]>
                 showSearch
@@ -190,8 +230,8 @@ export default function EditorPage() {
                 mode='multiple'
                 placeholder='No Tag'
                 optionFilterProp='label'
-                value={tags}
-                onChange={(values) => {setTags(values)}}
+                value={draft.tags}
+                onChange={(values) => {update({tags: values})}}
                 options={allTags}
             />
             <Flex justify='start' gap='small' className='max-sm-flex-wrap'>
@@ -209,19 +249,16 @@ export default function EditorPage() {
                                 post_id: postId,
                                 file_type: PostResourceTypeEnum.COVER_IMAGE
                             })}
-                            openFileDialogOnClick={coverId === undefined || imageUrl === undefined}
+                            openFileDialogOnClick={draft.coverId === undefined || draft.coverUrl === undefined}
                         >
                             {
-                                imageUrl ?
-                                <Image src={imageUrl} alt='cover'/> :
+                                draft.coverUrl ?
+                                <Image src={draft.coverUrl} alt='cover'/> :
                                 (loading ? <LoadingOutlined style={{ fontSize: '24px' }}/> : <PlusOutlined style={{ fontSize: '24px' }}/>)
                             }
                         </Upload>
                     </ImgCrop>
-                    <Popconfirm title="Sure to reset cover?" onConfirm={() => {
-                        setCoverId(undefined)
-                        setImageUrl(undefined)
-                    }}>
+                    <Popconfirm title="Sure to reset cover?" onConfirm={() => update({coverId: undefined, coverUrl: undefined})}>
                         <Button style={{width: '100%'}}>Reset cover</Button>
                     </Popconfirm>
                 </Flex>
@@ -230,9 +267,9 @@ export default function EditorPage() {
                     showCount
                     maxLength={200}
                     onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-                        setPreview(e.target.value)
+                        update({preview: e.target.value})
                     }}
-                    value={preview}
+                    value={draft.preview}
                     placeholder="Preview"
                 />
             </Flex>
@@ -249,34 +286,48 @@ export default function EditorPage() {
                         type='error'
                         showIcon
                         message='Failed to load this post'
-                        description='Save is disabled until the post loads.'
-                        action={<Button size='small' onClick={loadPost}>Retry</Button>}
+                        description='Nothing has been changed. Retry, or pick another post.'
+                        action={<Button size='small' onClick={load}>Retry</Button>}
                     />
                 }
-                <Input value={title} onChange={(e) => setTitle(e.target.value)}></Input>
-                <Flex wrap justify='start' align='center' gap='small'>
-                    <Button
-                        style={{ flex: '1 1 0' }}
-                        icon={hidePublishOption ? <DownOutlined /> : <UpOutlined />}
-                        onClick={() => setHidePublishOption(!hidePublishOption)}
-                    >
-                        More Options
-                    </Button>
-                    <Popconfirm title="Sure to save change?" onConfirm={() => updatePost()}>
-                        <Button
-                            style={{ flex: '1 1 0' }}
-                            variant='solid'
-                            color={postStatus === PostStatusEnum.DRAFT ? 'primary' : 'danger'}
-                            disabled={!loaded}
-                        >
-                            Save {postStatus} post
-                        </Button>
-                    </Popconfirm>
-                </Flex>
-                {moreOptionPanel}
-                <div style={{ flex: 1,  minHeight: 0}}>
-                    <CKEditor content={content} setContent={(editorContent) => setContent(editorContent)} postId={postId}/>
-                </div>
+                {
+                    loaded ? (
+                        <>
+                            <Input value={draft.title} onChange={(e) => update({title: e.target.value})}></Input>
+                            <Flex wrap justify='start' align='center' gap='small'>
+                                <Button
+                                    style={{ flex: '1 1 0' }}
+                                    icon={hidePublishOption ? <DownOutlined /> : <UpOutlined />}
+                                    onClick={() => setHidePublishOption(!hidePublishOption)}
+                                >
+                                    More Options
+                                </Button>
+                                <Popconfirm title="Sure to save change?" onConfirm={save}>
+                                    <Button
+                                        style={{ flex: '1 1 0' }}
+                                        variant='solid'
+                                        color={draft.status === PostStatusEnum.DRAFT ? 'primary' : 'danger'}
+                                    >
+                                        Save {draft.status} post
+                                    </Button>
+                                </Popconfirm>
+                            </Flex>
+                            {moreOptionPanel}
+                            <div style={{ flex: 1,  minHeight: 0}}>
+                                <CKEditor
+                                    content={draft.content}
+                                    setContent={(editorContent) => update({content: editorContent})}
+                                    postId={postId}
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        !loadFailed &&
+                        <Flex align='center' justify='center' style={{flex: 1}}>
+                            <Spin size='large'/>
+                        </Flex>
+                    )
+                }
             </Flex>
         </>
     )

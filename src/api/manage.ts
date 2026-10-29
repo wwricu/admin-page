@@ -3,34 +3,34 @@ import {ConfigKeyEnum, DatabaseActionEnum} from "@/model/enum.ts"
 import {http} from "@/common.ts"
 import {TrashBinVO} from "@/model/response.ts"
 
-export const databaseAPI = async (action: DatabaseActionEnum) => {
-    return await http.post('/manage/database', {action}).then(() => {})
+export const databaseAPI = (action: DatabaseActionEnum) => {
+    return http.postVoid('/manage/database', {action})
 }
 
-export const setConfigAPI = async (config: ConfigRO) => {
-    return await http.post('/manage/config/set', config).then(() => {})
+export const setConfigAPI = (config: ConfigRO) => {
+    return http.postVoid('/manage/config/set', config)
 }
 
-export const getConfigAPI = async (key: ConfigKeyEnum) => {
-    return await http.get<string | null>(`/manage/config/get?key=${key}`)
+export const getConfigAPI = (key: ConfigKeyEnum) => {
+    return http.get<string | null>(`/manage/config/get?key=${key}`)
 }
 
-export const userAPI = async (userRO: UserRO) => {
-    return await http.post('/manage/user', userRO).then(() => {})
+export const userAPI = (userRO: UserRO) => {
+    return http.postVoid('/manage/user', userRO)
 }
 
-export const trashGetAllAPI = async () => {
-    return await http.get<TrashBinVO[]>('/manage/trash/all')
+export const trashGetAllAPI = () => {
+    return http.get<TrashBinVO[]>('/manage/trash/all')
 }
 
-export const trashEditAPI = async (trashBinRO: TrashBinRO) => {
-    return await http.post('/manage/trash/edit', trashBinRO).then(() => {})
+export const trashEditAPI = (trashBinRO: TrashBinRO) => {
+    return http.postVoid('/manage/trash/edit', trashBinRO)
 }
 
-export const totpEnforceAPI = async (enforce: boolean) => {
-    return await http.post<string | null>('/manage/totp/enforce', {enforce})
+export const totpEnforceAPI = (enforce: boolean) => {
+    return http.post<string | null>('/manage/totp/enforce', {enforce})
 }
 
-export const totpConfirmAPI = async (totp: string) => {
-    return await http.post('/manage/totp/confirm', {totp}).then(() => {})
+export const totpConfirmAPI = (totp: string) => {
+    return http.postVoid('/manage/totp/confirm', {totp})
 }
