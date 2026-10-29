@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react'
-import {Button, Input, List, message, Modal, Popconfirm} from 'antd'
+import React, {lazy, Suspense, useEffect, useState} from 'react'
+import {Button, Input, List, message, Modal, Popconfirm, Spin} from 'antd'
 import {databaseAPI, getConfigAPI, setConfigAPI, totpConfirmAPI, totpEnforceAPI, userAPI} from "@/api/manage.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "@/model/enum.ts"
 import {useNavigate} from "react-router-dom"
-import {AboutEditor} from './CKEditor'
+
+// Lazy so that opening /management does not download the CKEditor bundle.
+const LazyAboutEditor = lazy(() => import('./AboutEditor'))
 
 type Action = {
     label: string
@@ -89,7 +91,11 @@ export default function ManagePage() {
         setDialog({
             title: 'About Page',
             width: 800,
-            body: (value, onChange) => <AboutEditor content={value} setContent={onChange}/>,
+            body: (value, onChange) => (
+                <Suspense fallback={<Spin style={{display: 'block', margin: '48px auto'}}/>}>
+                    <LazyAboutEditor content={value} setContent={onChange}/>
+                </Suspense>
+            ),
             value: aboutContent,
             onSubmit: (value) => setConfigAPI({key: ConfigKeyEnum.ABOUT_CONTENT, value}),
         })
@@ -258,6 +264,9 @@ export default function ManagePage() {
                 title={dialog?.title}
                 width={dialog?.width}
                 closable={false}
+                // closable={false} alone still closes on mask click, which would throw away the
+                // TOTP secret and any pending edit.
+                maskClosable={false}
                 destroyOnHidden
                 onCancel={() => setDialog(null)}
                 onOk={() => dialog && submitDialog(dialog)}
