@@ -3,18 +3,18 @@ import {LoginRO} from "@/model/request.ts"
 import {http} from "@/common.ts"
 
 
-export const uploadFileAPI = async (formData: FormData) => {
-    return await http.post<FileUploadVO>('/post/upload', formData)
+export const uploadFileAPI = (formData: FormData) => {
+    return http.post<FileUploadVO>('/post/upload', formData)
 }
 
-export const loginAPI = async (loginRO: LoginRO) => {
-    return await http.post('/login', loginRO).then(() => {})
+export const loginAPI = (loginRO: LoginRO) => {
+    return http.postVoid('/login', loginRO)
 }
 
-export const logoutAPI = async () => {
-    return await http.get('/logout').then(() => {})
+export const logoutAPI = () => {
+    return http.get<null>('/logout')
 }
 
-export const infoAPI = async () => {
-    return await http.get('/info')
+export const infoAPI = () => {
+    return http.get<null>('/info')
 }

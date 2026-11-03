@@ -1,34 +1,35 @@
 import {PostRequestRO, PostUpdateRO} from "@/model/request"
-import {PostPreviewPageVO, PostDetailVO} from "@/model/response"
+import {PageVO, PostDetailVO, PostPreviewVO} from "@/model/response"
 import {PostStatusEnum} from "@/model/enum"
 import {http} from "@/common.ts"
 
 
-export const getAllPost = async (pageIndex: number, pageSize: number, status: PostStatusEnum) => {
+export const getAllPost = (pageIndex: number, pageSize: number, status: PostStatusEnum) => {
     const postRequest: PostRequestRO = {
         page_index: pageIndex,
         page_size: pageSize,
         status: status
     }
-    return await http.post<PostPreviewPageVO>('/post/all', postRequest)
+    return http.post<PageVO<PostPreviewVO>>('/post/all', postRequest)
 }
 
-export const createPostAPI = async () => {
-    return await http.post<PostDetailVO>('/post/create')
+export const createPostAPI = () => {
+    return http.post<PostDetailVO>('/post/create')
 }
 
-export const getPostDetailAPI = async (postId: string | number) => {
-    return await http.get<PostDetailVO>(`/post/detail/${postId}`)
+// Returns null for an id that no longer exists
+export const getPostDetailAPI = (postId: string | number) => {
+    return http.get<PostDetailVO | null>(`/post/detail/${postId}`)
 }
 
-export const updatePostDetailAPI = async (postUpdateRO: PostUpdateRO) => {
-    return await http.post<PostDetailVO>('/post/update', postUpdateRO)
+export const updatePostDetailAPI = (postUpdateRO: PostUpdateRO) => {
+    return http.post<PostDetailVO>('/post/update', postUpdateRO)
 }
 
-export const updatePostStatusDetailAPI = async (postId: number, postStatusEnum: PostStatusEnum) => {
-    return await http.post<void>(`/post/status/${postId}`, {status: postStatusEnum})
+export const updatePostStatusDetailAPI = (postId: number, postStatusEnum: PostStatusEnum) => {
+    return http.postVoid(`/post/status/${postId}`, {status: postStatusEnum})
 }
 
-export const deletePostAPI = async (postId: string | number) => {
-    return await http.delete(`/post/delete/${postId}`).then(() => {})
+export const deletePostAPI = (postId: string | number) => {
+    return http.deleteVoid(`/post/delete/${postId}`)
 }

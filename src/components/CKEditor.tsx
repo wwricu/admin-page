@@ -21,7 +21,6 @@ import '@/ckeditor.css'
 
 import {PostResourceTypeEnum} from "@/model/enum.ts"
 import {uploadFileAPI} from "@/api/common.ts"
-import {useEffect} from "react"
 
 
 declare module '@ckeditor/ckeditor5-core' {
@@ -97,50 +96,7 @@ class CKEditorUploadAdaptor implements UploadAdapter {
     }
 }
 
-export const AboutEditor = ({ content, setContent }: EditorProps) => {
-    return (
-        <div style={{ flex: 1,  minHeight: 0 }}>
-            <CKEditor
-                editor={ClassicEditor}
-                data={content}
-                onChange={(_, editor) => setContent(editor.getData())}
-                config={{
-                    licenseKey: 'GPL',
-                    plugins: [
-                        Heading,
-                        Alignment, Font,
-                        Essentials, Paragraph,
-                        Bold, Italic, Strikethrough, Subscript, Superscript, Highlight,
-                        Emoji, Mention, AutoLink, Link, SpecialCharacters, SpecialCharactersEssentials,
-                        GeneralHtmlSupport
-                    ],
-                    toolbar: {
-                        items: [
-                            'heading', '|',
-                            'alignment', 'fontFamily', 'fontSize', '|',
-                            'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'highlight', '|',
-                            'emoji', 'link', 'specialCharacters'
-                        ],
-                        shouldNotGroupWhenFull: true
-                    },
-                }}
-            />
-        </div>
-    )
-}
-
 export const PostEditor = ({content, setContent, postId}: EditorProps) => {
-    useEffect(() => {
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            e.preventDefault()
-        }
-
-        window.addEventListener('beforeunload', handleBeforeUnload)
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload)
-        }
-    })
-
     return (
         <CKEditor
             editor={ClassicEditor}

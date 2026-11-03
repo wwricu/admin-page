@@ -1,7 +1,7 @@
-import {Button, ConfigProvider, Drawer, Flex, Layout, Spin} from "antd"
+import {App as AntdApp, Button, ConfigProvider, Drawer, Flex, Layout, Spin} from "antd"
 import Sider from "antd/es/layout/Sider"
 import {Content, Header} from "antd/es/layout/layout"
-import {BrowserRouter as Router, Navigate, Outlet, Route, Routes, useLocation} from "react-router-dom"
+import {createBrowserRouter, Navigate, Outlet, RouterProvider, useLocation} from "react-router-dom"
 import {PostStatusEnum, TagTypeEnum} from "./model/enum.ts"
 import '@/App.css'
 import React, {ReactNode, Suspense, useMemo, useState} from "react"
@@ -89,67 +89,39 @@ const AppLayout: React.FC = () => {
     )
 }
 
-const AppRouter = () => {
-    return (
-        <Router basename='/'>
-            <Routes>
-                <Route path="/login" element={(
-                    <Suspense fallback={<Loading/>}>
-                        <LazyLoginPage/>
-                    </Suspense>
-                )}/>
-                <Route path='/' element={<AppLayout/>}>
-                    <Route path="/post" element={(
-                        <Suspense fallback={<Loading/>}>
-                            <LazyPostTable postStatus={PostStatusEnum.PUBLISHED}/>
-                        </Suspense>
-                    )}/>
-                    <Route path="/draft" element={(
-                        <Suspense fallback={<Loading/>}>
-                            <LazyPostTable postStatus={PostStatusEnum.DRAFT}/>
-                        </Suspense>
-                    )}/>
-                    <Route path="/category" element={(
-                        <Suspense fallback={<Loading/>}>
-                            <LazyTagTable tagType={TagTypeEnum.POST_CAT}/>
-                        </Suspense>
-                    )}/>
-                    <Route path="/tag" element={(
-                        <Suspense fallback={<Loading/>}>
-                            <LazyTagTable tagType={TagTypeEnum.POST_TAG}/>
-                        </Suspense>
-                    )}/>
-                    <Route path="/management" element={(
-                        <Suspense fallback={<Loading/>}>
-                            <LazyManagement/>
-                        </Suspense>
-                    )}/>
-                    <Route path="/edit/:id" element={(
-                        <Suspense fallback={<Loading/>}>
-                            <LazyEditor/>
-                        </Suspense>
-                    )}/>
-                    <Route path="/trash" element={(
-                        <Suspense fallback={<Loading/>}>
-                            <LazyTrashBinPage/>
-                        </Suspense>
-                    )}/>
-                    <Route path="/" element={<Navigate to="/post" replace/>}/>
-                </Route>
-            </Routes>
-        </Router>
-    )
-}
+const suspend = (node: ReactNode) => <Suspense fallback={<Loading/>}>{node}</Suspense>
 
-
+// A data router, unlike <BrowserRouter>, is what exposes useBlocker to the editor page
+const router = createBrowserRouter([
+    {
+        path: '/login',
+        element: suspend(<LazyLoginPage/>),
+    },
+    {
+        path: '/',
+        element: <AppLayout/>,
+        children: [
+            {index: true, element: <Navigate to='/post' replace/>},
+            {path: 'post', element: suspend(<LazyPostTable postStatus={PostStatusEnum.PUBLISHED}/>)},
+            {path: 'draft', element: suspend(<LazyPostTable postStatus={PostStatusEnum.DRAFT}/>)},
+            {path: 'category', element: suspend(<LazyTagTable tagType={TagTypeEnum.POST_CAT}/>)},
+            {path: 'tag', element: suspend(<LazyTagTable tagType={TagTypeEnum.POST_TAG}/>)},
+            {path: 'management', element: suspend(<LazyManagement/>)},
+            {path: 'edit/:id', element: suspend(<LazyEditor/>)},
+            {path: 'trash', element: suspend(<LazyTrashBinPage/>)},
+        ],
+    },
+])
 
 export default function App() {
     const theme = useAutoTheme()
     return (
         <ConfigProvider theme={theme}>
-            <RefreshProvider>
-                <AppRouter/>
-            </RefreshProvider>
+            <AntdApp component={false}>
+                <RefreshProvider>
+                    <RouterProvider router={router}/>
+                </RefreshProvider>
+            </AntdApp>
         </ConfigProvider>
     )
 }
