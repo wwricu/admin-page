@@ -1,4 +1,5 @@
-import {totpConfirmAPI, totpEnforceAPI} from '@/api/manage.ts'
+import {setConfigAPI, totpConfirmAPI, totpEnrollAPI} from '@/api/manage.ts'
+import {ConfigKeyEnum} from '@/model/enum.ts'
 import type {Section, Ui} from '@/manage/ui.ts'
 
 export const totp = (ui: Ui, {enforced, reload}: {enforced: boolean; reload: () => Promise<void>}): Section => ({
@@ -9,8 +10,10 @@ export const totp = (ui: Ui, {enforced, reload}: {enforced: boolean; reload: () 
             label: 'Disable TOTP',
             confirm: 'Sure to disable TOTP protection?',
             success: 'success',
+            // A null write takes the secret with it: enforcement without a secret would ask at
+            // login for a code that can never be right.
             run: async () => {
-                await totpEnforceAPI(false)
+                await setConfigAPI({key: ConfigKeyEnum.TOTP_ENFORCE, value: null})
                 await reload()
             },
         } : {
@@ -18,10 +21,7 @@ export const totp = (ui: Ui, {enforced, reload}: {enforced: boolean; reload: () 
             // the dialog title, and the code typed from it is what confirms.
             label: 'Enforce TOTP',
             run: async () => {
-                const secret = await totpEnforceAPI(true)
-                if (!secret) {
-                    return // null is only the disable reply, and this call never disables
-                }
+                const secret = await totpEnrollAPI()
                 ui.dialog({
                     title: secret,
                     input: {placeholder: '6-pin code from authenticator'},

@@ -1,4 +1,4 @@
-import {ConfigRO, TrashBinRO, UserRO} from "@/model/request.ts"
+import {ConfigRO, TrashBinRO} from "@/model/request.ts"
 import {ConfigKeyEnum, DatabaseActionEnum} from "@/model/enum.ts"
 import {http} from "@/common.ts"
 import {TrashBinVO} from "@/model/response.ts"
@@ -15,10 +15,6 @@ export const getConfigAPI = (key: ConfigKeyEnum) => {
     return http.get<string | null>(`/manage/config/get?key=${key}`)
 }
 
-export const userAPI = (userRO: UserRO) => {
-    return http.postVoid('/manage/user', userRO)
-}
-
 export const trashGetAllAPI = () => {
     return http.get<TrashBinVO[]>('/manage/trash/all')
 }
@@ -27,8 +23,8 @@ export const trashEditAPI = (trashBinRO: TrashBinRO) => {
     return http.postVoid('/manage/trash/edit', trashBinRO)
 }
 
-export const totpEnforceAPI = (enforce: boolean) => {
-    return http.post<string | null>('/manage/totp/enforce', {enforce})
+export const totpEnrollAPI = () => {
+    return http.post<string>('/manage/totp/enroll')
 }
 
 export const totpConfirmAPI = (totp: string) => {

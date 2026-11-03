@@ -48,12 +48,6 @@ export interface ConfigRO {
     value?: string | null
 }
 
-export interface UserRO {
-    username?: string | null
-    password?: string | null
-    reset?: boolean | null
-}
-
 export interface TrashBinRO {
     id: number
     type: EntityTypeEnum

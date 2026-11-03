@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import {Button, Input, List, message, Modal, Popconfirm} from 'antd'
 import {useNavigate} from 'react-router-dom'
+import {logoutAPI} from '@/api/common.ts'
 import {getConfigAPI} from '@/api/manage.ts'
 import {ConfigKeyEnum} from '@/model/enum.ts'
 import type {Action, Dialog, Section, Ui} from '@/manage/ui.ts'
@@ -18,7 +19,7 @@ export default function ManagePage() {
     const navigate = useNavigate()
 
     const loadTotpEnforce = () => getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE)
-        .then((value) => setTotpEnforce(!!value))
+        .then((value) => setTotpEnforce(value !== null))
         .catch(() => {})
 
     useEffect(() => {
@@ -29,7 +30,8 @@ export default function ManagePage() {
     const ui: Ui = {
         notify: (content) => messageApi.success(content).then(),
         dialog: setDialog,
-        relogin: () => navigate('/login'),
+        // Changing the login no longer ends the session on the server, so the page ends it itself.
+        relogin: () => logoutAPI().catch(() => {}).then(() => navigate('/login')),
     }
 
     const sections: Section[] = [about(ui), login(ui), database(), totp(ui, {enforced: totpEnforce, reload: loadTotpEnforce})]

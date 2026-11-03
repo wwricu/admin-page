@@ -18,8 +18,7 @@ export enum PostResourceTypeEnum {
 
 export enum DatabaseActionEnum {
     BACKUP = 'backup',
-    RESTORE = 'restore',
-    DOWNLOAD = 'download'
+    RESTORE = 'restore'
 }
 
 export enum ConfigKeyEnum {
