@@ -2,7 +2,6 @@ import {databaseAPI} from '@/api/manage.ts'
 import {DatabaseActionEnum} from '@/model/enum.ts'
 import type {Section} from '@/manage/ui.ts'
 
-// Both writes run in a BackgroundTasks slot on the server, so the toast only says the job was taken.
 export const database = (): Section => ({
     key: 'database',
     title: 'Database',
