@@ -21,12 +21,24 @@ export enum DatabaseActionEnum {
     RESTORE = 'restore'
 }
 
-export enum ConfigKeyEnum {
-    ABOUT_CONTENT = 'about_content',
-    TOTP_ENFORCE = 'totp_enforce',
-    TOTP_SECRET = 'totp_secret',
+export enum ManageReadEnum {
+    ABOUT = 'about',
+    SITE_TITLE = 'site_title',
+    SITE_TAGLINE = 'site_tagline',
     USERNAME = 'username',
-    PASSWORD = 'password'
+    TOTP_ENFORCED = 'totp_enforced'
+}
+
+export enum ManageCommandEnum {
+    SET_ABOUT = 'set_about',
+    SET_SITE_TITLE = 'set_site_title',
+    SET_SITE_TAGLINE = 'set_site_tagline',
+    SET_USERNAME = 'set_username',
+    SET_PASSWORD = 'set_password',
+    RESET_LOGIN = 'reset_login',
+    ENROLL_TOTP = 'enroll_totp',
+    CONFIRM_TOTP = 'confirm_totp',
+    DISABLE_TOTP = 'disable_totp'
 }
 
 export enum EntityTypeEnum {

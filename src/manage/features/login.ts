@@ -1,9 +1,9 @@
-import {getConfigAPI, setConfigAPI} from '@/api/manage.ts'
-import {ConfigKeyEnum} from '@/model/enum.ts'
+import {getValueAPI, runCommandAPI} from '@/api/manage.ts'
+import {ManageCommandEnum, ManageReadEnum} from '@/model/enum.ts'
 import type {Section, Ui} from '@/manage/ui.ts'
 
-const write = (ui: Ui, key: ConfigKeyEnum, value: string | null) =>
-    setConfigAPI({key, value}).then(ui.relogin)
+const write = (ui: Ui, command: ManageCommandEnum, value = '') =>
+    runCommandAPI(command, value).then(ui.relogin)
 
 export const login = (ui: Ui): Section => ({
     key: 'login',
@@ -14,8 +14,8 @@ export const login = (ui: Ui): Section => ({
             run: async () => ui.dialog({
                 title: 'Set username',
                 input: {placeholder: 'Username'},
-                value: (await getConfigAPI(ConfigKeyEnum.USERNAME)) ?? '',
-                onSubmit: (value) => write(ui, ConfigKeyEnum.USERNAME, value),
+                value: (await getValueAPI(ManageReadEnum.USERNAME)) ?? '',
+                onSubmit: (value) => write(ui, ManageCommandEnum.SET_USERNAME, value),
             }),
         },
         {
@@ -24,14 +24,14 @@ export const login = (ui: Ui): Section => ({
                 title: 'Input new Password',
                 input: {placeholder: 'New password', secret: true},
                 value: '',
-                onSubmit: (value) => write(ui, ConfigKeyEnum.PASSWORD, value),
+                onSubmit: (value) => write(ui, ManageCommandEnum.SET_PASSWORD, value),
             }),
         },
         {
             label: 'Reset all to default',
             confirm: 'Sure to reset username and password to default?',
             success: 'success',
-            run: () => write(ui, ConfigKeyEnum.USERNAME, null),
+            run: () => write(ui, ManageCommandEnum.RESET_LOGIN),
         },
     ],
 })

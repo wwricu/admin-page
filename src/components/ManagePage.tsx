@@ -2,10 +2,10 @@ import {useEffect, useState} from 'react'
 import {Button, Input, List, message, Modal, Popconfirm} from 'antd'
 import {useNavigate} from 'react-router-dom'
 import {logoutAPI} from '@/api/common.ts'
-import {getConfigAPI} from '@/api/manage.ts'
-import {ConfigKeyEnum} from '@/model/enum.ts'
+import {getValueAPI} from '@/api/manage.ts'
+import {ManageReadEnum} from '@/model/enum.ts'
 import type {Action, Dialog, Section, Ui} from '@/manage/ui.ts'
-import {about} from '@/manage/features/about.tsx'
+import {site} from '@/manage/features/site.tsx'
 import {database} from '@/manage/features/database.ts'
 import {login} from '@/manage/features/login.ts'
 import {totp} from '@/manage/features/totp.ts'
@@ -16,8 +16,8 @@ export default function ManagePage() {
     const [totpEnforce, setTotpEnforce] = useState(false)
     const navigate = useNavigate()
 
-    const loadTotpEnforce = () => getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE)
-        .then((value) => setTotpEnforce(value !== null))
+    const loadTotpEnforce = () => getValueAPI(ManageReadEnum.TOTP_ENFORCED)
+        .then((value) => setTotpEnforce(value === 'true'))
         .catch(() => {})
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function ManagePage() {
         relogin: () => logoutAPI().catch(() => {}).then(() => navigate('/login')),
     }
 
-    const sections: Section[] = [about(ui), login(ui), database(), totp(ui, {enforced: totpEnforce, reload: loadTotpEnforce})]
+    const sections: Section[] = [site(ui), login(ui), database(), totp(ui, {enforced: totpEnforce, reload: loadTotpEnforce})]
 
     const run = async (task: () => Promise<void> | void, success?: string): Promise<boolean> => {
         try {
