@@ -19,7 +19,7 @@ export default function ManagePage() {
     const navigate = useNavigate()
 
     const loadTotpEnforce = () => getValueAPI(ManageReadEnum.TOTP_ENFORCED)
-        .then((value) => setTotpEnforce(value === 'true'))
+        .then((value) => setTotpEnforce(value !== null))
         .catch(() => {})
 
     useEffect(() => {
