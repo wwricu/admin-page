@@ -7,6 +7,9 @@ import type {Section, Ui} from '@/manage/ui.ts'
 const withField = (value: string, field: 'username' | 'password', text: string) =>
     JSON.stringify({...JSON.parse(value) as LoginRO, [field]: text})
 
+const write = (ui: Ui, command: ManageCommandEnum, value = '') =>
+    runCommandAPI(command, value).then(ui.relogin)
+
 export const login = (ui: Ui): Section => ({
     key: 'login',
     title: 'Login',
@@ -25,8 +28,14 @@ export const login = (ui: Ui): Section => ({
                         </Flex>
                     )
                 },
-                onSubmit: (value) => runCommandAPI(ManageCommandEnum.SET_LOGIN, value).then(ui.relogin),
+                onSubmit: (value) => write(ui, ManageCommandEnum.SET_LOGIN, value),
             }),
+        },
+        {
+            label: 'Reset all to default',
+            confirm: 'Sure to reset username and password to default?',
+            success: 'success',
+            run: () => write(ui, ManageCommandEnum.RESET_LOGIN),
         },
     ],
 })
