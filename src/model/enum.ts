@@ -37,7 +37,8 @@ export enum ManageCommandEnum {
     RESET_LOGIN = 'reset_login',
     ENROLL_TOTP = 'enroll_totp',
     CONFIRM_TOTP = 'confirm_totp',
-    DISABLE_TOTP = 'disable_totp'
+    DISABLE_TOTP = 'disable_totp',
+    REBUILD_SEARCH_INDEX = 'rebuild_search_index'
 }
 
 export enum EntityTypeEnum {

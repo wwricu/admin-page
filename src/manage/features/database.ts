@@ -1,5 +1,5 @@
-import {databaseAPI} from '@/api/manage.ts'
-import {DatabaseActionEnum} from '@/model/enum.ts'
+import {databaseAPI, runCommandAPI} from '@/api/manage.ts'
+import {DatabaseActionEnum, ManageCommandEnum} from '@/model/enum.ts'
 import type {Section} from '@/manage/ui.ts'
 
 export const database = (): Section => ({
@@ -22,6 +22,12 @@ export const database = (): Section => ({
             label: 'Download to local',
             confirm: 'Download database to local?',
             run: () => { window.open('/api/manage/database') },
+        },
+        {
+            label: 'Rebuild search index',
+            confirm: 'Sure to rebuild the search index?',
+            success: 'Search index rebuilt',
+            run: () => runCommandAPI(ManageCommandEnum.REBUILD_SEARCH_INDEX),
         },
     ],
 })
