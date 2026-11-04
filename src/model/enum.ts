@@ -29,6 +29,16 @@ export enum ConfigKeyEnum {
     PASSWORD = 'password'
 }
 
+export enum ManageCommandEnum {
+    SET_ABOUT = 'set_about',
+    SET_USERNAME = 'set_username',
+    SET_PASSWORD = 'set_password',
+    RESET_LOGIN = 'reset_login',
+    ENROLL_TOTP = 'enroll_totp',
+    CONFIRM_TOTP = 'confirm_totp',
+    DISABLE_TOTP = 'disable_totp'
+}
+
 export enum EntityTypeEnum {
     BLOG_POST = 'Post',
     POST_TAG = 'Tag',

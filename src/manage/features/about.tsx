@@ -1,7 +1,7 @@
 import {lazy, Suspense} from 'react'
 import {Spin} from 'antd'
-import {getConfigAPI, setConfigAPI} from '@/api/manage.ts'
-import {ConfigKeyEnum} from '@/model/enum.ts'
+import {getConfigAPI, runCommandAPI} from '@/api/manage.ts'
+import {ConfigKeyEnum, ManageCommandEnum} from '@/model/enum.ts'
 import type {Section, Ui} from '@/manage/ui.ts'
 
 // Lazy so that opening /management does not download the CKEditor bundle.
@@ -21,7 +21,7 @@ export const about = (ui: Ui): Section => ({
                     <LazyAboutEditor content={value} setContent={onChange}/>
                 </Suspense>
             ),
-            onSubmit: (value) => setConfigAPI({key: ConfigKeyEnum.ABOUT_CONTENT, value}),
+            onSubmit: (value) => runCommandAPI(ManageCommandEnum.SET_ABOUT, value),
         }),
     }],
 })

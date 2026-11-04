@@ -1,5 +1,5 @@
-import {setConfigAPI, totpConfirmAPI, totpEnrollAPI} from '@/api/manage.ts'
-import {ConfigKeyEnum} from '@/model/enum.ts'
+import {enrollTotpAPI, runCommandAPI} from '@/api/manage.ts'
+import {ManageCommandEnum} from '@/model/enum.ts'
 import type {Section, Ui} from '@/manage/ui.ts'
 
 export const totp = (ui: Ui, {enforced, reload}: {enforced: boolean; reload: () => Promise<void>}): Section => ({
@@ -11,19 +11,19 @@ export const totp = (ui: Ui, {enforced, reload}: {enforced: boolean; reload: () 
             confirm: 'Sure to disable TOTP protection?',
             success: 'success',
             run: async () => {
-                await setConfigAPI({key: ConfigKeyEnum.TOTP_ENFORCE, value: null})
+                await runCommandAPI(ManageCommandEnum.DISABLE_TOTP)
                 await reload()
             },
         } : {
             label: 'Enforce TOTP',
             run: async () => {
-                const secret = await totpEnrollAPI()
+                const secret = await enrollTotpAPI()
                 ui.dialog({
                     title: secret,
                     input: {placeholder: '6-pin code from authenticator'},
                     value: '',
                     onSubmit: async (code) => {
-                        await totpConfirmAPI(code)
+                        await runCommandAPI(ManageCommandEnum.CONFIRM_TOTP, code)
                         await reload()
                     },
                 })
