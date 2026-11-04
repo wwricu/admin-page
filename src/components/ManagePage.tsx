@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {Button, Input, List, message, Modal, Popconfirm} from 'antd'
+import {Button, Flex, Input, message, Modal, Popconfirm, Table} from 'antd'
 import {useNavigate} from 'react-router-dom'
 import {logoutAPI} from '@/api/common.ts'
 import {getValueAPI} from '@/api/manage.ts'
@@ -9,6 +9,8 @@ import {site} from '@/manage/features/site.tsx'
 import {database} from '@/manage/features/database.ts'
 import {login} from '@/manage/features/login.ts'
 import {totp} from '@/manage/features/totp.ts'
+
+const {Column} = Table
 
 export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
@@ -76,16 +78,24 @@ export default function ManagePage() {
     return (
         <>
             {messageContextHolder}
-            <List
+            <Table
+                <Section>
+                scroll={{x: true}}
                 size='small'
-                bordered
                 dataSource={sections}
-                renderItem={(section: Section) => (
-                    <List.Item actions={section.actions.map(renderAction)}>
-                        {section.title}
-                    </List.Item>
-                )}
-            />
+                pagination={false}
+            >
+                <Column title='Name' dataIndex='title' key='title' ellipsis={true}/>
+                <Column
+                    title='Actions'
+                    key='actions'
+                    render={(_, row: Section) => (
+                        <Flex justify='flex-start' gap='middle'>
+                            {row.actions.map(renderAction)}
+                        </Flex>
+                    )}
+                />
+            </Table>
             <Modal
                 open={dialog !== null}
                 title={dialog?.title}
