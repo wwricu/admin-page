@@ -33,9 +33,7 @@ export enum ManageCommandEnum {
     SET_ABOUT = 'set_about',
     SET_SITE_TITLE = 'set_site_title',
     SET_SITE_TAGLINE = 'set_site_tagline',
-    SET_USERNAME = 'set_username',
-    SET_PASSWORD = 'set_password',
-    RESET_LOGIN = 'reset_login',
+    SET_LOGIN = 'set_login',
     ENROLL_TOTP = 'enroll_totp',
     CONFIRM_TOTP = 'confirm_totp',
     DISABLE_TOTP = 'disable_totp'

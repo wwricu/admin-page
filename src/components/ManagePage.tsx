@@ -7,7 +7,7 @@ import {ManageReadEnum} from '@/model/enum.ts'
 import type {Action, Dialog, Section, Ui} from '@/manage/ui.ts'
 import {site} from '@/manage/features/site.tsx'
 import {database} from '@/manage/features/database.ts'
-import {login} from '@/manage/features/login.ts'
+import {login} from '@/manage/features/login.tsx'
 import {totp} from '@/manage/features/totp.ts'
 
 const {Column} = Table
