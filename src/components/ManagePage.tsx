@@ -10,11 +10,9 @@ import {database} from '@/manage/features/database.ts'
 import {login} from '@/manage/features/login.ts'
 import {totp} from '@/manage/features/totp.ts'
 
-// The page owns the one dialog; a feature is data plus the calls that fill it.
 export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [dialog, setDialog] = useState<Dialog | null>(null)
-    // The only config the page renders itself, because it decides which TOTP action is on offer.
     const [totpEnforce, setTotpEnforce] = useState(false)
     const navigate = useNavigate()
 
@@ -30,14 +28,11 @@ export default function ManagePage() {
     const ui: Ui = {
         notify: (content) => messageApi.success(content).then(),
         dialog: setDialog,
-        // Changing the login no longer ends the session on the server, so the page ends it itself.
         relogin: () => logoutAPI().catch(() => {}).then(() => navigate('/login')),
     }
 
     const sections: Section[] = [about(ui), login(ui), database(), totp(ui, {enforced: totpEnforce, reload: loadTotpEnforce})]
 
-    // The one place that swallows a failure, which the http layer already toasted, and announces
-    // what succeeded.
     const run = async (task: () => Promise<void> | void, success?: string): Promise<boolean> => {
         try {
             await task()
@@ -56,7 +51,6 @@ export default function ManagePage() {
             messageApi.error('Please input a valid value').then()
             return
         }
-        // A failed write leaves the dialog open, so the pending edit is not thrown away.
         if (await run(() => current.onSubmit(value), 'success')) {
             setDialog(null)
         }

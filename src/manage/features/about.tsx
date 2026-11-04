@@ -7,8 +7,6 @@ import type {Section, Ui} from '@/manage/ui.ts'
 // Lazy so that opening /management does not download the CKEditor bundle.
 const LazyAboutEditor = lazy(() => import('@/components/AboutEditor'))
 
-// The one control a dialog input cannot draw, and blank is a legal value. The content is read when
-// the dialog opens: opening it after a failed read would let one OK empty the page.
 export const about = (ui: Ui): Section => ({
     key: 'about',
     title: 'About Page',
