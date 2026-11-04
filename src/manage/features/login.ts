@@ -1,5 +1,5 @@
-import {getConfigAPI, runCommandAPI} from '@/api/manage.ts'
-import {ConfigKeyEnum, ManageCommandEnum} from '@/model/enum.ts'
+import {getValueAPI, runCommandAPI} from '@/api/manage.ts'
+import {ManageCommandEnum, ManageReadEnum} from '@/model/enum.ts'
 import type {Section, Ui} from '@/manage/ui.ts'
 
 const write = (ui: Ui, command: ManageCommandEnum, value = '') =>
@@ -14,7 +14,7 @@ export const login = (ui: Ui): Section => ({
             run: async () => ui.dialog({
                 title: 'Set username',
                 input: {placeholder: 'Username'},
-                value: (await getConfigAPI(ConfigKeyEnum.USERNAME)) ?? '',
+                value: (await getValueAPI(ManageReadEnum.USERNAME)) ?? '',
                 onSubmit: (value) => write(ui, ManageCommandEnum.SET_USERNAME, value),
             }),
         },

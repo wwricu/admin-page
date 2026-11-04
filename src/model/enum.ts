@@ -21,12 +21,10 @@ export enum DatabaseActionEnum {
     RESTORE = 'restore'
 }
 
-export enum ConfigKeyEnum {
-    ABOUT_CONTENT = 'about_content',
-    TOTP_ENFORCE = 'totp_enforce',
-    TOTP_SECRET = 'totp_secret',
+export enum ManageReadEnum {
+    ABOUT = 'about',
     USERNAME = 'username',
-    PASSWORD = 'password'
+    TOTP_ENFORCED = 'totp_enforced'
 }
 
 export enum ManageCommandEnum {

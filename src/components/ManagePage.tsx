@@ -2,8 +2,8 @@ import {useEffect, useState} from 'react'
 import {Button, Input, List, message, Modal, Popconfirm} from 'antd'
 import {useNavigate} from 'react-router-dom'
 import {logoutAPI} from '@/api/common.ts'
-import {getConfigAPI} from '@/api/manage.ts'
-import {ConfigKeyEnum} from '@/model/enum.ts'
+import {getValueAPI} from '@/api/manage.ts'
+import {ManageReadEnum} from '@/model/enum.ts'
 import type {Action, Dialog, Section, Ui} from '@/manage/ui.ts'
 import {about} from '@/manage/features/about.tsx'
 import {database} from '@/manage/features/database.ts'
@@ -16,8 +16,8 @@ export default function ManagePage() {
     const [totpEnforce, setTotpEnforce] = useState(false)
     const navigate = useNavigate()
 
-    const loadTotpEnforce = () => getConfigAPI(ConfigKeyEnum.TOTP_ENFORCE)
-        .then((value) => setTotpEnforce(value !== null))
+    const loadTotpEnforce = () => getValueAPI(ManageReadEnum.TOTP_ENFORCED)
+        .then((value) => setTotpEnforce(value === 'true'))
         .catch(() => {})
 
     useEffect(() => {
