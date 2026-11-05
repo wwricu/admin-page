@@ -1,7 +1,7 @@
 import {Flex, Input} from 'antd'
 import {getValueAPI, runCommandAPI} from '@/api/manage.ts'
 import {LoginRO} from '@/model/request.ts'
-import {ManageCommandEnum, ManageReadEnum} from '@/model/enum.ts'
+import {ConfigKeyEnum, ManageCommandEnum} from '@/model/enum.ts'
 import type {Section, Ui} from '@/manage/ui.ts'
 
 const withField = (value: string, field: 'username' | 'password', text: string) =>
@@ -18,7 +18,7 @@ export const login = (ui: Ui): Section => ({
             label: 'Set username and password',
             run: async () => ui.dialog({
                 title: 'Set username and password',
-                value: JSON.stringify({username: (await getValueAPI(ManageReadEnum.USERNAME)) ?? '', password: ''}),
+                value: JSON.stringify({username: (await getValueAPI(ConfigKeyEnum.USERNAME)) ?? '', password: ''}),
                 body: (value, onChange) => {
                     const {username, password} = JSON.parse(value) as LoginRO
                     return (

@@ -3,7 +3,7 @@ import {Button, Flex, Input, message, Modal, Popconfirm, Table} from 'antd'
 import {useNavigate} from 'react-router-dom'
 import {logoutAPI} from '@/api/common.ts'
 import {getValueAPI} from '@/api/manage.ts'
-import {ManageReadEnum} from '@/model/enum.ts'
+import {ConfigKeyEnum} from '@/model/enum.ts'
 import type {Action, Dialog, Section, Ui} from '@/manage/ui.ts'
 import {site} from '@/manage/features/site.tsx'
 import {database} from '@/manage/features/database.ts'
@@ -18,7 +18,7 @@ export default function ManagePage() {
     const [totpEnforce, setTotpEnforce] = useState(false)
     const navigate = useNavigate()
 
-    const loadTotpEnforce = () => getValueAPI(ManageReadEnum.TOTP_ENFORCED)
+    const loadTotpEnforce = () => getValueAPI(ConfigKeyEnum.TOTP_ENFORCE)
         .then((value) => setTotpEnforce(value !== null))
         .catch(() => {})
 

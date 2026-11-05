@@ -1,5 +1,5 @@
 import {TrashBinRO} from "@/model/request.ts"
-import {DatabaseActionEnum, ManageCommandEnum, ManageReadEnum} from "@/model/enum.ts"
+import {DatabaseActionEnum, ConfigKeyEnum, ManageCommandEnum} from "@/model/enum.ts"
 import {http} from "@/common.ts"
 import {TrashBinVO} from "@/model/response.ts"
 
@@ -15,7 +15,7 @@ export const enrollTotpAPI = () => {
     return http.post<string>('/manage/command', {command: ManageCommandEnum.ENROLL_TOTP, value: ''})
 }
 
-export const getValueAPI = (key: ManageReadEnum) => {
+export const getValueAPI = (key: ConfigKeyEnum) => {
     return http.get<string | null>(`/manage/config/get?key=${key}`)
 }
 
