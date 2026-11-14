@@ -1,11 +1,7 @@
 import {TrashBinRO} from "@/model/request.ts"
-import {DatabaseActionEnum, ConfigKeyEnum, ManageCommandEnum} from "@/model/enum.ts"
+import {ConfigKeyEnum, ManageCommandEnum} from "@/model/enum.ts"
 import {http} from "@/common.ts"
 import {TrashBinVO} from "@/model/response.ts"
-
-export const databaseAPI = (action: DatabaseActionEnum) => {
-    return http.postVoid('/manage/database', {action})
-}
 
 export const runCommandAPI = (command: ManageCommandEnum, value = '') => {
     return http.postVoid('/manage/command', {command, value})

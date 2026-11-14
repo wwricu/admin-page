@@ -13,11 +13,6 @@ export enum PostResourceTypeEnum {
     COVER_IMAGE = 'cover'
 }
 
-export enum DatabaseActionEnum {
-    BACKUP = 'backup',
-    RESTORE = 'restore'
-}
-
 export enum ConfigKeyEnum {
     ABOUT_CONTENT = 'about_content',
     SITE_TITLE = 'site_title',
@@ -37,7 +32,9 @@ export enum ManageCommandEnum {
     ENROLL_TOTP = 'enroll_totp',
     CONFIRM_TOTP = 'confirm_totp',
     DISABLE_TOTP = 'disable_totp',
-    REBUILD_SEARCH_INDEX = 'rebuild_search_index'
+    REBUILD_SEARCH_INDEX = 'rebuild_search_index',
+    BACKUP = 'backup',
+    RESTORE = 'restore'
 }
 
 export enum EntityTypeEnum {

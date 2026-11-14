@@ -1,5 +1,5 @@
-import {databaseAPI, runCommandAPI} from '@/api/manage.ts'
-import {DatabaseActionEnum, ManageCommandEnum} from '@/model/enum.ts'
+import {runCommandAPI} from '@/api/manage.ts'
+import {ManageCommandEnum} from '@/model/enum.ts'
 import type {Section} from '@/manage/ui.ts'
 
 export const database = (): Section => ({
@@ -10,18 +10,13 @@ export const database = (): Section => ({
             label: 'Backup to cloud',
             confirm: 'Sure to backup database? This will override cloud database',
             success: 'Database backup submitted',
-            run: () => databaseAPI(DatabaseActionEnum.BACKUP),
+            run: () => runCommandAPI(ManageCommandEnum.BACKUP),
         },
         {
             label: 'Restore from cloud',
             confirm: 'Sure to restore database? This will override local database',
             success: 'Database restore submitted',
-            run: () => databaseAPI(DatabaseActionEnum.RESTORE),
-        },
-        {
-            label: 'Download to local',
-            confirm: 'Download database to local?',
-            run: () => { window.open('/api/manage/database') },
+            run: () => runCommandAPI(ManageCommandEnum.RESTORE),
         },
         {
             label: 'Rebuild search index',
