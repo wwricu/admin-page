@@ -12,7 +12,7 @@ export type Section = { key: string; title: string; actions: Action[] }
 export type Dialog = {
     title: string
     width?: number
-    input?: { placeholder: string; secret?: boolean }
+    input?: { placeholder: string }
     body?: (value: string, onChange: (value: string) => void) => ReactNode
     value: string
     onSubmit: (value: string) => Promise<void>

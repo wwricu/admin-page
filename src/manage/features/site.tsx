@@ -4,7 +4,6 @@ import {getValueAPI, runCommandAPI} from '@/api/manage.ts'
 import {ConfigKeyEnum, ManageCommandEnum} from '@/model/enum.ts'
 import type {Action, Section, Ui} from '@/manage/ui.ts'
 
-// Lazy so that opening /management does not download the CKEditor bundle.
 const LazyAboutEditor = lazy(() => import('@/components/AboutEditor'))
 
 const textAction = (ui: Ui, label: string, placeholder: string, read: ConfigKeyEnum, command: ManageCommandEnum): Action => ({

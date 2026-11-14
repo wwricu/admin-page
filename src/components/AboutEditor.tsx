@@ -17,7 +17,6 @@ type EditorProps = {
     setContent: (content: string) => void,
 }
 
-// Default export so the manage about feature can React.lazy() this without a `.then(m => ({default: m.X}))` shim.
 export default function AboutEditor({ content, setContent }: EditorProps) {
     return (
         <div style={{ flex: 1,  minHeight: 0 }}>

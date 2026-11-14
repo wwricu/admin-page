@@ -15,7 +15,8 @@ const {Column} = Table
 export default function ManagePage() {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [dialog, setDialog] = useState<Dialog | null>(null)
-    const [totpEnforce, setTotpEnforce] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
+    const [totpEnforce, setTotpEnforce] = useState<boolean | null>(null)
     const navigate = useNavigate()
 
     const loadTotpEnforce = () => getValueAPI(ConfigKeyEnum.TOTP_ENFORCE)
@@ -53,9 +54,11 @@ export default function ManagePage() {
             messageApi.error('Please input a valid value').then()
             return
         }
+        setSubmitting(true)
         if (await run(() => current.onSubmit(value), 'success')) {
             setDialog(null)
         }
+        setSubmitting(false)
     }
 
     const renderAction = (action: Action) => action.confirm ? (
@@ -101,20 +104,17 @@ export default function ManagePage() {
                 title={dialog?.title}
                 width={dialog?.width}
                 closable={false}
-                // closable={false} alone still closes on mask click, which would throw away the
-                // TOTP secret and any pending edit.
                 maskClosable={false}
+                keyboard={false}
+                confirmLoading={submitting}
+                cancelButtonProps={{disabled: submitting}}
                 destroyOnHidden
                 onCancel={() => setDialog(null)}
                 onOk={() => dialog && submitDialog(dialog)}
             >
-                {
-                    dialog?.input
-                        ? (dialog.input.secret
-                            ? <Input.Password value={dialog.value} placeholder={dialog.input.placeholder} onChange={(e) => changeDialogValue(e.target.value)}/>
-                            : <Input value={dialog.value} placeholder={dialog.input.placeholder} onChange={(e) => changeDialogValue(e.target.value)}/>)
-                        : dialog?.body?.(dialog.value, changeDialogValue)
-                }
+                {dialog?.input
+                    ? <Input value={dialog.value} placeholder={dialog.input.placeholder} onChange={(e) => changeDialogValue(e.target.value)}/>
+                    : dialog?.body?.(dialog.value, changeDialogValue)}
             </Modal>
         </>
     )

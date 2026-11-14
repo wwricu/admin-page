@@ -20,7 +20,6 @@ const LazyTrashBinPage = React.lazy(() => import("./components/TrashBinPage.tsx"
 const RefreshProvider = ({ children }: { children: ReactNode }) => {
     const [key, setKey] = useState(false)
 
-    // Memoized so consumers' useEffect deps only fire on an actual refresh trigger
     const value = useMemo(() => ({
         key,
         triggerRefresh: () => setKey(prev => !prev),
@@ -91,8 +90,8 @@ const AppLayout: React.FC = () => {
 
 const suspend = (node: ReactNode) => <Suspense fallback={<Loading/>}>{node}</Suspense>
 
-// A data router, unlike <BrowserRouter>, is what exposes useBlocker to the editor page
-const router = createBrowserRouter([
+// eslint-disable-next-line react-refresh/only-export-components
+export const router = createBrowserRouter([
     {
         path: '/login',
         element: suspend(<LazyLoginPage/>),
@@ -115,6 +114,7 @@ const router = createBrowserRouter([
 
 export default function App() {
     const theme = useAutoTheme()
+    ConfigProvider.config({theme})
     return (
         <ConfigProvider theme={theme}>
             <AntdApp component={false}>

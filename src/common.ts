@@ -20,6 +20,14 @@ export class HttpError extends Error {
     }
 }
 
+export const beforeUpload = (file: File) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+    if (!isJpgOrPng) {
+        message.error('You can only upload JPG/PNG file!').then()
+    }
+    return isJpgOrPng
+}
+
 const readBody = async (response: Response): Promise<unknown> => {
     const text = await response.text()
     if (!text) {
@@ -32,8 +40,6 @@ const readBody = async (response: Response): Promise<unknown> => {
     }
 }
 
-// FastAPI answers a bad request with `detail` as a string, but a pydantic validation error
-// makes it an array of errors; rendering that array would break the toast.
 const detailText = (detail: unknown): string => {
     if (typeof detail === 'string') {
         return detail
@@ -50,18 +56,16 @@ const send = async <T>(url: string, init: RequestInit, expectBody: boolean): Pro
 
     if (!response.ok) {
         const errorMsg = detailText((data as { detail?: unknown } | undefined)?.detail) || response.statusText
-        message.error(errorMsg).then()
+        if (errorMsg !== 'Please input TOTP') message.error(errorMsg).then()
 
         if (response.status === 401 && !window.location.pathname.startsWith('/login')) {
-            window.location.href = '/login'
+            const {router} = await import('@/App')
+            await router.navigate('/login')
         }
 
-        // Always reject so callers can settle loading state in their catch/finally branches
         throw new HttpError(errorMsg, response.status)
     }
 
-    // A 200 without a body is how a failed lookup comes back. Handing it to the caller would turn
-    // "not found" into an empty record, so endpoints that really return nothing use the void calls.
     if (expectBody && data === undefined) {
         const errorMsg = 'Empty response from server'
         message.error(errorMsg).then()
@@ -71,32 +75,15 @@ const send = async <T>(url: string, init: RequestInit, expectBody: boolean): Pro
     return data as T
 }
 
-const withAccept = (headers?: Record<string, string>) => ({'Accept': 'application/json', ...headers})
+const acceptJson = {'Accept': 'application/json'}
 
-const postInit = (data: unknown, headers?: Record<string, string>): RequestInit => {
-    const isFormData = data instanceof FormData
-    return {
-        method: 'POST',
-        headers: isFormData ? headers : {'Content-Type': 'application/json', ...withAccept(headers)},
-        body: isFormData ? data : JSON.stringify(data)
-    }
-}
+const postInit = (data: unknown): RequestInit => data instanceof FormData
+    ? {method: 'POST', body: data}
+    : {method: 'POST', headers: {'Content-Type': 'application/json', ...acceptJson}, body: JSON.stringify(data)}
 
 export const http = {
-    get<T>(url: string, headers?: Record<string, string>): Promise<T> {
-        return send<T>(url, {method: 'GET', headers: withAccept(headers)}, true)
-    },
-
-    post<T>(url: string, data?: unknown, headers?: Record<string, string>): Promise<T> {
-        return send<T>(url, postInit(data, headers), true)
-    },
-
-    // For endpoints whose response body carries nothing the app needs
-    postVoid(url: string, data?: unknown, headers?: Record<string, string>): Promise<void> {
-        return send<void>(url, postInit(data, headers), false)
-    },
-
-    deleteVoid(url: string, headers?: Record<string, string>): Promise<void> {
-        return send<void>(url, {method: 'DELETE', headers: withAccept(headers)}, false)
-    }
+    get<T>(url: string) { return send<T>(url, {method: 'GET', headers: acceptJson}, true) },
+    post<T>(url: string, data?: unknown) { return send<T>(url, postInit(data), true) },
+    postVoid(url: string, data?: unknown) { return send<void>(url, postInit(data), false) },
+    deleteVoid(url: string) { return send<void>(url, {method: 'DELETE', headers: acceptJson}, false) }
 }

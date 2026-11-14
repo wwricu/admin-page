@@ -9,13 +9,13 @@ export const database = (): Section => ({
         {
             label: 'Backup to cloud',
             confirm: 'Sure to backup database? This will override cloud database',
-            success: 'Database backup successfully',
+            success: 'Database backup submitted',
             run: () => databaseAPI(DatabaseActionEnum.BACKUP),
         },
         {
             label: 'Restore from cloud',
             confirm: 'Sure to restore database? This will override local database',
-            success: 'Database restore successfully',
+            success: 'Database restore submitted',
             run: () => databaseAPI(DatabaseActionEnum.RESTORE),
         },
         {

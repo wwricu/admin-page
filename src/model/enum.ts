@@ -1,6 +1,3 @@
-// Mirrors wwricu/domain/enum.py. Keep the members and their wire values identical to the backend,
-// including members this app never sends: the tables render whatever the backend returns.
-
 export enum TagTypeEnum {
     POST_TAG = 'post_tag',
     POST_CAT = 'post_category'

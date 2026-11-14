@@ -3,32 +3,21 @@ import {theme} from 'antd'
 
 const { defaultAlgorithm, darkAlgorithm } = theme
 
+const components = {
+    Button: {colorPrimary: '#722ed1'},
+    Layout: {headerHeight: 48, headerPadding: '0 5px'},
+}
+
 const lightTheme = {
     algorithm: defaultAlgorithm,
-    token: {
-        colorPrimary: '#1677ff',
-        borderRadius: 6,
-    },
-    components: {
-        Button: {
-            colorPrimary: '#722ed1',
-        },
-        Layout: {
-            headerBg: '#ffffff',
-            headerHeight: 48,
-            headerPadding: '0 5px'
-        },
-    },
+    token: {colorPrimary: '#1677ff', borderRadius: 6},
+    components: {...components, Layout: {...components.Layout, headerBg: '#ffffff'}},
 }
 
 const darkTheme = {
     algorithm: darkAlgorithm,
-    components: {
-        Layout: {
-            headerHeight: 48,
-            headerPadding: '0 5px'
-        },
-    },
+    token: {borderRadius: 6},
+    components,
 }
 
 export default function useAutoTheme() {

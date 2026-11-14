@@ -17,7 +17,6 @@ export const createPostAPI = () => {
     return http.post<PostDetailVO>('/post/create')
 }
 
-// Returns null for an id that no longer exists
 export const getPostDetailAPI = (postId: string | number) => {
     return http.get<PostDetailVO | null>(`/post/detail/${postId}`)
 }

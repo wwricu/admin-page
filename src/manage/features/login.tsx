@@ -23,8 +23,8 @@ export const login = (ui: Ui): Section => ({
                     const {username, password} = JSON.parse(value) as LoginRO
                     return (
                         <Flex vertical gap='small'>
-                            <Input value={username} placeholder='Username' onChange={(e) => onChange(withField(value, 'username', e.target.value))}/>
-                            <Input.Password value={password} placeholder='New password' onChange={(e) => onChange(withField(value, 'password', e.target.value))}/>
+                            <Input value={username} placeholder='Username (4+ chars, letter first)' onChange={(e) => onChange(withField(value, 'username', e.target.value))}/>
+                            <Input.Password value={password} placeholder='New password (8+ chars, with a symbol)' onChange={(e) => onChange(withField(value, 'password', e.target.value))}/>
                         </Flex>
                     )
                 },

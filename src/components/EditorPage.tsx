@@ -6,7 +6,6 @@ import {
     App as AntdApp,
     Button,
     Flex,
-    type GetProp,
     Image,
     Input,
     message,
@@ -22,6 +21,7 @@ import {PostResourceTypeEnum, PostStatusEnum, TagTypeEnum} from "@/model/enum.ts
 import {DownOutlined, LoadingOutlined, PlusOutlined, UpOutlined} from "@ant-design/icons"
 import ImgCrop from "antd-img-crop"
 import {useBlocker, useNavigate, useParams} from "react-router-dom"
+import {beforeUpload} from '@/common.ts'
 import {PostEditor as CKEditor} from './CKEditor'
 
 const { TextArea } = Input
@@ -31,8 +31,6 @@ type TagItem = {
     label: string
 }
 
-// Everything the save call sends. Keeping it in one object is what lets a load replace the whole
-// editor state at once and lets unsaved changes be detected by comparing against the loaded copy.
 type Draft = {
     title: string
     preview: string
@@ -44,15 +42,13 @@ type Draft = {
     coverUrl?: string
 }
 
-type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
-
 const emptyDraft: Draft = {title: '', preview: '', content: '', tags: []}
 
 const toTagItems = (tagList: TagVO[]): TagItem[] =>
     tagList.map(({id, name}) => ({value: id, label: name}))
 
 const draftFrom = (post: PostDetailVO): Draft => ({
-    title: post.title ?? '',
+    title: post.title,
     preview: post.preview,
     content: post.content,
     status: post.status ?? PostStatusEnum.DRAFT,
@@ -62,7 +58,6 @@ const draftFrom = (post: PostDetailVO): Draft => ({
     coverUrl: post.cover?.url,
 })
 
-// category and tags are replaced, never mutated, so identity comparison is exact here
 const sameDraft = (a: Draft, b: Draft) =>
     a.title === b.title &&
     a.preview === b.preview &&
@@ -72,22 +67,10 @@ const sameDraft = (a: Draft, b: Draft) =>
     a.tags === b.tags &&
     a.coverId === b.coverId
 
-const getBase64 = (img: FileType, callback: (url: string) => void) => {
+const getBase64 = (img: File, callback: (url: string) => void) => {
     const reader = new FileReader()
     reader.addEventListener('load', () => callback(reader.result as string))
     reader.readAsDataURL(img)
-}
-
-const beforeUpload = (file: FileType) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-    if (!isJpgOrPng) {
-        message.error('You can only upload JPG/PNG file!').then()
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2
-    if (!isLt2M) {
-        message.error('Image must smaller than 2MB!').then()
-    }
-    return isJpgOrPng && isLt2M
 }
 
 export default function EditorPage() {
@@ -99,8 +82,8 @@ export default function EditorPage() {
     const [loading, setLoading] = useState(false)
     const [loaded, setLoaded] = useState(false)
     const [loadFailed, setLoadFailed] = useState(false)
-    // What the loaded post looked like; null until a load succeeds
     const loadedDraft = useRef<Draft | null>(null)
+    const loadRef = useRef(0)
     const { modal } = AntdApp.useApp()
     const { id } = useParams()
     const navigate = useNavigate()
@@ -117,7 +100,7 @@ export default function EditorPage() {
         }
         if (info.file.status === 'done') {
             // Get this url from response in real world.
-            getBase64(info.file.originFileObj as FileType, (url) => {
+            getBase64(info.file.originFileObj as File, (url) => {
                 setLoading(false)
                 update({coverUrl: url, coverId: info.file.response.id})
             })
@@ -152,6 +135,7 @@ export default function EditorPage() {
             messageApi.error(`Invalid post id '${id}'`).then(() => navigate('/post'))
             return
         }
+        const req = ++loadRef.current
         setLoaded(false)
         setLoadFailed(false)
         getAllTag(TagTypeEnum.POST_TAG).then((tagList: TagVO[]) => {
@@ -161,9 +145,10 @@ export default function EditorPage() {
             setAllCategories(toTagItems(tagList))
         }).catch(() => {})
 
-        // A missing post comes back as null (or as nothing at all); the http layer reports the
-        // latter as an error. Either way there is nothing to edit, so the form stays unmounted.
         const postDetailVO = await getPostDetailAPI(postId).catch(() => null)
+        if (req !== loadRef.current) {
+            return
+        }
         if (!postDetailVO) {
             setLoadFailed(true)
             return
@@ -178,11 +163,9 @@ export default function EditorPage() {
 
     useEffect(() => {
         load()
-        // Only the id can change under a mounted editor; every other input is per-render state
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId])
 
-    // In-app navigation (menu links, post table) is intercepted so a dirty editor can ask first
     const blocker = useBlocker(({currentLocation, nextLocation}) =>
         isDirty && currentLocation.pathname !== nextLocation.pathname)
 
@@ -201,7 +184,6 @@ export default function EditorPage() {
         })
     }, [blocker, modal])
 
-    // Reloads and tab closes cannot be blocked by the router; the browser shows its own prompt
     useEffect(() => {
         if (!isDirty) {
             return
@@ -302,15 +284,14 @@ export default function EditorPage() {
                                 >
                                     More Options
                                 </Button>
-                                <Popconfirm title="Sure to save change?" onConfirm={save}>
-                                    <Button
-                                        style={{ flex: '1 1 0' }}
-                                        variant='solid'
-                                        color={draft.status === PostStatusEnum.DRAFT ? 'primary' : 'danger'}
-                                    >
-                                        Save {draft.status} post
-                                    </Button>
-                                </Popconfirm>
+                                <Button
+                                    style={{ flex: '1 1 0' }}
+                                    variant='solid'
+                                    color={draft.status === PostStatusEnum.DRAFT ? 'primary' : 'danger'}
+                                    onClick={save} disabled={loading}
+                                >
+                                    Save {draft.status} post
+                                </Button>
                             </Flex>
                             {moreOptionPanel}
                             <div style={{ flex: 1,  minHeight: 0}}>

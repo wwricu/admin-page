@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react'
+import React, {ChangeEvent, useState} from 'react'
 import {
     BookOutlined,
     BorderlessTableOutlined, EditOutlined,
@@ -19,17 +19,11 @@ import {useRefresh} from "@/common.ts"
 const AdminMenu: React.FC = () => {
     const navigate = useNavigate()
     const location = useLocation()
-    const [activeKey, setActiveKey] = useState<string>('')
-    const [modalTitle, setModalTitle] = useState('')
-    const [isModalOpen, setIsModalOpen] = useState(false)
     const [creatingName, setCreatingName] = useState<'category' | 'tag' | null>(null)
     const [inputValue, setInputValue] = useState<string>('')
     const [popoverOpen, setPopoverOpen] = useState(false)
     const refresh = useRefresh()
-
-    useEffect(() => {
-        setActiveKey(location.pathname.split('/').filter(Boolean)[0] || '')
-    }, [location])
+    const activeKey = location.pathname.split('/').filter(Boolean)[0] || ''
 
     return (
         <Flex style={{minHeight: '100vh', position: 'sticky', top: 0}} vertical justify='space-between'>
@@ -88,20 +82,12 @@ const AdminMenu: React.FC = () => {
                             {
                                 key: 'New Category',
                                 label: 'New Category',
-                                onClick: () => {
-                                    setModalTitle('New Category')
-                                    setCreatingName('category')
-                                    setIsModalOpen(true)
-                                }
+                                onClick: () => setCreatingName('category')
                             },
                             {
                                 key: 'New Tag',
                                 label: 'New Tag',
-                                onClick: () => {
-                                    setModalTitle('New Tag')
-                                    setCreatingName('tag')
-                                    setIsModalOpen(true)
-                                }
+                                onClick: () => setCreatingName('tag')
                             }
                         ]
                     },
@@ -143,38 +129,33 @@ const AdminMenu: React.FC = () => {
                 <Button style={{marginLeft: 16, marginRight: 16, marginBottom: 20}} onClick={() => logoutAPI().catch(() => {}).then(() => navigate('/login'))}>Logout</Button>
             </Flex>
             <Modal
-                title={modalTitle}
+                title={creatingName === 'category' ? 'New Category' : 'New Tag'}
                 closable={false}
-                open={isModalOpen}
-                onCancel={() => {
-                    setIsModalOpen(false)
-                    setModalTitle('')
-                }}
+                open={creatingName !== null}
+                onCancel={() => setCreatingName(null)}
                 onOk={() => {
                     if (!inputValue) {
                         message.error('Please enter name', 1).then()
                         return
                     }
-                    const type = creatingName === 'category' ? TagTypeEnum.POST_CAT : TagTypeEnum.POST_TAG
-                    newTag({ name: inputValue, type: type }).then(() => {
+                    newTag({ name: inputValue, type: creatingName === 'category' ? TagTypeEnum.POST_CAT : TagTypeEnum.POST_TAG }).then(() => {
                         setInputValue('')
-                        setIsModalOpen(false)
                         message.success('success', 2).then()
                         navigate(`/${creatingName}`)
                         if (creatingName === activeKey) {
                             refresh.triggerRefresh()
                         }
-                        setModalTitle('')
+                        setCreatingName(null)
                     }).catch(() => {})
                 }}
             >
                 <Input
                     value={inputValue}
+                    maxLength={32}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {setInputValue(e.target.value)}}
                     placeholder={`Input new ${creatingName} name`}
                     style={{ marginTop: 12, marginBottom: 12 }}
-                >
-                </Input>
+                />
             </Modal>
         </Flex>
     )

@@ -21,6 +21,7 @@ import '@/ckeditor.css'
 
 import {PostResourceTypeEnum} from "@/model/enum.ts"
 import {uploadFileAPI} from "@/api/common.ts"
+import {beforeUpload} from "@/common.ts"
 
 
 declare module '@ckeditor/ckeditor5-core' {
@@ -37,7 +38,7 @@ interface CKEditorUploaderConfig {
 type EditorProps = {
     content: string,
     setContent: (content: string) => void,
-    postId?: number
+    postId: number
 }
 
 class CKEditorUploader extends Plugin {
@@ -76,14 +77,14 @@ class CKEditorUploadAdaptor implements UploadAdapter {
         return this.loader.file.then(
             file => new Promise(
                 (resolve, reject) => {
-                    if (!file) {
-                        return
+                    if (!file || !beforeUpload(file)) {
+                        return reject('failed')
                     }
 
                     const formData = new FormData()
                     formData.append('post_id', this.postId)
                     formData.append('file_type', this.fileType)
-                    formData.append('file', file, file?.name)
+                    formData.append('file', file, file.name)
 
                     uploadFileAPI(formData).then((fileUploadVO) => {
                         resolve({ default: fileUploadVO.location, name: fileUploadVO.name })
@@ -144,7 +145,7 @@ export const PostEditor = ({content, setContent, postId}: EditorProps) => {
                     ],
                 },
                 uploader: {
-                    postId: postId!.toString(),
+                    postId: postId.toString(),
                     fileType: PostResourceTypeEnum.IMAGE
                 }
             }}
