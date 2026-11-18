@@ -2,20 +2,20 @@ import {runCommandAPI} from '@/api/manage.ts'
 import {ManageCommandEnum} from '@/model/enum.ts'
 import type {Section} from '@/manage/ui.ts'
 
-export const database = (): Section => ({
-    key: 'database',
-    title: 'Database',
+export const system = (): Section => ({
+    key: 'system',
+    title: 'System',
     actions: [
         {
-            label: 'Backup to cloud',
+            label: 'Backup database',
             confirm: 'Sure to backup database? This will override cloud database',
             success: 'Database backup submitted',
             run: () => runCommandAPI(ManageCommandEnum.BACKUP),
         },
         {
-            label: 'Restore from cloud',
-            confirm: 'Sure to restore database? This will override local database',
-            success: 'Database restore submitted',
+            label: 'Reset database',
+            confirm: 'Sure to reset database? Re-downloads the cloud backup and restarts the service.',
+            success: 'Database reset submitted',
             run: () => runCommandAPI(ManageCommandEnum.RESTORE),
         },
         {
@@ -23,6 +23,12 @@ export const database = (): Section => ({
             confirm: 'Sure to rebuild the search index?',
             success: 'Search index rebuilt',
             run: () => runCommandAPI(ManageCommandEnum.REBUILD_SEARCH_INDEX),
+        },
+        {
+            label: 'Restart service',
+            confirm: 'Sure to restart the service?',
+            success: 'Service restart submitted',
+            run: () => runCommandAPI(ManageCommandEnum.RESTART),
         },
     ],
 })

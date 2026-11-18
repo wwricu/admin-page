@@ -6,7 +6,7 @@ import {getValueAPI} from '@/api/manage.ts'
 import {ConfigKeyEnum} from '@/model/enum.ts'
 import type {Action, Dialog, Section, Ui} from '@/manage/ui.ts'
 import {site} from '@/manage/features/site.tsx'
-import {database} from '@/manage/features/database.ts'
+import {system} from '@/manage/features/system.ts'
 import {login} from '@/manage/features/login.tsx'
 import {totp} from '@/manage/features/totp.ts'
 
@@ -34,7 +34,7 @@ export default function ManagePage() {
         relogin: () => logoutAPI().catch(() => {}).then(() => navigate('/login')),
     }
 
-    const sections: Section[] = [site(ui), login(ui), database(), totp(ui, {enforced: totpEnforce, reload: loadTotpEnforce})]
+    const sections: Section[] = [site(ui), login(ui), system(), totp(ui, {enforced: totpEnforce, reload: loadTotpEnforce})]
 
     const run = async (task: () => Promise<void> | void, success?: string): Promise<boolean> => {
         try {

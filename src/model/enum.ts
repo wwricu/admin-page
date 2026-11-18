@@ -35,7 +35,8 @@ export enum ManageCommandEnum {
     DISABLE_TOTP = 'disable_totp',
     REBUILD_SEARCH_INDEX = 'rebuild_search_index',
     BACKUP = 'backup',
-    RESTORE = 'restore'
+    RESTORE = 'restore',
+    RESTART = 'restart'
 }
 
 export enum EntityTypeEnum {
