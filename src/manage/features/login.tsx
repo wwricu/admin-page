@@ -43,7 +43,7 @@ export const login = (ui: Ui): Section => ({
                             dataSource={sessions}
                             pagination={false}
                             columns={[
-                                {title: 'UA', dataIndex: 'ua', ellipsis: true, render: shortUA},
+                                {title: 'UA', dataIndex: 'ua', ellipsis: true, render: (ua: string) => <span title={ua}>{shortUA(ua)}</span>},
                                 {title: 'Last active', dataIndex: 'last_active', width: 150, render: (v: string) => v.slice(0, 16).replace('T', ' ')},
                                 {
                                     title: '', width: 80,
