@@ -10,10 +10,10 @@ const withField = (value: string, field: 'username' | 'password', text: string) 
     JSON.stringify({...JSON.parse(value) as LoginRO, [field]: text})
 
 const shortUA = (ua: string) => {
-    const os = ua.match(/Windows|iPhone|iPad|Android|Macintosh|Linux/)?.[0] ?? ''
-    const browser = ua.match(/(Edg|OPR)\/(\d+)/) ?? ua.match(/(Firefox|Chrome|Version)\/(\d+)/)
+    const os = (ua.match(/Android/) ?? ua.match(/Windows|iPhone|iPad|Macintosh|Linux/))?.[0] ?? ''
+    const browser = ua.match(/(Edg|OPR|OppoBrowser|HeyTapBrowser)\/(\d+)/) ?? ua.match(/(Firefox|Chrome)\/(\d+)/) ?? ua.match(/(Version)\/(\d+)/)
     if (!browser) return ua
-    const names: Record<string, string> = {Edg: 'Edge', OPR: 'Opera', Version: 'Safari'}
+    const names: Record<string, string> = {Edg: 'Edge', OPR: 'Opera', Version: 'Safari', OppoBrowser: 'OPPO Browser', HeyTapBrowser: 'HeyTap Browser'}
     return `${os} ${names[browser[1]] ?? browser[1]} ${browser[2]}`.trim()
 }
 
