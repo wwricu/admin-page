@@ -15,7 +15,7 @@ export type Dialog = {
     input?: { placeholder: string }
     body?: (value: string, onChange: (value: string) => void) => ReactNode
     value: string
-    onSubmit: (value: string) => Promise<void>
+    onSubmit?: (value: string) => Promise<void>
 }
 
 export type Ui = {

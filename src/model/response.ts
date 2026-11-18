@@ -52,3 +52,9 @@ export interface TrashBinVO {
     type: EntityTypeEnum
     delete_time: string
 }
+
+export interface SessionVO {
+    id: string
+    ua: string
+    last_active: string
+}

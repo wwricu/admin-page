@@ -1,4 +1,4 @@
-import {FileUploadVO} from "@/model/response"
+import {FileUploadVO, SessionVO} from "@/model/response"
 import {LoginRO} from "@/model/request.ts"
 import {http} from "@/common.ts"
 
@@ -16,5 +16,5 @@ export const logoutAPI = () => {
 }
 
 export const infoAPI = () => {
-    return http.get<null>('/info')
+    return http.get<SessionVO[]>('/info')
 }

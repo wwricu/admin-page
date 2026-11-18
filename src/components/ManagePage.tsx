@@ -55,7 +55,8 @@ export default function ManagePage() {
             return
         }
         setSubmitting(true)
-        if (await run(() => current.onSubmit(value), 'success')) {
+        const submit = current.onSubmit
+        if (!submit || await run(() => submit(value), 'success')) {
             setDialog(null)
         }
         setSubmitting(false)
@@ -104,8 +105,9 @@ export default function ManagePage() {
                 title={dialog?.title}
                 width={dialog?.width}
                 closable={false}
-                maskClosable={false}
+                maskClosable={!dialog?.onSubmit}
                 keyboard={false}
+                footer={dialog?.onSubmit ? undefined : null}
                 confirmLoading={submitting}
                 cancelButtonProps={{disabled: submitting}}
                 destroyOnHidden
