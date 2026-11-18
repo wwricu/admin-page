@@ -11,9 +11,11 @@ const withField = (value: string, field: 'username' | 'password', text: string) 
 
 const shortUA = (ua: string) => {
     const os = (ua.match(/Android/) ?? ua.match(/Windows|iPhone|iPad|Macintosh|Linux/))?.[0] ?? ''
-    const browser = ua.match(/(Edg|OPR|OppoBrowser|HeyTapBrowser)\/(\d+)/) ?? ua.match(/(Firefox|Chrome)\/(\d+)/) ?? ua.match(/(Version)\/(\d+)/)
+    const noise = ['Mozilla', 'AppleWebKit', 'KHTML', 'Gecko', 'Mobile', 'Safari', 'Build']
+    const tokens = [...ua.matchAll(/([A-Za-z][A-Za-z0-9]*)\/(\d+)/g)].filter(m => !noise.includes(m[1]))
+    const browser = tokens[tokens.length - 1]
     if (!browser) return ua
-    const names: Record<string, string> = {Edg: 'Edge', OPR: 'Opera', Version: 'Safari', OppoBrowser: 'OPPO Browser', HeyTapBrowser: 'HeyTap Browser'}
+    const names: Record<string, string> = {Edg: 'Edge', OPR: 'Opera', Version: 'Safari'}
     return `${os} ${names[browser[1]] ?? browser[1]} ${browser[2]}`.trim()
 }
 
