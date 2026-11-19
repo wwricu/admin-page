@@ -1,7 +1,7 @@
 import { routes, type VercelConfig } from '@vercel/config/v1'
 
-// The edge only exposes the privileged group, so every call from this app goes to /api/admin/*.
-const backendUrl = process.env.BACKEND_URL ?? 'https://api.wwr.icu/api/admin'
+const backendUrl = process.env.API_URL
+if (!backendUrl) throw new Error('API_URL is not set')
 
 export const config: VercelConfig = {
   rewrites: [

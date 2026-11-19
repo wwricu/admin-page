@@ -9,11 +9,13 @@ const {Column} = Table
 const TrashBinPage: React.FC = () => {
     const [messageApi, messageContextHolder] = message.useMessage()
     const [trashBinVOList, setTrashBinVOList] = useState<TrashBinVO[]>([])
+    const [loading, setLoading] = useState(false)
 
     const getAllTrashBinVO = () => {
+        setLoading(true)
         trashGetAllAPI().then((data: TrashBinVO[]) => {
             setTrashBinVOList(data)
-        }).catch(() => {})
+        }).catch(() => {}).finally(() => setLoading(false))
     }
 
     useEffect(() => {
@@ -26,6 +28,7 @@ const TrashBinPage: React.FC = () => {
             <Table
                 <TrashBinVO>
                 scroll={{ x: true }}
+                loading={loading}
                 dataSource={trashBinVOList}
                 rowKey={(trashBinVO: TrashBinVO) => `${trashBinVO.id}:${trashBinVO.type}`}
             >
@@ -102,7 +105,7 @@ const TrashBinPage: React.FC = () => {
                                 </Button>
                             </Popconfirm>
                             <Popconfirm
-                                title={`Delete ${trashBinVO.type} "${trashBinVO.name}"?`}
+                                title={`Permanently delete ${trashBinVO.type} "${trashBinVO.name}"? This cannot be recovered.`}
                                 okButtonProps={{variant: 'solid', color: 'danger'}}
                                 onConfirm={() =>
                                     trashEditAPI({

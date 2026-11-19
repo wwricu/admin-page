@@ -21,7 +21,7 @@ import '@/ckeditor.css'
 
 import {PostResourceTypeEnum} from "@/model/enum.ts"
 import {uploadFileAPI} from "@/api/common.ts"
-import {useEffect} from "react"
+import {beforeUpload} from "@/common.ts"
 
 
 declare module '@ckeditor/ckeditor5-core' {
@@ -38,7 +38,7 @@ interface CKEditorUploaderConfig {
 type EditorProps = {
     content: string,
     setContent: (content: string) => void,
-    postId?: number
+    postId: number
 }
 
 class CKEditorUploader extends Plugin {
@@ -77,14 +77,14 @@ class CKEditorUploadAdaptor implements UploadAdapter {
         return this.loader.file.then(
             file => new Promise(
                 (resolve, reject) => {
-                    if (!file) {
-                        return
+                    if (!file || !beforeUpload(file)) {
+                        return reject('failed')
                     }
 
                     const formData = new FormData()
                     formData.append('post_id', this.postId)
                     formData.append('file_type', this.fileType)
-                    formData.append('file', file, file?.name)
+                    formData.append('file', file, file.name)
 
                     uploadFileAPI(formData).then((fileUploadVO) => {
                         resolve({ default: fileUploadVO.location, name: fileUploadVO.name })
@@ -97,50 +97,7 @@ class CKEditorUploadAdaptor implements UploadAdapter {
     }
 }
 
-export const AboutEditor = ({ content, setContent }: EditorProps) => {
-    return (
-        <div style={{ flex: 1,  minHeight: 0 }}>
-            <CKEditor
-                editor={ClassicEditor}
-                data={content}
-                onChange={(_, editor) => setContent(editor.getData())}
-                config={{
-                    licenseKey: 'GPL',
-                    plugins: [
-                        Heading,
-                        Alignment, Font,
-                        Essentials, Paragraph,
-                        Bold, Italic, Strikethrough, Subscript, Superscript, Highlight,
-                        Emoji, Mention, AutoLink, Link, SpecialCharacters, SpecialCharactersEssentials,
-                        GeneralHtmlSupport
-                    ],
-                    toolbar: {
-                        items: [
-                            'heading', '|',
-                            'alignment', 'fontFamily', 'fontSize', '|',
-                            'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'highlight', '|',
-                            'emoji', 'link', 'specialCharacters'
-                        ],
-                        shouldNotGroupWhenFull: true
-                    },
-                }}
-            />
-        </div>
-    )
-}
-
 export const PostEditor = ({content, setContent, postId}: EditorProps) => {
-    useEffect(() => {
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            e.preventDefault()
-        }
-
-        window.addEventListener('beforeunload', handleBeforeUnload)
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload)
-        }
-    })
-
     return (
         <CKEditor
             editor={ClassicEditor}
@@ -188,7 +145,7 @@ export const PostEditor = ({content, setContent, postId}: EditorProps) => {
                     ],
                 },
                 uploader: {
-                    postId: postId!.toString(),
+                    postId: postId.toString(),
                     fileType: PostResourceTypeEnum.IMAGE
                 }
             }}

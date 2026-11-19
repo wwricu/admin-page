@@ -1,8 +1,9 @@
 import {useEffect, useRef, useState} from 'react'
-import {Button, Flex, message, Popconfirm, Table, Tag, Tooltip, Typography} from 'antd'
+import {Button, Flex, message, Popconfirm, Table, Tag, Tooltip} from 'antd'
 import {deletePostAPI, getAllPost, updatePostStatusDetailAPI} from '@/api/post'
-import {PostPreviewPageVO, PostPreviewVO, TagVO} from '@/model/response'
+import {PageVO, PostPreviewVO, TagVO} from '@/model/response'
 import {PostStatusEnum} from '@/model/enum'
+import {useNavigate} from 'react-router-dom'
 
 const {Column} = Table
 
@@ -12,17 +13,19 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
     const [loading, setLoading] = useState(false)
     const [pageIndex, setPageIndex] = useState<number>(1)
     const [pageSize, setPageSize] = useState<number>(10)
+    const navigate = useNavigate()
 
+    const reqRef = useRef(0)
     const updatePostPage = (pageIndex: number = 1, pageSize: number = 10) => {
+        const req = ++reqRef.current
         setPageIndex(pageIndex)
         setPageSize(pageSize)
         setLoading(true)
-        getAllPost(pageIndex, pageSize, postStatus).then((res: PostPreviewPageVO) => {
-            setList(res?.data)
-            setCount(res?.count)
-        }).catch(() => {
-            // Error toast is raised centrally in http layer
-        }).finally(() => setLoading(false))
+        getAllPost(pageIndex, pageSize, postStatus).then((res: PageVO<PostPreviewVO>) => {
+            if (req !== reqRef.current) return
+            setList(res.data)
+            setCount(res.count)
+        }).catch(() => {}).finally(() => { if (req === reqRef.current) setLoading(false) })
     }
 
     const paginationProps = {
@@ -34,12 +37,9 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
         onChange: updatePostPage,
     }
 
-    // Only refetch on status tab switch; page/pageSize changes go through pagination.onChange
-    const pageSizeRef = useRef(pageSize)
-    pageSizeRef.current = pageSize
     useEffect(() => {
         document.title = `Admin - ${postStatus === PostStatusEnum.PUBLISHED ? 'Published Posts' : 'Draft Posts'} - wwr.icu`
-        updatePostPage(1, pageSizeRef.current)
+        updatePostPage(1, pageSize)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postStatus])
 
@@ -115,15 +115,13 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                     width={180}
                     render={(_, postDetailVO: PostPreviewVO) => (
                         <Flex justify='space-evenly' gap={'small'}>
-                            <Typography.Link href={`/edit/${postDetailVO.id}`}>
-                                <Button size={'small'}>
-                                    Edit
-                                </Button>
-                            </Typography.Link>
+                            <Button size={'small'} onClick={() => navigate(`/edit/${postDetailVO.id}`)}>
+                                Edit
+                            </Button>
                             <Popconfirm
-                                title={postDetailVO.status === 'published' ? `Revoke "${postDetailVO.title}"` : `Publish "${postDetailVO.title}"`}
+                                title={postDetailVO.status === PostStatusEnum.PUBLISHED ? `Revoke "${postDetailVO.title}"` : `Publish "${postDetailVO.title}"`}
                                 onConfirm={() => {
-                                    updatePostStatusDetailAPI(postDetailVO.id, postDetailVO.status === 'published' ?
+                                    updatePostStatusDetailAPI(postDetailVO.id, postDetailVO.status === PostStatusEnum.PUBLISHED ?
                                         PostStatusEnum.DRAFT :
                                         PostStatusEnum.PUBLISHED
                                     ).then(() => {
@@ -133,14 +131,14 @@ export default function AdminPostPage({postStatus}: { postStatus: PostStatusEnum
                                 }}
                             >
                                 <Button size={'small'}>
-                                    {postDetailVO.status === 'published' ? 'Revoke' : 'Publish'}
+                                    {postDetailVO.status === PostStatusEnum.PUBLISHED ? 'Revoke' : 'Publish'}
                                 </Button>
                             </Popconfirm>
                             {
-                                postDetailVO.status === 'published' ? null :
+                                postDetailVO.status === PostStatusEnum.PUBLISHED ? null :
                                 <Popconfirm
-                                    title={`Delete ${postDetailVO.status} "${postDetailVO.title}"?`}
-                                    okButtonProps={{variant: 'solid', color: postDetailVO.status === 'published' ? 'danger' : 'primary'}}
+                                    title={`Move "${postDetailVO.title}" to trash?`}
+                                    okButtonProps={{variant: 'solid', color: 'danger'}}
                                     onConfirm={() =>
                                         deletePostAPI(postDetailVO.id).then(() => {
                                             message.success('success').then()

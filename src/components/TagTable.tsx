@@ -1,61 +1,25 @@
 import React, {useEffect, useState} from 'react'
-import {Button, message, Space, TableProps} from 'antd'
-import { Form, Input, InputNumber, Popconfirm, Table} from 'antd'
+import {Button, Form, Input, message, Popconfirm, Space, Table} from 'antd'
 import {TagVO} from "@/model/response"
 import {TagTypeEnum} from "@/model/enum"
 import {deleteTag, getAllTag, updateTag} from "@/api/tag"
 import {useRefresh} from "@/common.ts"
 
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-    editing: boolean
-    dataIndex: string
-    title: string
-    inputType: 'number' | 'text'
-    record: TagVO
-    index: number
-}
-
-const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = (
-    {
-        editing,
-        dataIndex,
-        title,
-        inputType,
-        children,
-        ...restProps
-    }) => {
-    const inputNode = inputType === 'number' ? <InputNumber/> : <Input/>
-
-    return (
-        <td {...restProps}>
-            {
-                editing ? (
-                    <Form.Item
-                        style={{margin: 0}}
-                        name={dataIndex}
-                        rules={[{ required: true, message: `Please Input ${title}!` }]}
-                    >
-                        {inputNode}
-                    </Form.Item>
-                ) : ( children )
-            }
-        </td>
-    )
-}
-
 export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
     const [form] = Form.useForm()
     const [data, setData] = useState<TagVO[]>([])
     const [editingKey, setEditingKey] = useState<number | undefined>()
+    const [loading, setLoading] = useState(false)
     const isEditing = (tag: TagVO) => tag.id === editingKey
     const [messageApi, contextHolder] = message.useMessage()
     const refresh = useRefresh()
 
     useEffect(() => {
         document.title = `Admin - ${tagType === TagTypeEnum.POST_CAT ? 'Post Categories' : 'Post Tags'} - wwr.icu`
+        setLoading(true)
         getAllTag(tagType).then((tagList: TagVO[]) => {
             setData(tagList)
-        }).catch(() => {})
+        }).catch(() => {}).finally(() => setLoading(false))
         setEditingKey(undefined)
     }, [tagType, refresh])
 
@@ -79,24 +43,20 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
     }
 
     const save = async (tagId: number) => {
-        try {
-            const row = (await form.validateFields()) as TagVO
-
-            const newData = [...data]
-            const index = newData.findIndex((item) => tagId === item.id)
-            if (index < 0) {
-                return
-            }
-            const tag = newData[index]
-            const tagVO = await updateTag({...tag, ...row,})
-            newData.splice(index, 1, tagVO)
-            setData(newData)
-            messageApi.success("success").then()
-            setEditingKey(undefined)
-        } catch (errInfo) {
-            // Field validation failures and API failures (already toasted in http layer) both keep the row in edit mode
-            console.log('Edit failed:', errInfo)
+        const row = await form.validateFields().catch(() => undefined)
+        const index = data.findIndex((item) => tagId === item.id)
+        if (!row || index < 0) {
+            return
         }
+        const tagVO = await updateTag({...data[index], ...row}).catch(() => undefined)
+        if (!tagVO) {
+            return
+        }
+        const newData = [...data]
+        newData.splice(index, 1, tagVO)
+        setData(newData)
+        messageApi.success("success").then()
+        setEditingKey(undefined)
     }
 
     const columns = [
@@ -104,13 +64,16 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
             title: 'Name',
             dataIndex: 'name',
             width: '40%',
-            editable: true,
+            render: (name: string, tag: TagVO) => isEditing(tag) ? (
+                <Form.Item style={{margin: 0}} name='name' rules={[{required: true, message: 'Please Input Name!'}]}>
+                    <Input maxLength={32}/>
+                </Form.Item>
+            ) : name,
         },
         {
             title: 'Count',
             dataIndex: 'count',
             width: '30%',
-            editable: false,
         },
         {
             width: '30%',
@@ -119,7 +82,7 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
             render: (_: unknown, tag: TagVO) => {
                 return isEditing(tag) ? (
                     <Space size='middle'>
-                        <Popconfirm title={`Save ${tag.name}?`} onConfirm={() => save(tag.id)}>
+                        <Popconfirm title={`Save ${form.getFieldValue('name')}?`} onConfirm={() => save(tag.id)}>
                             <Button variant='outlined' color='primary' size='small'>
                               Save
                             </Button>
@@ -142,22 +105,6 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
         },
     ]
 
-    const mergedColumns: TableProps<TagVO>['columns'] = columns.map((col) => {
-        if (!col.editable) {
-            return col
-        }
-        return {
-            ...col,
-            onCell: (record: TagVO) => ({
-                record,
-                inputType: 'text',
-                dataIndex: col.dataIndex,
-                title: col.title,
-                editing: isEditing(record),
-            }),
-        }
-    })
-
     return (
         <>
             {contextHolder}
@@ -165,11 +112,11 @@ export default function TagTable ({ tagType }: { tagType: TagTypeEnum }) {
                 <Table<TagVO>
                     size={'small'}
                     scroll={{ x: true }}
+                    loading={loading}
                     rowKey={(tagVO: TagVO) => tagVO.id}
-                    components={{body: { cell: EditableCell }}}
                     bordered
                     dataSource={data}
-                    columns={mergedColumns}
+                    columns={columns}
                     rowClassName="editable-row"
                     pagination={{ onChange: cancel, simple: true}}
                 />
