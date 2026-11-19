@@ -94,8 +94,8 @@ export default function LoginPage() {
                             <Button block size='large' type="primary" htmlType="submit">Login</Button>
                         </Form.Item>
                     </div>
-                    {/* minHeight = account block height, so hiding it does not shrink and recenter the card lower */}
-                    <div style={loginPhase === 'totp' ? {minHeight: 166} : {display: 'none'}}>
+                    {/* natural height: the outer Flex centers the card symmetrically, so switching phases does not shift it lower */}
+                    <div style={loginPhase === 'totp' ? {} : {display: 'none'}}>
                         <p style={{textAlign: 'center', fontSize: 13, color: token.colorTextDescription, marginBottom: 16, textWrap: 'balance'}}>
                             Enter your 6-digit authenticator code
                         </p>
