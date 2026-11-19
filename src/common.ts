@@ -55,7 +55,7 @@ const send = async <T>(url: string, init: RequestInit, expectBody: boolean): Pro
     const data = await readBody(response)
 
     if (!response.ok) {
-        const errorMsg = detailText((data as { detail?: unknown } | undefined)?.detail) || response.statusText
+        const errorMsg = detailText((data as { detail?: unknown } | undefined)?.detail) || `Request failed (${response.status})`
         if (errorMsg !== 'Please input TOTP') message.error(errorMsg).then()
 
         if (response.status === 401 && !window.location.pathname.startsWith('/login')) {
