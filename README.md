@@ -7,13 +7,13 @@ Provide management functionalities, work with [Basic Service](https://github.com
 Built and served as a static SPA on Vercel (`admin.wwr.icu`). There is no Caddyfile and no image
 here any more - the edge config lives in [wwricu/deploy](https://github.com/wwricu/deploy).
 
-`vercel.ts` proxies every `/api/*` call to `ADMIN_API_URL`, the privileged admin group on the API
+`vercel.ts` proxies every `/api/*` call to `API_URL`, the privileged admin group on the API
 edge. Keeping the call same-origin is what lets the session cookie
 (`Domain=wwr.icu`, `SameSite=Strict`) travel without CORS. This app holds no API secret and sends no
 credential header - the session cookie is the credential, and the edge decides which group a
 visitor may reach at all.
 
-Set `ADMIN_API_URL` in the Vercel project (required, e.g. `https://api.wwr.icu/admin`). There is
+Set `API_URL` in the Vercel project (required, e.g. `https://api.wwr.icu/admin`). There is
 no hardcoded fallback in `vercel.ts`: a missing value fails the deploy instead of silently pointing
 at a stale address.
 
