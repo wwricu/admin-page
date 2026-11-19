@@ -1,6 +1,7 @@
 import { routes, type VercelConfig } from '@vercel/config/v1'
 
-const backendUrl = process.env.BACKEND_URL ?? 'https://api.wwr.icu/api/admin'
+const backendUrl = process.env.ADMIN_API_URL
+if (!backendUrl) throw new Error('ADMIN_API_URL is not set')
 
 export const config: VercelConfig = {
   rewrites: [
