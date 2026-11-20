@@ -29,7 +29,7 @@ export const beforeUpload = (file: File) => {
 }
 
 const readBody = async (response: Response): Promise<unknown> => {
-    const text = await response.text()
+    const text = await response.text().catch(() => '')
     if (!text) {
         return undefined
     }
@@ -51,7 +51,11 @@ const detailText = (detail: unknown): string => {
 }
 
 const send = async <T>(url: string, init: RequestInit, expectBody: boolean): Promise<T> => {
-    const response = await fetch(`/api${url}`, init)
+    const response = await fetch(`/api${url}`, init).catch(() => {
+        const errorMsg = 'Network error'
+        message.error(errorMsg).then()
+        throw new HttpError(errorMsg, 0)
+    })
     const data = await readBody(response)
 
     if (!response.ok) {
