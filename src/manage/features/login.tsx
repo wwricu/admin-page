@@ -1,5 +1,5 @@
 import {Button, Flex, Input, Popconfirm, Table} from 'antd'
-import {getValueAPI, runCommandAPI} from '@/api/manage.ts'
+import {enrollTotpAPI, getValueAPI, runCommandAPI} from '@/api/manage.ts'
 import {infoAPI} from '@/api/common.ts'
 import {LoginRO} from '@/model/request.ts'
 import {SessionVO} from '@/model/response.ts'
@@ -22,9 +22,9 @@ const shortUA = (ua: string) => {
 const write = (ui: Ui, command: ManageCommandEnum, value = '') =>
     runCommandAPI(command, value).then(ui.relogin)
 
-export const login = (ui: Ui): Section => ({
+export const login = (ui: Ui, {enforced, reload}: {enforced: boolean | null; reload: () => Promise<void>}): Section => ({
     key: 'login',
-    title: 'Login',
+    title: 'Auth',
     actions: [
         {
             label: 'Active sessions',
@@ -84,5 +84,29 @@ export const login = (ui: Ui): Section => ({
             success: 'success',
             run: () => write(ui, ManageCommandEnum.RESET_LOGIN),
         },
+        ...(enforced === null ? [] : [enforced ? {
+            label: 'Disable TOTP',
+            confirm: 'Sure to disable TOTP protection?',
+            success: 'success',
+            run: async () => {
+                await runCommandAPI(ManageCommandEnum.DISABLE_TOTP)
+                await reload()
+            },
+        } : {
+            label: 'Enforce TOTP',
+            confirm: 'Enroll a new TOTP secret?',
+            run: async () => {
+                const secret = await enrollTotpAPI()
+                ui.dialog({
+                    title: secret,
+                    input: {placeholder: '6-pin code from authenticator'},
+                    value: '',
+                    onSubmit: async (code) => {
+                        await runCommandAPI(ManageCommandEnum.CONFIRM_TOTP, code)
+                        await reload()
+                    },
+                })
+            },
+        }]),
     ],
 })

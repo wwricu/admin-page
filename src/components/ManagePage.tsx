@@ -8,7 +8,6 @@ import type {Action, Dialog, Section, Ui} from '@/manage/ui.ts'
 import {site} from '@/manage/features/site.tsx'
 import {system} from '@/manage/features/system.ts'
 import {login} from '@/manage/features/login.tsx'
-import {totp} from '@/manage/features/totp.ts'
 
 const {Column} = Table
 
@@ -34,7 +33,7 @@ export default function ManagePage() {
         relogin: () => logoutAPI().catch(() => {}).then(() => navigate('/login')),
     }
 
-    const sections: Section[] = [site(ui), login(ui), system(), totp(ui, {enforced: totpEnforce, reload: loadTotpEnforce})]
+    const sections: Section[] = [site(ui), login(ui, {enforced: totpEnforce, reload: loadTotpEnforce}), system()]
 
     const run = async (task: () => Promise<void> | void, success?: string): Promise<boolean> => {
         try {
