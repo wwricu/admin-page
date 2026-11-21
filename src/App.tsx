@@ -71,7 +71,7 @@ const AppLayout: React.FC = () => {
                 </Layout>
             </Layout>
             <Drawer
-                width={200}
+                size={200}
                 title={null}
                 placement='left'
                 closable={false}
