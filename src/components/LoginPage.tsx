@@ -29,7 +29,7 @@ export default function LoginPage() {
             justify='center'
             align='center'
             style={{
-                minHeight: '100vh',
+                minHeight: '100dvh',
                 boxSizing: 'border-box',
                 padding: 24,
                 background: `radial-gradient(1100px 520px at 50% -12%, ${token.colorPrimary}14, transparent 62%), linear-gradient(180deg, ${token.colorBgLayout} 0%, ${token.colorBgContainer} 100%)`,

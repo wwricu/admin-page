@@ -261,7 +261,7 @@ export default function EditorPage() {
     return (
         <>
             {contextHolder}
-            <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100vh'}}>
+            <Flex vertical gap='small' style={{ padding: 4, paddingBottom: 0, width: '100%', height: '100dvh'}}>
                 {
                     loadFailed &&
                     <Alert
