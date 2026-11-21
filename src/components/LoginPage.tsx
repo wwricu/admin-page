@@ -96,9 +96,6 @@ export default function LoginPage() {
                     </div>
                     {/* natural height: the outer Flex centers the card symmetrically, so switching phases does not shift it lower */}
                     <div style={loginPhase === 'totp' ? {} : {display: 'none'}}>
-                        <p style={{textAlign: 'center', fontSize: 13, color: token.colorTextDescription, marginBottom: 16, textWrap: 'balance'}}>
-                            Enter your 6-digit authenticator code
-                        </p>
                         <Flex justify='center'>
                             {/* Flex to work around with mobile safari; TODO: Fix OTP width on safari */}
                             <Form.Item<LoginRO> name="totp" style={{marginBottom: 0}}>
