@@ -22,18 +22,15 @@
 
         --ck-color-button-default-hover-background: hsl(270, 1%, 22%);
         --ck-color-button-default-active-background: hsl(270, 2%, 20%);
-        --ck-color-button-default-active-shadow: hsl(270, 2%, 23%);
 
         --ck-color-button-on-background: var(--ck-custom-foreground);
         --ck-color-button-on-hover-background: hsl(255, 4%, 16%);
         --ck-color-button-on-active-background: hsl(255, 4%, 14%);
-        --ck-color-button-on-active-shadow: hsl(240, 3%, 19%);
         --ck-color-button-on-disabled-background: var(--ck-custom-foreground);
 
         --ck-color-button-action-background: hsl(168, 76%, 42%);
         --ck-color-button-action-hover-background: hsl(168, 76%, 38%);
         --ck-color-button-action-active-background: hsl(168, 76%, 36%);
-        --ck-color-button-action-active-shadow: hsl(168, 75%, 34%);
         --ck-color-button-action-disabled-background: hsl(168, 76%, 42%);
         --ck-color-button-action-text: var(--ck-custom-white);
 
@@ -56,7 +53,6 @@
         /* -- Overrides the default .ck-input class colors. ----------------------------------------- */
 
         --ck-color-input-border: hsl(257, 3%, 43%);
-        --ck-color-input-text: hsl(0, 0%, 98%);
         --ck-color-input-disabled-background: hsl(255, 4%, 21%);
         --ck-color-input-disabled-border: hsl(250, 3%, 38%);
         --ck-color-input-disabled-text: hsl(0, 0%, 78%);

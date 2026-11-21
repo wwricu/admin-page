@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@ant-design/icons": "~6.3.4",
-    "@ckeditor/ckeditor5-react": "12.0.0",
+    "@ckeditor/ckeditor5-react": "11.0.1",
     "antd": "~6.7.1",
     "antd-img-crop": "~4.30.0",
-    "ckeditor5": "49.1.0",
+    "ckeditor5": "48.5.3",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.12.0"
