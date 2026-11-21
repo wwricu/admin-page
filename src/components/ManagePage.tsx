@@ -104,7 +104,7 @@ export default function ManagePage() {
                 title={dialog?.title}
                 width={dialog?.width}
                 closable={false}
-                maskClosable={!dialog?.onSubmit}
+                mask={{closable: !dialog?.onSubmit}}
                 keyboard={false}
                 footer={dialog?.onSubmit ? undefined : null}
                 confirmLoading={submitting}

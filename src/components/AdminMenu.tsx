@@ -26,7 +26,7 @@ const AdminMenu: React.FC = () => {
     const activeKey = location.pathname.split('/').filter(Boolean)[0] || ''
 
     return (
-        <Flex style={{minHeight: '100vh', position: 'sticky', top: 0}} vertical justify='space-between'>
+        <Flex style={{minHeight: '100dvh', position: 'sticky', top: 0}} vertical justify='space-between'>
             <Menu
                 mode="inline"
                 selectedKeys={[activeKey]}

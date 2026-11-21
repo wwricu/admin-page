@@ -50,7 +50,7 @@ const AppLayout: React.FC = () => {
 
     return (
         <>
-            <Layout style={{height: '100vh'}}>
+            <Layout style={{height: '100dvh'}}>
                 <Header className='lg:hidden'>
                     <Flex align='center' gap='small'>
                         <Button color="default" variant="text" onClick={() => setOpen(true)}>
@@ -71,7 +71,7 @@ const AppLayout: React.FC = () => {
                 </Layout>
             </Layout>
             <Drawer
-                width={200}
+                size={200}
                 title={null}
                 placement='left'
                 closable={false}

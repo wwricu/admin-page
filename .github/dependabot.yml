@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    versioning-strategy: increase-if-necessary
+    groups:
+      ckeditor:
+        patterns: ["ckeditor5", "@ckeditor/*"]
+      routine:
+        patterns: ["*"]
+    allow:
+      - dependency-name: "*"
+        update-types: [version-update:semver-patch]
+      # GPL users get no backports, so track every ckeditor release.
+      - dependency-name: ckeditor5
+      - dependency-name: "@ckeditor/*"
